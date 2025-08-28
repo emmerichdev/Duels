@@ -1,5 +1,6 @@
 package com.meteordevelopments.duels.command.commands.party;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.meteordevelopments.duels.DuelsPlugin;
@@ -100,6 +101,6 @@ public class PartyCommand extends BaseCommand {
     // Disables default TabCompleter
     @Override
     public List<String> onTabComplete(@NotNull final CommandSender sender, final Command command, final String alias, final String[] args) {
-        return null;
+        return Collections.emptyList();
     }
 }

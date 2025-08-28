@@ -247,9 +247,8 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
 
     public long getPlayersInMatch(final Queue queue) {
         return arenas.stream().filter(arena -> {
-            if (!arena.isUsed()) return false;
-            assert arena.getMatch() != null;
-            return arena.getMatch().isFromQueue() && arena.getMatch().getSource().equals(queue);
+            if (!arena.isUsed() || arena.getMatch() == null) return false;
+            return arena.getMatch().isFromQueue() && Objects.equals(arena.getMatch().getSource(), queue);
         }).count() * 2;
     }
 

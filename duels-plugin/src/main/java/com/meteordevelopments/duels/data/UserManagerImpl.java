@@ -31,6 +31,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.Locale;
 
 public class UserManagerImpl implements Loadable, Listener, UserManager {
 
@@ -86,7 +87,10 @@ public class UserManagerImpl implements Loadable, Listener, UserManager {
                         user.matchesToDisplay = matchesToDisplay;
                         user.refreshMatches();
                         user.calculateTotalElo();
-                        names.putIfAbsent(user.getName().toLowerCase(), uuid);
+                        final String userName = user.getName();
+                        if (userName != null) {
+                            names.putIfAbsent(userName.toLowerCase(Locale.ROOT), uuid);
+                        }
                         users.putIfAbsent(uuid, user);
                     }
                 }
@@ -213,8 +217,15 @@ public class UserManagerImpl implements Loadable, Listener, UserManager {
                 user.refreshMatches();
                 user.calculateTotalElo();
                 users.put(uuid, user);
-                names.put(user.getName().toLowerCase(), uuid);
-            } catch (Exception ignored) {}
+                final String userName = user.getName();
+                if (userName != null) {
+                    names.put(userName.toLowerCase(Locale.ROOT), uuid);
+                } else {
+                    plugin.getLogger().warning("User name is null for UUID: " + uuid);
+                }
+            } catch (Exception ex) {
+                plugin.getLogger().warning("Failed to load user data for UUID " + uuid + ": " + ex.getMessage());
+            }
         });
     }
 

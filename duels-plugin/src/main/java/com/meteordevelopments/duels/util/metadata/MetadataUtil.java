@@ -13,7 +13,8 @@ public final class MetadataUtil {
     }
 
     public static Object get(final Plugin plugin, final Entity entity, final String key) {
-        return entity.getMetadata(key).stream().filter(value -> Objects.equals(value.getOwningPlugin(), plugin)).findFirst().map(MetadataValue::value).orElse(null);
+        Objects.requireNonNull(plugin, "plugin must not be null");
+        return entity.getMetadata(key).stream().filter(value -> plugin == value.getOwningPlugin()).findFirst().map(MetadataValue::value).orElse(null);
     }
 
     public static void put(final Plugin plugin, final Entity entity, final String key, final Object data) {

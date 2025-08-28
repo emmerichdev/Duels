@@ -72,21 +72,32 @@ public record ItemBuilder(ItemStack result) {
         return lore(Arrays.asList(lore));
     }
 
-    public void enchant(final Enchantment enchantment, final int level) {
+    public ItemBuilder enchant(final Enchantment enchantment, final int level) {
         result.addUnsafeEnchantment(enchantment, level);
+        return this;
     }
 
-    public void unbreakable() {
-        editMeta(meta -> meta.setUnbreakable(true));
-    }
-
-    public void head(final String owner) {
+    public ItemBuilder unbreakable() {
         editMeta(meta -> {
-            if (owner != null && Items.equals(Items.HEAD, result)) {
+            try {
+                // Use reflection for compatibility with pre-1.11 servers
+                java.lang.reflect.Method setUnbreakable = meta.getClass().getMethod("setUnbreakable", boolean.class);
+                setUnbreakable.invoke(meta, true);
+            } catch (Exception ignored) {
+                // Silently ignore on older servers that don't support unbreakable
+            }
+        });
+        return this;
+    }
+
+    public ItemBuilder head(final String owner) {
+        editMeta(meta -> {
+            if (owner != null && Items.equals(Items.HEAD, result) && meta instanceof SkullMeta) {
                 final SkullMeta skullMeta = (SkullMeta) meta;
                 skullMeta.setOwner(owner);
             }
         });
+        return this;
     }
 
     public void leatherArmorColor(final String color) {

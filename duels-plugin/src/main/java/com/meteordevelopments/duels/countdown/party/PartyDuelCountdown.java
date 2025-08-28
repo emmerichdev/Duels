@@ -26,10 +26,14 @@ public class PartyDuelCountdown extends DuelCountdown {
     @Override
     protected void sendMessage(final String rawMessage, final String message, final String title) {
         final String kitName = match.getKit() != null ? match.getKit().getName() : lang.getMessage("GENERAL.none");
-        match.getPlayerToParty().forEach((player, value) -> {
+        match.getPlayerToParty().forEach((player, party) -> {
             config.playSound(player, rawMessage);
+            final Party opponentParty = arena.getOpponent(party);
+            final String opponentInfo = opponentParty != null ? info.get(opponentParty) : null;
+            final String opponentDisplay = opponentInfo != null ? opponentInfo : "Unknown";
+            
             player.sendMessage(message
-                    .replace("%opponents%", info.get(arena.getOpponent(value)))
+                    .replace("%opponents%", opponentDisplay)
                     .replace("%kit%", kitName)
                     .replace("%arena%", arena.getName())
             );

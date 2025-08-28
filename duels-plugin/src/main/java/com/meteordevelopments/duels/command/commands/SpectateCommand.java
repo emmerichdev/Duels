@@ -75,9 +75,14 @@ public class SpectateCommand extends BaseCommand {
 
                 final DuelMatch match = arena.getMatch();
                 final String kit = match.getKit() != null ? match.getKit().getName() : lang.getMessage("GENERAL.none");
+                final Player opponent = arena.getOpponent(target);
+                if (opponent == null) {
+                    lang.sendMessage(player, "ERROR.player.not-found");
+                    return;
+                }
                 lang.sendMessage(player, "COMMAND.spectate.start-spectate",
                         "name", target.getName(),
-                        "opponent", Objects.requireNonNull(arena.getOpponent(target)).getName(),
+                        "opponent", opponent.getName(),
                         "kit", kit,
                         "arena", arena.getName(),
                         "bet_amount", match.getBet()

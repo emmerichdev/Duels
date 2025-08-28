@@ -198,6 +198,6 @@ public class DuelCommand extends BaseCommand {
     // Disables default TabCompleter
     @Override
     public List<String> onTabComplete(@NotNull final CommandSender sender, final Command command, final String alias, final String[] args) {
-        return null;
+        return Collections.emptyList();
     }
 }

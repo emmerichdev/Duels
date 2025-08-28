@@ -174,8 +174,10 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
 
             // Broadcast to the arena that player has begun spectating if player does not have the SPEC_ANON permission.
             if (!player.hasPermission(Permissions.SPEC_ANON)) {
-                assert arena.getMatch() != null;
-                arena.getMatch().getAllPlayers().forEach(matchPlayer -> lang.sendMessage(matchPlayer, "SPECTATE.arena-broadcast", "name", player.getName()));
+                final DuelMatch arenaMatch = arena.getMatch();
+                if (arenaMatch != null) {
+                    arenaMatch.getAllPlayers().forEach(matchPlayer -> lang.sendMessage(matchPlayer, "SPECTATE.arena-broadcast", "name", player.getName()));
+                }
             }
         }, null);
         return Result.SUCCESS;
