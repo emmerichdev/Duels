@@ -32,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.Locale;
+import java.util.logging.Level;
 
 public class UserManagerImpl implements Loadable, Listener, UserManager {
 
@@ -224,7 +225,7 @@ public class UserManagerImpl implements Loadable, Listener, UserManager {
                     plugin.getLogger().warning("User name is null for UUID: " + uuid);
                 }
             } catch (Exception ex) {
-                plugin.getLogger().warning("Failed to load user data for UUID " + uuid + ": " + ex.getMessage());
+                plugin.getLogger().log(Level.WARNING, "Failed to load user data for UUID " + uuid, ex);
             }
         });
     }

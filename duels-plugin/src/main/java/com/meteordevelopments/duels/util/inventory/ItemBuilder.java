@@ -30,7 +30,15 @@ public record ItemBuilder(ItemStack result) {
     }
 
     private ItemBuilder(final String type, final int amount, final short durability) {
-        this(Material.matchMaterial(type), amount, durability);
+        this(validateMaterial(type), amount, durability);
+    }
+    
+    private static Material validateMaterial(final String type) {
+        final Material material = Material.matchMaterial(type);
+        if (material == null) {
+            throw new IllegalArgumentException("Unknown material type: " + type);
+        }
+        return material;
     }
 
     public static ItemBuilder of(final Material type) {
