@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 public abstract class AbstractHookManager<P extends JavaPlugin> {
 
@@ -32,11 +33,14 @@ public abstract class AbstractHookManager<P extends JavaPlugin> {
 
             DuelsPlugin.sendMessage("&aSuccessfully hooked into '" + name + "'!");
         } catch (Throwable throwable) {
-            if (throwable.getCause() != null) {
-                throwable = throwable.getCause();
+            Throwable throwable1 = throwable;
+            if (throwable1.getCause() != null) {
+                throwable1 = throwable1.getCause();
             }
 
-            DuelsPlugin.sendMessage("&b&lFailed to hook into " + name + ": " + throwable.getMessage());
+            final String message = String.format("Failed to hook into %s: %s (%s)", 
+                    name, throwable1.getMessage(), throwable1.getClass().getName());
+            plugin.getLogger().log(Level.SEVERE, message, throwable1);
         }
     }
 

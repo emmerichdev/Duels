@@ -19,9 +19,14 @@ public class VersionCommand extends BaseCommand {
     @Override
     protected void execute(final CommandSender sender, final String label, final String[] args) {
         final PluginDescriptionFile info = plugin.getDescription();
-        TextBuilder
-                .of(StringUtil.color("&b" + info.getFullName() + " by " + info.getAuthors().get(0) + " &l[Click]"))
-                .setClickEvent(Action.OPEN_URL, info.getWebsite())
-                .send((Player) sender);
+        final String authors = info.getAuthors().isEmpty() ? "unknown" : String.join(", ", info.getAuthors());
+        final TextBuilder textBuilder = TextBuilder.of(StringUtil.color("&b" + info.getFullName() + " by " + authors + " &l[Click]"));
+        
+        final String website = info.getWebsite();
+        if (website != null && !website.trim().isEmpty()) {
+            textBuilder.setClickEvent(Action.OPEN_URL, website);
+        }
+        
+        textBuilder.send((Player) sender);
     }
 }
