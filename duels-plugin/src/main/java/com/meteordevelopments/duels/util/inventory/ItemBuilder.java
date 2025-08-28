@@ -87,17 +87,19 @@ public final class ItemBuilder {
 
     public ItemBuilder unbreakable() {
         return editMeta(meta -> {
-            if (CompatUtil.isPre1_12()) {
-                meta.setUnbreakable(true);
-            } else {
-                meta.setUnbreakable(true);
+            try {
+                final java.lang.reflect.Method method = meta.getClass().getMethod("setUnbreakable", boolean.class);
+                method.setAccessible(true);
+                method.invoke(meta, true);
+            } catch (Throwable ignored) {
+                // Ignore for older versions where setUnbreakable may not exist
             }
         });
     }
 
     public ItemBuilder head(final String owner) {
         return editMeta(meta -> {
-            if (owner != null && Items.equals(Items.HEAD, result)) {
+            if (owner != null && Items.equals(Items.HEAD, result) && meta instanceof SkullMeta) {
                 final SkullMeta skullMeta = (SkullMeta) meta;
                 skullMeta.setOwner(owner);
             }

@@ -90,8 +90,9 @@ public class UserManagerImpl implements Loadable, Listener, UserManager {
                         user.matchesToDisplay = matchesToDisplay;
                         user.refreshMatches();
                         user.calculateTotalElo();
-                        if (user.getName() != null) {
-                            names.putIfAbsent(user.getName().toLowerCase(), uuid);
+                        final String userName = user.getName();
+                        if (userName != null) {
+                            names.putIfAbsent(userName.toLowerCase(java.util.Locale.ROOT), uuid);
                         }
                         users.putIfAbsent(uuid, user);
                     }
@@ -219,10 +220,13 @@ public class UserManagerImpl implements Loadable, Listener, UserManager {
                 user.refreshMatches();
                 user.calculateTotalElo();
                 users.put(uuid, user);
-                if (user.getName() != null) {
-                    names.put(user.getName().toLowerCase(), uuid);
+                final String userName = user.getName();
+                if (userName != null) {
+                    names.put(userName.toLowerCase(java.util.Locale.ROOT), uuid);
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ex) {
+                Log.error(this, "Failed to reload user '" + uuid + "'", ex);
+            }
         });
     }
 

@@ -255,7 +255,12 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
     }
 
     public long getPlayersInMatch(final Queue queue) {
-        return arenas.stream().filter(arena -> arena.isUsed() && arena.getMatch().isFromQueue() && arena.getMatch().getSource().equals(queue)).count() * 2;
+        return arenas.stream()
+                .filter(arena -> arena.isUsed()
+                        && arena.getMatch() != null
+                        && arena.getMatch().isFromQueue()
+                        && java.util.Objects.equals(arena.getMatch().getSource(), queue))
+                .count() * 2;
     }
 
     public boolean isSelectable(@Nullable final KitImpl kit, @NotNull final ArenaImpl arena) {

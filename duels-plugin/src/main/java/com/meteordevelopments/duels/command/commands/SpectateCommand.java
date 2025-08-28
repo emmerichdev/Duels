@@ -73,9 +73,15 @@ public class SpectateCommand extends BaseCommand {
 
                 final DuelMatch match = arena.getMatch();
                 final String kit = match.getKit() != null ? match.getKit().getName() : lang.getMessage("GENERAL.none");
+                final Player opponent = arena.getOpponent(target);
+                if (opponent == null) {
+                    // Opponent vanished or match ended between checks
+                    lang.sendMessage(player, "ERROR.player.no-longer-online");
+                    return;
+                }
                 lang.sendMessage(player, "COMMAND.spectate.start-spectate",
                         "name", target.getName(),
-                        "opponent", arena.getOpponent(target).getName(),
+                        "opponent", opponent.getName(),
                         "kit", kit,
                         "arena", arena.getName(),
                         "bet_amount", match.getBet()

@@ -11,7 +11,8 @@ public final class MetadataUtil {
     }
 
     public static Object get(final Plugin plugin, final Entity entity, final String key) {
-        return entity.getMetadata(key).stream().filter(value -> value.getOwningPlugin().equals(plugin)).findFirst().map(MetadataValue::value).orElse(null);
+        java.util.Objects.requireNonNull(plugin, "plugin must not be null");
+        return entity.getMetadata(key).stream().filter(value -> value.getOwningPlugin() == plugin).findFirst().map(MetadataValue::value).orElse(null);
     }
 
     public static void put(final Plugin plugin, final Entity entity, final String key, final Object data) {
@@ -19,6 +20,7 @@ public final class MetadataUtil {
     }
 
     public static void remove(final Plugin plugin, final Entity entity, final String key) {
+        java.util.Objects.requireNonNull(plugin, "plugin must not be null");
         entity.removeMetadata(key, plugin);
     }
 

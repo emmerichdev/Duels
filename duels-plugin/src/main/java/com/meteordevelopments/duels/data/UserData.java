@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class UserData implements User {
 
-    private static transient final String ERROR_USER_SAVE = "An error occured while saving userdata of %s!";
+    private static transient final String ERROR_USER_SAVE = "An error occurred while saving user data of %s!";
     transient File folder;
     transient int defaultRating;
     transient int matchesToDisplay;

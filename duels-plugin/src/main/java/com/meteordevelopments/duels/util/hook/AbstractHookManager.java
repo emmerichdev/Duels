@@ -36,7 +36,8 @@ public abstract class AbstractHookManager<P extends JavaPlugin> {
                 throwable = throwable.getCause();
             }
 
-            DuelsPlugin.sendMessage("&b&lFailed to hook into " + name + ": " + throwable.getMessage());
+            final String message = "Failed to hook into '" + name + "' due to " + throwable.getClass().getName() + ": " + throwable.getMessage();
+            plugin.getLogger().log(java.util.logging.Level.SEVERE, message, throwable);
         }
     }
 

@@ -29,13 +29,17 @@ public class PartyDuelCountdown extends DuelCountdown {
         final String kitName = match.getKit() != null ? match.getKit().getName() : lang.getMessage("GENERAL.none");
         match.getPlayerToParty().entrySet().forEach(entry -> {
             final Player player = entry.getKey();
+            final Party party = entry.getValue();
+            final Party opponentParty = arena.getOpponent(party);
+            final String opponentsDisplay = opponentParty != null ? info.getOrDefault(opponentParty, "") : "";
+
             config.playSound(player, rawMessage);
             player.sendMessage(message
-                .replace("%opponents%", info.get(arena.getOpponent(entry.getValue())))
+                .replace("%opponents%", opponentsDisplay)
                 .replace("%kit%", kitName)
                 .replace("%arena%", arena.getName())
             );
-            
+
             if (title != null) {
                 Titles.send(player, title, null, 0, 20, 50);
             }
