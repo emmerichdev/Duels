@@ -2,9 +2,7 @@ package com.meteordevelopments.duels.util.inventory;
 
 import com.meteordevelopments.duels.util.EnumUtil;
 import com.meteordevelopments.duels.util.StringUtil;
-import com.meteordevelopments.duels.util.compat.CompatUtil;
 import com.meteordevelopments.duels.util.compat.Items;
-import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -24,21 +22,23 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public final class ItemBuilder {
-
-    private final ItemStack result;
+public record ItemBuilder(ItemStack result) {
 
     private ItemBuilder(final Material type, final int amount, final short durability) {
-        this.result = new ItemStack(type, amount);
+        this(new ItemStack(type, amount));
         Items.setDurability(result, durability);
     }
 
     private ItemBuilder(final String type, final int amount, final short durability) {
-        this(Material.matchMaterial(type), amount, durability);
+        this(validateMaterial(type), amount, durability);
     }
-
-    private ItemBuilder(final ItemStack item) {
-        this.result = item;
+    
+    private static Material validateMaterial(final String type) {
+        final Material material = Material.matchMaterial(type);
+        if (material == null) {
+            throw new IllegalArgumentException("Unknown material type: " + type);
+        }
+        return material;
     }
 
     public static ItemBuilder of(final Material type) {
@@ -86,26 +86,30 @@ public final class ItemBuilder {
     }
 
     public ItemBuilder unbreakable() {
-        return editMeta(meta -> {
-            if (CompatUtil.isPre1_12()) {
-                meta.setUnbreakable(true);
-            } else {
-                meta.setUnbreakable(true);
+        editMeta(meta -> {
+            try {
+                // Use reflection for compatibility with pre-1.11 servers
+                java.lang.reflect.Method setUnbreakable = meta.getClass().getMethod("setUnbreakable", boolean.class);
+                setUnbreakable.invoke(meta, true);
+            } catch (Exception ignored) {
+                // Silently ignore on older servers that don't support unbreakable
             }
         });
+        return this;
     }
 
     public ItemBuilder head(final String owner) {
-        return editMeta(meta -> {
-            if (owner != null && Items.equals(Items.HEAD, result)) {
+        editMeta(meta -> {
+            if (owner != null && Items.equals(Items.HEAD, result) && meta instanceof SkullMeta) {
                 final SkullMeta skullMeta = (SkullMeta) meta;
                 skullMeta.setOwner(owner);
             }
         });
+        return this;
     }
 
-    public ItemBuilder leatherArmorColor(final String color) {
-        return editMeta(meta -> {
+    public void leatherArmorColor(final String color) {
+        editMeta(meta -> {
             final LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) meta;
 
             if (color != null) {
@@ -121,8 +125,8 @@ public final class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder attribute(final String name, final int operation, final double amount, final String slotName) {
-        return editMeta(meta -> {
+    public void attribute(final String name, final int operation, final double amount, final String slotName) {
+        editMeta(meta -> {
             final Attribute attribute = EnumUtil.getByName(attributeNameToEnum(name), Attribute.class);
 
             if (attribute == null) {

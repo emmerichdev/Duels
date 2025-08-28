@@ -16,6 +16,8 @@ import com.meteordevelopments.duels.util.json.JsonUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+
+import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -101,7 +103,11 @@ public class PlayerInfoManager implements Loadable {
 
         // If lobby is not found or invalid, use the default world's spawn location for lobby.
         if (lobby == null || lobby.getWorld() == null) {
-            final World world = Bukkit.getWorlds().get(0);
+            final List<World> worlds = Bukkit.getWorlds();
+            if (worlds.isEmpty()) {
+                throw new IllegalStateException("No worlds available");
+            }
+            final World world = worlds.get(0);
             this.lobby = world.getSpawnLocation();
             Log.warn(this, String.format(ERROR_LOBBY_DEFAULT, world.getName()));
         }
