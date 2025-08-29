@@ -90,7 +90,7 @@ public class UserManagerImpl implements Loadable, Listener, UserManager {
                         user.calculateTotalElo();
                         final String userName = user.getName();
                         if (userName != null && !userName.trim().isEmpty()) {
-                            final String normalizedName = userName.toLowerCase(Locale.ROOT);
+                            final String normalizedName = userName.strip().toLowerCase(Locale.ROOT);
                             final UUID existingUuid = names.put(normalizedName, uuid);
                             if (existingUuid != null && !existingUuid.equals(uuid)) {
                                 Log.info(this, "Name mapping updated: '" + normalizedName + "' changed from " + existingUuid + " to " + uuid);
@@ -156,7 +156,7 @@ public class UserManagerImpl implements Loadable, Listener, UserManager {
     @Override
     public UserData get(@NotNull final String name) {
         Objects.requireNonNull(name, "name");
-        final UUID uuid = names.get(name.toLowerCase());
+        final UUID uuid = names.get(name.strip().toLowerCase(Locale.ROOT));
         return uuid != null ? get(uuid) : null;
     }
 
@@ -224,7 +224,9 @@ public class UserManagerImpl implements Loadable, Listener, UserManager {
                 users.put(uuid, user);
                 final String userName = user.getName();
                 if (userName != null && !userName.trim().isEmpty()) {
-                    names.put(userName.toLowerCase(Locale.ROOT), uuid);
+                    // Remove any previous mapping for this UUID to avoid stale entries
+                    names.entrySet().removeIf(entry -> entry.getValue().equals(uuid));
+                    names.put(userName.strip().toLowerCase(Locale.ROOT), uuid);
                 } else {
                     Log.warn(this, "Skipping name mapping for UUID " + uuid + " - userName is null or empty during reload");
                 }
@@ -306,7 +308,9 @@ public class UserManagerImpl implements Loadable, Listener, UserManager {
         if (user != null) {
             if (!player.getName().equals(user.getName())) {
                 user.setName(player.getName());
-                names.put(player.getName().toLowerCase(), player.getUniqueId());
+                // Remove any previous mapping for this UUID to avoid stale entries
+                names.entrySet().removeIf(entry -> entry.getValue().equals(player.getUniqueId()));
+                names.put(player.getName().strip().toLowerCase(Locale.ROOT), player.getUniqueId());
             }
 
             return;
@@ -315,7 +319,7 @@ public class UserManagerImpl implements Loadable, Listener, UserManager {
         plugin.doAsync(() -> {
             final UserData data = tryLoad(player);
 
-            names.put(player.getName().toLowerCase(), player.getUniqueId());
+            names.put(player.getName().strip().toLowerCase(Locale.ROOT), player.getUniqueId());
             users.put(player.getUniqueId(), data);
         });
     }

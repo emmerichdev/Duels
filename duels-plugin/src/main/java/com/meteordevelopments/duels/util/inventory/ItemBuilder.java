@@ -121,22 +121,39 @@ public record ItemBuilder(ItemStack result) {
     }
 
     public ItemBuilder potion(final PotionType type, final boolean extended, final boolean upgraded) {
-        PotionMeta meta = (PotionMeta) result.getItemMeta();
+        if (result == null) {
+            return this;
+        }
+        
+        final ItemMeta itemMeta = result.getItemMeta();
+        if (itemMeta == null || !(itemMeta instanceof PotionMeta)) {
+            return this;
+        }
+        
+        final PotionMeta meta = (PotionMeta) itemMeta;
         
         // Compute target PotionType based on extended/upgraded flags
         PotionType targetType = type;
-        if (upgraded || extended) {
-            String prefix = upgraded ? "STRONG_" : (extended ? "LONG_" : "");
-            try {
-                targetType = PotionType.valueOf(prefix + type.name());
-            } catch (IllegalArgumentException e) {
-                // Fall back to original type if variant doesn't exist
-                targetType = type;
+        if ((upgraded || extended) && type != null) {
+            final String typeName = type.name();
+            if (!typeName.startsWith("LONG_") && !typeName.startsWith("STRONG_")) {
+                String prefix = upgraded ? "STRONG_" : "LONG_";
+                String variantName = prefix + typeName;
+                
+                PotionType variant = EnumUtil.getByName(variantName, PotionType.class);
+                if (variant != null) {
+                    targetType = variant;
+                }
+                // If lookup returns null, fall back to the original type (already set)
             }
         }
         
-        meta.setBasePotionType(targetType);
-        result.setItemMeta(meta);
+        // Only set if we have a valid target type
+        if (targetType != null) {
+            meta.setBasePotionType(targetType);
+            result.setItemMeta(meta);
+        }
+        
         return this;
     }
 
