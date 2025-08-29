@@ -14,9 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Caches the GameProfile stored in EntityHuman instance to prevent Mojang server lookup.
- */
 public final class Skulls {
 
     private static final Method GET_PROFILE;
@@ -53,12 +50,6 @@ public final class Skulls {
         return (GameProfile) GET_PROFILE.invoke(player);
     }
 
-    /**
-     * Sets given player as the owner of the given skull using cached GameProfile information of the player.
-     *
-     * @param meta   SkullMeta of the skull to set owner
-     * @param player Player to display on skull
-     */
     public static void setProfile(final SkullMeta meta, final Player player) {
         // In 1.15.2 and above, setOwningPlayer was optimized to use online player's cached GameProfile.
         if (SET_PROFILE != null) {

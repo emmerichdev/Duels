@@ -15,9 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
-/**
- * Displays a message to shooter containing hit entity's health if enabled.
- */
 public class ProjectileHitListener implements Listener {
 
     private final Config config;

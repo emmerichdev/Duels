@@ -24,6 +24,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.bson.Document;
+import com.mongodb.client.model.ReplaceOptions;
+import com.meteordevelopments.duels.redis.RedisService;
 
 import java.io.*;
 import java.util.*;
@@ -58,7 +61,7 @@ public class KitManagerImpl implements Loadable, KitManager {
             final var mongo = plugin.getMongoService();
             if (mongo != null) {
                 final var collection = mongo.collection("kits");
-                for (final org.bson.Document doc : collection.find()) {
+                for (final Document doc : collection.find()) {
                     final String json = doc.toJson();
                     final KitData data = JsonUtil.getObjectMapper().readValue(json, KitData.class);
                     final String kitName = data != null ? data.getName() : null;
@@ -94,13 +97,13 @@ public class KitManagerImpl implements Loadable, KitManager {
                 for (final Map.Entry<String, KitImpl> entry : kits.entrySet()) {
                     final KitData kd = KitData.fromKit(entry.getValue());
                     final String json = JsonUtil.getObjectWriter().writeValueAsString(kd);
-                    final org.bson.Document doc = org.bson.Document.parse(json);
+                    final Document doc = Document.parse(json);
                     doc.put("_id", kd.getName());
-                    collection.replaceOne(new org.bson.Document("_id", kd.getName()), doc, new com.mongodb.client.model.ReplaceOptions().upsert(true));
+                    collection.replaceOne(new Document("_id", kd.getName()), doc, new ReplaceOptions().upsert(true));
                 }
                 if (plugin.getRedisService() != null) {
                     // notify cross-server to refresh kits
-                    kits.keySet().forEach(name -> plugin.getRedisService().publish(com.meteordevelopments.duels.redis.RedisService.CHANNEL_INVALIDATE_KIT, name));
+                    kits.keySet().forEach(name -> plugin.getRedisService().publish(RedisService.CHANNEL_INVALIDATE_KIT, name));
                 }
             }
         } catch (Exception ex) {
@@ -121,18 +124,18 @@ public class KitManagerImpl implements Loadable, KitManager {
         if (mongo == null) return;
         try {
             final var doc = mongo.collection("kits")
-                                 .find(new org.bson.Document("_id", name))
+                                 .find(new Document("_id", name))
                                  .first();
             if (doc == null) return;
 
             // Bind directly from BSON document into our KitData POJO
-            final com.meteordevelopments.duels.data.KitData data =
-                    com.meteordevelopments.duels.util.json.JsonUtil
+            final KitData data =
+                    JsonUtil
                         .getObjectMapper()
-                        .convertValue(doc, com.meteordevelopments.duels.data.KitData.class);
+                        .convertValue(doc, KitData.class);
             if (data == null
                 || data.getName() == null
-                || !com.meteordevelopments.duels.util.StringUtil.isAlphanumeric(data.getName())) {
+                || !StringUtil.isAlphanumeric(data.getName())) {
                 return;
             }
 
@@ -142,7 +145,7 @@ public class KitManagerImpl implements Loadable, KitManager {
                 if (gui != null) gui.calculatePages();
             });
         } catch (Exception ex) {
-            com.meteordevelopments.duels.util.Log.error(this,
+            Log.error(this,
                 "Failed to reload kit: " + name, ex);
         }
     }
@@ -189,14 +192,14 @@ public class KitManagerImpl implements Loadable, KitManager {
             try {
                 final var mongo = plugin.getMongoService();
                 if (mongo != null) {
-                    mongo.collection("kits").deleteOne(new org.bson.Document("_id", name));
+                    mongo.collection("kits").deleteOne(new Document("_id", name));
                 }
                 final var redis = plugin.getRedisService();
                 if (redis != null) {
-                    redis.publish(com.meteordevelopments.duels.redis.RedisService.CHANNEL_INVALIDATE_KIT, name);
+                    redis.publish(RedisService.CHANNEL_INVALIDATE_KIT, name);
                 }
             } catch (Exception ex) {
-                com.meteordevelopments.duels.util.Log.error(this, "Failed to finalize removal for kit: " + name, ex);
+                Log.error(this, "Failed to finalize removal for kit: " + name, ex);
             }
         });
 

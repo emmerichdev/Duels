@@ -60,9 +60,6 @@ public class MultiPageGui<P extends JavaPlugin> extends AbstractGui<P> {
         this.buttons = buttons;
     }
 
-    /**
-     * Recalculates the pages for this {@link MultiPageGui}.
-     */
     public void calculatePages() {
         // The max size an inventory can contain.
         final int maxSize = size - 9;

@@ -7,12 +7,6 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Called when a {@link Kit} is removed.
- *
- * @see KitManager#remove(CommandSender, String)
- * @see Kit#isRemoved()
- */
 public class KitRemoveEvent extends KitEvent {
 
     private static final HandlerList handlers = new HandlerList();

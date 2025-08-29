@@ -6,9 +6,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Called before a player starts spectating.
- */
 public class SpectateStartEvent extends SpectateEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();

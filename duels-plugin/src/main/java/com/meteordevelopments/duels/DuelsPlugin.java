@@ -2,7 +2,6 @@ package com.meteordevelopments.duels;
 
 import com.meteordevelopments.duels.startup.*;
 import com.meteordevelopments.duels.util.CC;
-import com.meteordevelopments.duels.util.UpdateManager;
 import com.meteordevelopments.duels.party.PartyManagerImpl;
 import com.meteordevelopments.duels.validator.ValidatorManager;
 import com.meteordevelopments.duels.util.Log;
@@ -46,16 +45,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import space.arim.morepaperlib.MorePaperLib;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
+import redis.clients.jedis.JedisPubSub;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 import java.util.logging.Level;
 
+import static com.meteordevelopments.duels.redis.RedisService.*;
+
 
 public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     
-    @Getter
-    private UpdateManager updateManager;
     @Getter
     private static DuelsPlugin instance;
     @Getter
@@ -94,7 +94,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     @Getter @Setter private MongoService mongoService;
     @Getter @Setter private RedisService redisService;
     @Getter @Setter private DatabaseConfig databaseConfig;
-    private redis.clients.jedis.JedisPubSub redisSubscriber;
+    private JedisPubSub redisSubscriber;
 
     @Override
     public void onEnable() {
@@ -130,7 +130,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
             setupRedisSubscriptions();
         }
         
-        checkForUpdatesAndMetrics();
+        // Update system removed in this fork
     }
 
     @Override
@@ -218,82 +218,44 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     @Override
     public ScheduledTask doSync(@NotNull final Runnable task) {
         Objects.requireNonNull(task, "task");
-        return DuelsPlugin.morePaperLib.scheduling().globalRegionalScheduler().run(task);
+        return morePaperLib.scheduling().globalRegionalScheduler().run(task);
     }
 
     @Override
     public ScheduledTask doSyncAfter(@NotNull final Runnable task, final long delay) {
         Objects.requireNonNull(task, "task");
-        return DuelsPlugin.morePaperLib.scheduling().globalRegionalScheduler().runDelayed(task, delay);
+        return morePaperLib.scheduling().globalRegionalScheduler().runDelayed(task, delay);
     }
 
     @Override
     public ScheduledTask doSyncRepeat(@NotNull final Runnable task, final long delay, final long period) {
         Objects.requireNonNull(task, "task");
-
-        long safeDelay = Math.max(1, delay);
-
-        return DuelsPlugin.morePaperLib.scheduling()
-                .globalRegionalScheduler()
-                .runAtFixedRate(task, safeDelay, period);
+        return morePaperLib.scheduling().globalRegionalScheduler().runAtFixedRate(task, delay, period);
     }
 
+    @Override
+    public void cancelTask(final ScheduledTask task) {
+        if (task != null) {
+            task.cancel();
+        }
+    }
 
     @Override
     public ScheduledTask doAsync(@NotNull final Runnable task) {
         Objects.requireNonNull(task, "task");
-        return DuelsPlugin.morePaperLib.scheduling().asyncScheduler().run(task);
+        return morePaperLib.scheduling().asyncScheduler().run(task);
     }
 
     @Override
-    public ScheduledTask doAsyncAfter(@NotNull final Runnable task, final long delay) {
+    public ScheduledTask doAsyncAfter(@NotNull final Runnable task, long delay) {
         Objects.requireNonNull(task, "task");
-        return DuelsPlugin.morePaperLib.scheduling().asyncScheduler().runDelayed(task, Duration.ofMillis(delay * 50));
+        return morePaperLib.scheduling().asyncScheduler().runDelayed(task, Duration.ofMillis(delay * 50L));
     }
 
     @Override
-    public ScheduledTask doAsyncRepeat(@NotNull final Runnable task, final long delay, final long period) {
+    public ScheduledTask doAsyncRepeat(@NotNull final Runnable task, long delay, long interval) {
         Objects.requireNonNull(task, "task");
-        return DuelsPlugin.morePaperLib.scheduling().asyncScheduler().runAtFixedRate(task, Duration.ofMillis(delay * 50), Duration.ofMillis(period * 50));
-    }
-
-    @Override
-    public void cancelTask(@NotNull final ScheduledTask task) {
-        Objects.requireNonNull(task, "task");
-        task.cancel();
-    }
-
-    @Override
-    public void info(@NotNull final String message) {
-        Objects.requireNonNull(message, "message");
-        Log.info(message);
-    }
-
-    @Override
-    public void warn(@NotNull final String message) {
-        Objects.requireNonNull(message, "message");
-        Log.warn(message);
-    }
-
-    @Override
-    public void error(@NotNull final String message) {
-        Objects.requireNonNull(message, "message");
-        Log.error(message);
-    }
-
-    @Override
-    public void error(@NotNull final String message, @NotNull final Throwable thrown) {
-        Objects.requireNonNull(message, "message");
-        Objects.requireNonNull(thrown, "thrown");
-        Log.error(message, thrown);
-    }
-
-    public Loadable find(final String name) {
-        return loadableManager.find(name);
-    }
-
-    public List<String> getReloadables() {
-        return loadableManager.getReloadableNames();
+        return morePaperLib.scheduling().asyncScheduler().runAtFixedRate(task, Duration.ofMillis(delay * 50L), Duration.ofMillis(interval * 50L));
     }
 
     @Override
@@ -304,6 +266,26 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     @Override
     public void log(final Level level, final String s, final Throwable thrown) {
         getLogger().log(level, s, thrown);
+    }
+
+    @Override
+    public void info(@NotNull final String message) {
+        getLogger().info(message);
+    }
+
+    @Override
+    public void warn(@NotNull final String message) {
+        getLogger().warning(message);
+    }
+
+    @Override
+    public void error(@NotNull final String message) {
+        getLogger().severe(message);
+    }
+
+    @Override
+    public void error(@NotNull final String message, @NotNull final Throwable thrown) {
+        getLogger().log(java.util.logging.Level.SEVERE, message, thrown);
     }
 
     public static String getPrefix() {
@@ -320,21 +302,16 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         logManager.debug("onEnable start -> " + System.currentTimeMillis() + "\n");
     }
 
-    private void checkForUpdatesAndMetrics() {
-        if (!configuration.isCheckForUpdates()) {
-            return;
-        }
-
-        this.updateManager = new UpdateManager(this);
-        this.updateManager.checkForUpdate();
-        if (updateManager.updateIsAvailable()){
-            sendMessage("&a===============================================");
-            sendMessage("&aAn update for " + getName() + " is available!");
-            sendMessage("&aDownload " + getName() + " v" + updateManager.getLatestVersion() + " here:");
-            sendMessage("&e" + getDescription().getWebsite());
-            sendMessage("&a===============================================");
-        }
+    // Convenience delegates used by commands
+    public Loadable find(final String name) {
+        return loadableManager != null ? loadableManager.find(name) : null;
     }
+
+    public java.util.List<String> getReloadables() {
+        return loadableManager != null ? loadableManager.getReloadableNames() : java.util.Collections.emptyList();
+    }
+
+    // Update system removed in this fork
 
     private void setupRedisSubscriptions() {
         try {
@@ -345,7 +322,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
                 } catch (Exception ignored) {}
                 this.redisSubscriber = null;
             }
-            final var sub = new redis.clients.jedis.JedisPubSub() {
+            final var sub = new JedisPubSub() {
                 @Override
                 public void onMessage(String channel, String message) {
                     doSync(() -> {
@@ -362,17 +339,17 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
                             }
                         } catch (Exception ignored) {}
                         switch (channel) {
-                            case RedisService.CHANNEL_INVALIDATE_USER -> {
+                            case CHANNEL_INVALIDATE_USER -> {
                                 try {
                                     final UUID uuid = UUID.fromString(payload);
                                     if (userManager != null) userManager.reloadUser(uuid);
                                 } catch (Exception ignored) {
                                 }
                             }
-                            case RedisService.CHANNEL_INVALIDATE_KIT -> {
+                            case CHANNEL_INVALIDATE_KIT -> {
                                 if (kitManager != null) kitManager.reloadKit(payload);
                             }
-                            case RedisService.CHANNEL_INVALIDATE_ARENA -> {
+                            case CHANNEL_INVALIDATE_ARENA -> {
                                 if (arenaManager != null) arenaManager.reloadArena(payload);
                             }
                         }
@@ -381,9 +358,9 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
             };
             this.redisSubscriber = sub;
             redisService.subscribe(sub,
-                    RedisService.CHANNEL_INVALIDATE_USER,
-                    RedisService.CHANNEL_INVALIDATE_KIT,
-                    RedisService.CHANNEL_INVALIDATE_ARENA
+                    CHANNEL_INVALIDATE_USER,
+                    CHANNEL_INVALIDATE_KIT,
+                    CHANNEL_INVALIDATE_ARENA
             );
         } catch (Exception ex) {
             sendMessage("&eFailed to subscribe to Redis channels; continuing without cross-server sync.");

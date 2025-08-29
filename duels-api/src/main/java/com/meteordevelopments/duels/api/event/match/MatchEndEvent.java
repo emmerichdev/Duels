@@ -8,11 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * Called when a {@link Match} is ending.
- * <p>
- * Note: {@link Match#isFinished()} will return true only after this event is called.
- */
 public class MatchEndEvent extends MatchEvent {
 
     private static final HandlerList handlers = new HandlerList();
@@ -32,31 +27,16 @@ public class MatchEndEvent extends MatchEvent {
         return handlers;
     }
 
-    /**
-     * Winner of the {@link Match}. May be null if there was a no winner!
-     *
-     * @return {@link UUID} of the winner of the {@link Match}. May be null if there was a no winner!
-     */
     @Nullable
     public UUID getWinner() {
         return winner;
     }
 
-    /**
-     * Loser of the {@link Match}. May be null if there was a no loser!
-     *
-     * @return {@link UUID} of the loser of the {@link Match}. May be null if there was a no loser!
-     */
     @Nullable
     public UUID getLoser() {
         return loser;
     }
 
-    /**
-     * End reason of the {@link Match}. If reason is {@link Reason#OPPONENT_DEFEAT}, {@link #getWinner()} and {@link #getLoser()} is guaranteed to not return null.
-     *
-     * @return {@link Reason} that is the end reason of the {@link Match}.
-     */
     @NotNull
     public Reason getReason() {
         return reason;

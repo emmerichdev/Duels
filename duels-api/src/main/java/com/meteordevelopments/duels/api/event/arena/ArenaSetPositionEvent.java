@@ -11,11 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-/**
- * Called when a new spawnpoint is set for an {@link Arena}.
- *
- * @see Arena#setPosition(Player, int, Location)
- */
 public class ArenaSetPositionEvent extends ArenaEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -35,38 +30,18 @@ public class ArenaSetPositionEvent extends ArenaEvent implements Cancellable {
         return handlers;
     }
 
-    /**
-     * The position number of the spawnpoint set.
-     *
-     * @return position number of the spawnpoint set.
-     */
     public int getPos() {
         return pos;
     }
 
-    /**
-     * Sets a new position number for the spawnpoint.
-     *
-     * @param pos New position number for the spawnpoint set.
-     */
     public void setPos(final int pos) {
         this.pos = pos;
     }
 
-    /**
-     * The location of the spawnpoint set.
-     *
-     * @return location of the spawnpoint set.
-     */
     public Location getLocation() {
         return location;
     }
 
-    /**
-     * Sets a new location for the spawnpoint.
-     *
-     * @param location New location for the spawnpoint set.
-     */
     public void setLocation(final Location location) {
         this.location = location;
     }

@@ -27,6 +27,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
+import org.bson.Document;
+import com.mongodb.client.model.BulkWriteOptions;
+import com.mongodb.client.model.ReplaceOneModel;
+import com.mongodb.client.model.ReplaceOptions;
 
 import java.io.*;
 import java.util.*;
@@ -58,15 +62,18 @@ public class QueueSignManagerImpl implements Loadable, QueueSignManager, Listene
             final var mongo = plugin.getMongoService();
             if (mongo != null) {
                 final var collection = mongo.collection("signs");
-                for (final org.bson.Document doc : collection.find()) {
+                final String serverId = resolveServerId();
+                final Document filter = new Document("serverId", serverId);
+
+                for (final Document doc : collection.find(filter)) {
                     final String json = doc.toJson();
                     final QueueSignData data = JsonUtil.getObjectMapper().readValue(json, QueueSignData.class);
-                    if (data != null) {
-                        final QueueSignImpl queueSign = data.toQueueSign(plugin);
-                        if (queueSign != null) {
-                            signs.put(queueSign.getLocation(), queueSign);
-                        }
-                    }
+                    if (data == null) { continue; }
+
+                    final QueueSignImpl queueSign = data.toQueueSign(plugin);
+                    if (queueSign == null) { continue; }
+
+                    signs.put(queueSign.getLocation(), queueSign);
                 }
             }
         } catch (Exception ex) {
@@ -92,7 +99,7 @@ public class QueueSignManagerImpl implements Loadable, QueueSignManager, Listene
             final var mongo = plugin.getMongoService();
             if (mongo != null) {
                 final var collection = mongo.collection("signs");
-                final java.util.List<com.mongodb.client.model.WriteModel<org.bson.Document>> ops = new java.util.ArrayList<>();
+                final java.util.List<com.mongodb.client.model.WriteModel<Document>> ops = new java.util.ArrayList<>();
                 final String serverId = resolveServerId();
                 for (final QueueSignImpl sign : signs.values()) {
                     if (sign.getQueue().isRemoved()) {
@@ -100,19 +107,19 @@ public class QueueSignManagerImpl implements Loadable, QueueSignManager, Listene
                     }
                     final QueueSignData data = new QueueSignData(sign);
                     final String json = JsonUtil.getObjectWriter().writeValueAsString(data);
-                    final org.bson.Document doc = org.bson.Document.parse(json);
+                    final Document doc = Document.parse(json);
                     // scope by server
                     doc.put("serverId", serverId);
                     final String id = sign.getLocation().getWorld().getName() + ":" + sign.getLocation().getBlockX() + ":" + sign.getLocation().getBlockY() + ":" + sign.getLocation().getBlockZ() + ":" + serverId;
                     doc.put("_id", id);
-                    final org.bson.Document filter = new org.bson.Document("_id", id);
-                    ops.add(new com.mongodb.client.model.ReplaceOneModel<>(filter, doc, new com.mongodb.client.model.ReplaceOptions().upsert(true)));
+                    final Document filter = new Document("_id", id);
+                    ops.add(new ReplaceOneModel<>(filter, doc, new ReplaceOptions().upsert(true)));
                 }
                 if (!ops.isEmpty()) {
                     // run unordered bulk upsert off-thread
                     plugin.doAsync(() -> {
                         try {
-                            collection.bulkWrite(ops, new com.mongodb.client.model.BulkWriteOptions().ordered(false));
+                            collection.bulkWrite(ops, new BulkWriteOptions().ordered(false));
                         } catch (Exception ex) {
                             Log.error(this, "Failed to persist queue signs asynchronously", ex);
                         }

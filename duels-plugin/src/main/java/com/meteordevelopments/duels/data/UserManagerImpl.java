@@ -295,13 +295,7 @@ public class UserManagerImpl implements Loadable, Listener, UserManager {
     public void on(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
 
-        plugin.doSyncAfter(() -> {
-            if (plugin.getUpdateManager() != null) {
-                if (plugin.getUpdateManager().updateIsAvailable() && (player.isOp() || player.hasPermission(Permissions.ADMIN))) {
-                    player.sendMessage(StringUtil.color(String.format(ADMIN_UPDATE_MESSAGE, plugin.getUpdateManager().getLatestVersion(), plugin.getDescription().getWebsite())));
-                }
-            }
-        }, 5L);
+        // Update notifications removed in this fork
 
         final UserData user = users.get(player.getUniqueId());
 

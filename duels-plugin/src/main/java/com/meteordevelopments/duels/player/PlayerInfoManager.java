@@ -31,12 +31,9 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.bson.Document;
+import com.mongodb.client.model.ReplaceOptions;
 
-/**
- * Manages:
- * (1) player info cache for restoration after matches.
- * (2) lobby location for teleportation after matches.
- */
 public class PlayerInfoManager implements Loadable {
 
     private static final String CACHE_FILE_NAME = "player-cache.yml"; // Changed to YAML
@@ -86,7 +83,7 @@ public class PlayerInfoManager implements Loadable {
         try {
             final var mongo = plugin.getMongoService();
             if (mongo != null) {
-                final var doc = mongo.collection("meta").find(new org.bson.Document("_id", "lobby")).first();
+                final var doc = mongo.collection("meta").find(new Document("_id", "lobby")).first();
                 if (doc != null) {
                     final String json = doc.toJson();
                     this.lobby = JsonUtil.getObjectMapper().readValue(json, LocationData.class).toLocation();
@@ -142,12 +139,6 @@ public class PlayerInfoManager implements Loadable {
         cache.clear();
     }
 
-    /**
-     * Sets a lobby location at given player's location.
-     *
-     * @param player Player to get location for lobby
-     * @return true if setting lobby was successful, false otherwise
-     */
     public boolean setLobby(final Player player) {
         final Location lobby = player.getLocation().clone();
 
@@ -156,9 +147,9 @@ public class PlayerInfoManager implements Loadable {
             if (mongo != null) {
                 final var collection = mongo.collection("meta");
                 final String json = JsonUtil.getObjectWriter().writeValueAsString(LocationData.fromLocation(lobby));
-                final org.bson.Document doc = org.bson.Document.parse(json);
+                final Document doc = Document.parse(json);
                 doc.put("_id", "lobby");
-                collection.replaceOne(new org.bson.Document("_id", "lobby"), doc, new com.mongodb.client.model.ReplaceOptions().upsert(true));
+                collection.replaceOne(new Document("_id", "lobby"), doc, new ReplaceOptions().upsert(true));
                 this.lobby = lobby;
                 return true;
             }
@@ -168,22 +159,10 @@ public class PlayerInfoManager implements Loadable {
         return false;
     }
 
-    /**
-     * Gets cached PlayerInfo instance for given player.
-     *
-     * @param player Player to get cached PlayerInfo instance
-     * @return cached PlayerInfo instance or null if not found
-     */
     public PlayerInfo get(final Player player) {
         return cache.get(player.getUniqueId());
     }
 
-    /**
-     * Creates a cached PlayerInfo instance for given player.
-     *
-     * @param player Player to create a cached PlayerInfo instance
-     * @param excludeInventory true to exclude inventory contents from being stored in PlayerInfo, false otherwise
-     */
     public void create(final Player player, final boolean excludeInventory) {
         final PlayerInfo info = new PlayerInfo(player, excludeInventory);
 
@@ -194,28 +173,16 @@ public class PlayerInfoManager implements Loadable {
         cache.put(player.getUniqueId(), info);
     }
 
-    /**
-     * Calls {@link #create(Player, boolean)} with excludeInventory defaulting to false.
-     *
-     * @see {@link #create(Player, boolean)}
-     */
     public void create(final Player player) {
         create(player, false);
     }
 
-    /**
-     * Removes the given player from cache.
-     *
-     * @param player Player to remove from cache
-     * @return Removed PlayerInfo instance or null if not found
-     */
     public PlayerInfo remove(final Player player) {
         return cache.remove(player.getUniqueId());
     }
 
     private class PlayerInfoListener implements Listener {
 
-        // Handles case of some players causing respawn to skip somehow.
         @EventHandler(priority = EventPriority.HIGHEST)
         public void on(final PlayerJoinEvent event) {
             final Player player = event.getPlayer();

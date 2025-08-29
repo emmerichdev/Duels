@@ -297,7 +297,7 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
         }
 
         version = configuration.getInt("config-version");
-        checkForUpdates = configuration.getBoolean("check-for-updates", true);
+        // update system removed
 
         userNotFound = configuration.getString("placeholders.user-not-found", "User not found");
         notInMatch = configuration.getString("placeholders.not-in-match", "none");
@@ -424,7 +424,7 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
         soupCancelIfAlreadyFull = configuration.getBoolean("soup.cancel-if-already-full", true);
         fireworkColour = configuration.getString("firework.colour", "AQUA");
         fireworkType = configuration.getString("firework.type", "BALL_LARGE");
-        stayUpToDate = configuration.getBoolean("stay-up-to-date", true);
+        // update system removed
         disableEnderpearlInEndgame = configuration.getBoolean("disable-enderpearl-in-endgame", true);
         disableMovementInEndgame = configuration.getBoolean("disable-movement-in-endgame", false);
 

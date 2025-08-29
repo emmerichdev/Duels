@@ -46,9 +46,6 @@ public abstract class BaseCommand extends AbstractCommand<DuelsPlugin> {
     protected final PartyManagerImpl partyManager;
     protected final ValidatorManager validatorManager;
 
-    /**
-     * Constructor for a sub command
-     */
     protected BaseCommand(final DuelsPlugin plugin, final String name, final String usage, final String description, final String permission, final int length,
                           final boolean playerOnly, final String... aliases) {
         super(plugin, name, usage, description, permission, length, playerOnly, aliases);
@@ -72,17 +69,11 @@ public abstract class BaseCommand extends AbstractCommand<DuelsPlugin> {
         this.validatorManager = plugin.getValidatorManager();
     }
 
-    /**
-     * Constructor for a sub command, inherits parent permission
-     */
     protected BaseCommand(final DuelsPlugin plugin, final String name, final String usage, final String description, final int length, final boolean playerOnly,
                           final String... aliases) {
         this(plugin, name, usage, description, null, length, playerOnly, aliases);
     }
 
-    /**
-     * Constructor for a parent command
-     */
     protected BaseCommand(final DuelsPlugin plugin, final String name, final String permission, final boolean playerOnly) {
         this(plugin, name, null, null, permission, -1, playerOnly);
     }

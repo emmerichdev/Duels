@@ -10,85 +10,36 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * Represents the UserManager singleton used by Duels.
- */
 public interface UserManager {
 
 
-    /**
-     * Whether or not had all users completed loading to the memory.
-     *
-     * @return True if all users have completed loading to the memory. False otherwise.
-     */
     boolean isLoaded();
 
 
-    /**
-     * Gets a {@link User} with the given name.
-     * Note: If {@link #isLoaded()} returns false, this may return null even if userdata file exists.
-     *
-     * @param name Name of the user to get.
-     * @return {@link User} with the given name or null if not exists.
-     */
     @Nullable
     User get(@NotNull final String name);
 
 
-    /**
-     * Gets a {@link User} with the given {@link UUID}.
-     * Note: If {@link #isLoaded()} returns false, this may return null even if userdata file exists.
-     *
-     * @param uuid {@link UUID} of the user to get.
-     * @return {@link User} with the given {@link UUID} or null if not exists.
-     */
     @Nullable
     User get(@NotNull final UUID uuid);
 
 
-    /**
-     * Calls {@link #get(UUID)} with {@link Player#getUniqueId()}.
-     *
-     * @see #get(UUID)
-     */
     @Nullable
     User get(@NotNull final Player player);
 
 
-    /**
-     * Gets the top wins. thread-safe!
-     *
-     * @return {@link TopEntry} containing name and wins of the top 10 Wins or null if the leaderboard has not loaded yet.
-     */
     @Nullable
     TopEntry getTopWins();
 
 
-    /**
-     * Gets the top losses. thread-safe!
-     *
-     * @return {@link TopEntry} containing name and losses of the top 10 Losses or null if the leaderboard has not loaded yet.
-     */
     @Nullable
     TopEntry getTopLosses();
 
 
-    /**
-     * Gets the top rating for no kit. thread-safe!
-     *
-     * @return {@link TopEntry} containing name and rating of the top 10 Rating for no kit or null if the leaderboard has not loaded yet.
-     * @since 3.3.0
-     */
     @Nullable
     TopEntry getTopRatings();
 
 
-    /**
-     * Gets the top rating for the given {@link Kit}. thread-safe!
-     *
-     * @param kit {@link Kit} to get {@link TopEntry}.
-     * @return {@link TopEntry} containing name and rating of the top 10 Rating for kit or null if the leaderboard has not loaded yet.
-     */
     @Nullable
     TopEntry getTopRatings(@NotNull final Kit kit);
 

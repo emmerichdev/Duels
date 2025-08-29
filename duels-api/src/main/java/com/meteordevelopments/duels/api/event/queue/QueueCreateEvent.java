@@ -8,11 +8,6 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Called when a {@link DQueue} is created.
- *
- * @see DQueueManager#create(CommandSender, Kit, int)
- */
 public class QueueCreateEvent extends QueueEvent {
 
     private static final HandlerList handlers = new HandlerList();

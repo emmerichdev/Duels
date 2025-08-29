@@ -16,9 +16,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.Set;
 
-/**
- * Prevents players teleporting to players in a match or in spectator mode.
- */
 public class TeleportListener implements Listener {
 
     private final Lang lang;

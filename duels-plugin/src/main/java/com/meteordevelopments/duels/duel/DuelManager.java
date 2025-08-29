@@ -205,14 +205,6 @@ public class DuelManager implements Loadable {
         }
     }
 
-    /**
-     * Resets the player's inventory and balance in the case of a tie game.
-     *
-     * @param player Player to reset state
-     * @param arena  Arena the match is taking place
-     * @param match  Match the player is in
-     * @param alive  Whether the player was alive in the match when the method was called.
-     */
     private void handleTie(final Player player, final ArenaImpl arena, final DuelMatch match, boolean alive) {
         arena.remove(player);
 
@@ -252,14 +244,6 @@ public class DuelManager implements Loadable {
         }
     }
 
-    /**
-     * Rewards the duel winner with money and items bet on the match.
-     *
-     * @param winner   Player determined to be the winner
-     * @param opponent Player that opposed the winner
-     * @param arena    Arena the match is taking place
-     * @param match    Match the player is in
-     */
     private void handleWin(final Player winner, final Player opponent, final ArenaImpl arena, final DuelMatch match) {
         arena.remove(winner);
 

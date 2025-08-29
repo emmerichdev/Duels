@@ -7,12 +7,6 @@ public final class NumberUtil {
     private NumberUtil() {
     }
 
-    /**
-     * Copy of {@link Integer#parseInt(String)} (String)} but returns an empty {@link OptionalInt} instead of throwing a {@link NumberFormatException}.
-     *
-     * @param s String to parse.
-     * @return {@link OptionalInt} instance with parsed value inside or empty if string is invalid.
-     */
     public static OptionalInt parseInt(final String s) {
         if (s == null) {
             return OptionalInt.empty();

@@ -6,11 +6,6 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Called when an {@link Arena} is removed.
- *
- * @see Arena#isRemoved()
- */
 public class ArenaRemoveEvent extends ArenaEvent {
 
     private static final HandlerList handlers = new HandlerList();

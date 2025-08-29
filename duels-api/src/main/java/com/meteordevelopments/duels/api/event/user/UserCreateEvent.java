@@ -7,9 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-/**
- * Called when a new {@link User} is created.
- */
 public class UserCreateEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
@@ -25,11 +22,6 @@ public class UserCreateEvent extends Event {
         return handlers;
     }
 
-    /**
-     * The {@link User} that was created.
-     *
-     * @return Never-null {@link User} that was created.
-     */
     @NotNull
     public User getUser() {
         return user;

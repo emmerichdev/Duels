@@ -7,11 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-/**
- * Represents an event caused by a {@link Request}.
- *
- * @since 3.2.1
- */
 public abstract class RequestEvent extends SourcedEvent {
 
     private final Player source, target;
@@ -27,32 +22,17 @@ public abstract class RequestEvent extends SourcedEvent {
         this.request = request;
     }
 
-    /**
-     * {@link Player} who is the source of this event.
-     *
-     * @return Never-null {@link Player} who is the source of this event.
-     */
     @NotNull
     @Override
     public Player getSource() {
         return source;
     }
 
-    /**
-     * {@link Player} who is the target of this event.
-     *
-     * @return Never-null {@link Player} who is the target of this event.
-     */
     @NotNull
     public Player getTarget() {
         return target;
     }
 
-    /**
-     * {@link Request} instance associated with this event.
-     *
-     * @return Never-null {@link Request} instance associated with this event.
-     */
     @NotNull
     public Request getRequest() {
         return request;

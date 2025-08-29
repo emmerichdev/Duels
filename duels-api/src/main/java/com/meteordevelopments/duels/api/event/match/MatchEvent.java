@@ -6,9 +6,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-/**
- * Represents an event caused by a {@link Match}.
- */
 public abstract class MatchEvent extends Event {
 
     private final Match match;
@@ -18,11 +15,6 @@ public abstract class MatchEvent extends Event {
         this.match = match;
     }
 
-    /**
-     * {@link Match} instance associated with this event.
-     *
-     * @return Never-null {@link Match} instance associated with this event.
-     */
     public Match getMatch() {
         return match;
     }

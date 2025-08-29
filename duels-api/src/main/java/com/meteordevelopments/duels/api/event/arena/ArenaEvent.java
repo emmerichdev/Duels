@@ -8,9 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-/**
- * Represents an event caused by a {@link Arena}.
- */
 public abstract class ArenaEvent extends SourcedEvent {
 
     private final Arena arena;
@@ -21,11 +18,6 @@ public abstract class ArenaEvent extends SourcedEvent {
         this.arena = arena;
     }
 
-    /**
-     * {@link Arena} instance associated with this event.
-     *
-     * @return Never-null {@link Arena} instance associated with this event.
-     */
     @NotNull
     public Arena getArena() {
         return arena;

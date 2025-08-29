@@ -6,9 +6,6 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Called when a new {@link Arena} is created.
- */
 public class ArenaCreateEvent extends ArenaEvent {
 
     private static final HandlerList handlers = new HandlerList();

@@ -12,9 +12,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-/**
- * Overrides damage cancellation by other plugins for players in a duel.
- */
 public class DamageListener implements Listener {
 
     private final ArenaManagerImpl arenaManager;

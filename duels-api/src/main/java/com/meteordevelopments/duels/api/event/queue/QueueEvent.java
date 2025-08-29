@@ -8,11 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-/**
- * Represents an event caused by a {@link DQueue}.
- *
- * @since 3.2.0
- */
 public abstract class QueueEvent extends SourcedEvent {
 
     private final DQueue queue;
@@ -23,11 +18,6 @@ public abstract class QueueEvent extends SourcedEvent {
         this.queue = queue;
     }
 
-    /**
-     * {@link DQueue} instance associated with this event.
-     *
-     * @return Never-null {@link DQueue} instance associated with this event.
-     */
     @NotNull
     public DQueue getQueue() {
         return queue;

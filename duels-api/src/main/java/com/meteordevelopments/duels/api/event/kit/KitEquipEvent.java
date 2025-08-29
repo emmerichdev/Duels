@@ -8,11 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-/**
- * Called when a {@link Player} equips a {@link Kit}.
- *
- * @see Kit#equip(Player)
- */
 public class KitEquipEvent extends KitEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -30,11 +25,6 @@ public class KitEquipEvent extends KitEvent implements Cancellable {
         return handlers;
     }
 
-    /**
-     * {@link Player} who is equipping the {@link Kit}.
-     *
-     * @return Never-null {@link Player} who is equipping the {@link Kit}.
-     */
     @NotNull
     @Override
     public Player getSource() {
