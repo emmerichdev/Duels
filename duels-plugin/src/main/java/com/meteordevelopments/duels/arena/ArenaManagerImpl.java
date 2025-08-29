@@ -178,7 +178,7 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
                 return;
             }
             final String json = doc.toJson();
-            final com.meteordevelopments.duels.data.ArenaData data = com.meteordevelopments.duels.util.json.JsonUtil.getObjectMapper().readValue(json, com.meteordevelopments.duels.data.ArenaData.class);
+            final ArenaData data = JsonUtil.getObjectMapper().readValue(json, ArenaData.class);
             if (data == null) { return; }
             final ArenaImpl arena = data.toArena(plugin);
             // Replace existing

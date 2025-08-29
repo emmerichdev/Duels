@@ -129,10 +129,10 @@ public class KitManagerImpl implements Loadable, KitManager {
             if (doc == null) return;
 
             // Bind directly from BSON document into our KitData POJO
-            final com.meteordevelopments.duels.data.KitData data =
-                    com.meteordevelopments.duels.util.json.JsonUtil
+            final KitData data =
+                    JsonUtil
                         .getObjectMapper()
-                        .convertValue(doc, com.meteordevelopments.duels.data.KitData.class);
+                        .convertValue(doc, KitData.class);
             if (data == null
                 || data.getName() == null
                 || !com.meteordevelopments.duels.util.StringUtil.isAlphanumeric(data.getName())) {
