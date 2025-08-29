@@ -14,35 +14,18 @@ processResources {
 }
 
 dependencies {
-    compileOnly 'org.jetbrains:annotations:24.1.0'
-    compileOnly 'org.projectlombok:lombok:1.18.38'
-    annotationProcessor 'org.projectlombok:lombok:1.18.38'
-    implementation 'commons-lang:commons-lang:2.6'
-    implementation 'com.mojang:authlib:1.5.25'
-    implementation 'me.clip:placeholderapi:2.11.6'
-    // These are compileOnly because runtime presence is provided by the server classpath
-    implementation 'com.github.timderspieler:DeluxeCombat-API:1.5.1'
-    implementation 'com.artillexstudios:AxGraves:1.7.0'
-    implementation 'com.github.No-Not-Jaden:NotBounties:1.22.0'
-    implementation('net.essentialsx:EssentialsX:2.21.2') {
-        transitive = false
-    }
-    implementation(name: 'MVdWPlaceholderAPI-3.1.1') {
-        transitive = false
-    }
-    implementation name: 'Vault-1.6.7'
-    implementation name: 'CombatTagPlus'
-    implementation name: 'PvPManager-3.7.16'
-    implementation name: 'Factions-1.6.9.5-U0.1.14'
-    implementation name: 'MassiveCore'
-    implementation name: 'Factions'
-    implementation name: 'MyPet-2.3.4'
-    implementation name: 'BountyHunters-2.2.6'
-    implementation name: 'SimpleClans-2.14.4.1'
-    implementation name: 'LeaderHeadsAPI'
-
     implementation project(':duels-api')
     implementation project(':duels-worldguard')
+
+    compileOnly 'org.projectlombok:lombok:1.18.38'
+    annotationProcessor 'org.projectlombok:lombok:1.18.38'
+
+    implementation 'org.apache.commons:commons-lang3:3.18.0'
+    implementation 'com.mojang:authlib:3.13.56'
+    implementation 'me.clip:placeholderapi:2.11.6'
+    implementation 'com.github.timderspieler:DeluxeCombat-API:1.5.1'
+    implementation 'com.github.MilkBowl:VaultAPI:1.7.1'
+    implementation('net.essentialsx:EssentialsX:2.21.2')
     implementation 'space.arim.morepaperlib:morepaperlib:0.4.4'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.2'
     implementation 'org.json:json:20250517'
@@ -80,15 +63,4 @@ shadowJar {
 // To build Duels plugin jar, run './gradlew clean build'.
 build {
     dependsOn(shadowJar)
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = project.group.toString()
-            artifactId = project.name.toLowerCase()
-            version = project.version
-            from components.java
-        }
-    }
 }

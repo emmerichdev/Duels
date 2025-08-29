@@ -1,24 +1,3 @@
 dependencies {
-    compileOnly('org.jetbrains:annotations:24.1.0')
     implementation('space.arim.morepaperlib:morepaperlib:0.4.4')
-}
-
-java {
-    withJavadocJar()
-}
-
-tasks.javadoc {
-    options.encoding = 'UTF-8'
-    failOnError = false // Spigot projects often throw warnings; this prevents build failure
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = project.group.toString()
-            artifactId = project.name.toLowerCase()
-            version = project.version
-            from components.java
-        }
-    }
 }

@@ -12,9 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Manages registration and lifecycle of event listeners
- */
 public class ListenerManager {
     
     private final DuelsPlugin plugin;
@@ -23,10 +20,7 @@ public class ListenerManager {
     public ListenerManager(DuelsPlugin plugin) {
         this.plugin = plugin;
     }
-    
-    /**
-     * Registers all pre-startup listeners
-     */
+
     public void registerPreListeners() {
         long start = System.currentTimeMillis();
         DuelsPlugin.sendMessage("&eRegistering listeners...");
@@ -42,21 +36,13 @@ public class ListenerManager {
         
         DuelsPlugin.sendMessage("&dSuccessfully registered listeners in &f[" + CC.getTimeDifferenceAndColor(start, System.currentTimeMillis()) + "&f]");
     }
-    
-    /**
-     * Registers a single listener
-     * @param listener the listener to register
-     */
+
     public void registerListener(Listener listener) {
         Objects.requireNonNull(listener, "listener");
         registeredListeners.add(listener);
         Bukkit.getPluginManager().registerEvents(listener, plugin);
     }
-    
-    /**
-     * Registers a listener with timing feedback (for post-startup listeners)
-     * @param listener the listener to register
-     */
+
     public void registerListenerWithTiming(Listener listener) {
         long start = System.currentTimeMillis();
         DuelsPlugin.sendMessage("&eRegistering post listeners...");
@@ -65,10 +51,7 @@ public class ListenerManager {
         
         DuelsPlugin.sendMessage("&dSuccessfully registered listeners after plugin startup in [" + CC.getTimeDifferenceAndColor(start, System.currentTimeMillis()) + ChatColor.WHITE + "]");
     }
-    
-    /**
-     * Unregisters all managed listeners and any listeners registered directly against the plugin
-     */
+
     public void unregisterAllListeners() {
         // Unregister managed listeners
         registeredListeners.forEach(HandlerList::unregisterAll);

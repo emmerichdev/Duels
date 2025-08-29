@@ -1,6 +1,6 @@
 package com.meteordevelopments.duels.util;
 
-import com.meteordevelopments.duels.util.reflect.ReflectionUtil;
+
 import org.bukkit.Location;
 
 import java.util.Collection;
@@ -12,8 +12,6 @@ public final class StringUtil {
 
     private static final Pattern ALPHANUMERIC = Pattern.compile("^[a-zA-Z0-9_]+$");
     private static final TreeMap<Integer, String> ROMAN_NUMERALS = new TreeMap<>();
-    private static final boolean COMMONS_LANG3;
-
     static {
         ROMAN_NUMERALS.put(1000, "M");
         ROMAN_NUMERALS.put(900, "CM");
@@ -28,7 +26,6 @@ public final class StringUtil {
         ROMAN_NUMERALS.put(5, "V");
         ROMAN_NUMERALS.put(4, "IV");
         ROMAN_NUMERALS.put(1, "I");
-        COMMONS_LANG3 = ReflectionUtil.getClassUnsafe(" org.apache.commons.lang3.StringUtils") != null;
     }
 
     private StringUtil() {
@@ -78,36 +75,19 @@ public final class StringUtil {
         return ALPHANUMERIC.matcher(input.replace(" ", "")).matches();
     }
 
-    // In some versions of spigot, commons-lang3 is not available
     public static String join(final Object[] array, final String separator, final int startIndex, final int endIndex) {
-        if (COMMONS_LANG3) {
-            return org.apache.commons.lang3.StringUtils.join(array, separator, startIndex, endIndex);
-        } else {
-            return org.apache.commons.lang.StringUtils.join(array, separator, startIndex, endIndex);
-        }
+        return org.apache.commons.lang3.StringUtils.join(array, separator, startIndex, endIndex);
     }
 
     public static String join(final Collection<?> collection, final String separator) {
-        if (COMMONS_LANG3) {
-            return org.apache.commons.lang3.StringUtils.join(collection, separator);
-        } else {
-            return org.apache.commons.lang.StringUtils.join(collection, separator);
-        }
+        return org.apache.commons.lang3.StringUtils.join(collection, separator);
     }
 
     public static String capitalize(final String s) {
-        if (COMMONS_LANG3) {
-            return org.apache.commons.lang3.StringUtils.capitalize(s);
-        } else {
-            return org.apache.commons.lang.StringUtils.capitalize(s);
-        }
+        return org.apache.commons.lang3.StringUtils.capitalize(s);
     }
 
     public static boolean containsIgnoreCase(final String str, final String searchStr) {
-        if (COMMONS_LANG3) {
-            return org.apache.commons.lang3.StringUtils.containsIgnoreCase(str, searchStr);
-        } else {
-            return org.apache.commons.lang.StringUtils.containsIgnoreCase(str, searchStr);
-        }
+        return org.apache.commons.lang3.StringUtils.containsIgnoreCase(str, searchStr);
     }
 }

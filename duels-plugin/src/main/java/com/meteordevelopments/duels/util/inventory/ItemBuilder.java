@@ -5,22 +5,23 @@ import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.compat.Items;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
+
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionData;
+
 import org.bukkit.potion.PotionType;
-import org.bukkit.util.Consumer;
+import java.util.function.Consumer;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public record ItemBuilder(ItemStack result) {
 
@@ -120,7 +121,7 @@ public record ItemBuilder(ItemStack result) {
 
     public ItemBuilder potion(final PotionType type, final boolean extended, final boolean upgraded) {
         PotionMeta meta = (PotionMeta) result.getItemMeta();
-        meta.setBasePotionData(new PotionData(type, extended, upgraded));
+        meta.setBasePotionType(type);
         result.setItemMeta(meta);
         return this;
     }
@@ -135,6 +136,8 @@ public record ItemBuilder(ItemStack result) {
 
             final AttributeModifier modifier;
 
+            NamespacedKey key = NamespacedKey.minecraft(name.toLowerCase().replace(" ", "_"));
+
             if (slotName != null) {
                 final EquipmentSlot slot = EnumUtil.getByName(slotName, EquipmentSlot.class);
 
@@ -142,9 +145,9 @@ public record ItemBuilder(ItemStack result) {
                     return;
                 }
 
-                modifier = new AttributeModifier(UUID.randomUUID(), name, amount, AttributeModifier.Operation.values()[operation], slot);
+                modifier = new AttributeModifier(key, amount, AttributeModifier.Operation.values()[operation], slot.getGroup());
             } else {
-                modifier = new AttributeModifier(UUID.randomUUID(), name, amount, AttributeModifier.Operation.values()[operation]);
+                modifier = new AttributeModifier(key, amount, AttributeModifier.Operation.values()[operation]);
             }
 
             meta.addAttributeModifier(attribute, modifier);

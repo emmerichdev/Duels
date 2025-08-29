@@ -40,7 +40,6 @@ import java.util.UUID;
 public class PlayerInfoManager implements Loadable {
 
     private static final String CACHE_FILE_NAME = "player-cache.yml"; // Changed to YAML
-    private static final String LOBBY_FILE_NAME = "lobby.json"; // Assuming you still want to use JSON for lobby
 
     private static final String ERROR_LOBBY_LOAD = "Could not load lobby location!";
     private static final String ERROR_LOBBY_SAVE = "Could not save lobby location!";
@@ -49,7 +48,6 @@ public class PlayerInfoManager implements Loadable {
     private final DuelsPlugin plugin;
     private final Config config;
     private final File cacheFile;
-    private final File lobbyFile;
 
     private final Map<UUID, PlayerInfo> cache = new HashMap<>();
 
@@ -63,7 +61,6 @@ public class PlayerInfoManager implements Loadable {
         this.plugin = plugin;
         this.config = plugin.getConfiguration();
         this.cacheFile = new File(plugin.getDataFolder(), CACHE_FILE_NAME);
-        this.lobbyFile = new File(plugin.getDataFolder(), LOBBY_FILE_NAME);
         plugin.doSyncAfter(() -> Bukkit.getPluginManager().registerEvents(new PlayerInfoListener(), plugin), 1L);
     }
 
@@ -84,8 +81,6 @@ public class PlayerInfoManager implements Loadable {
                     }
                 }
             }
-
-            cacheFile.delete();
         }
 
         try {
@@ -107,7 +102,7 @@ public class PlayerInfoManager implements Loadable {
             if (worlds.isEmpty()) {
                 throw new IllegalStateException("No worlds available");
             }
-            final World world = worlds.get(0);
+            final World world = worlds.getFirst();
             this.lobby = world.getSpawnLocation();
             Log.warn(this, String.format(ERROR_LOBBY_DEFAULT, world.getName()));
         }

@@ -9,19 +9,11 @@ import com.meteordevelopments.duels.util.CC;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Manages the startup process of the Duels plugin
- */
 public record StartupManager(DuelsPlugin plugin) {
 
     private static final String SPIGOT_INSTALLATION_URL = "https://www.spigotmc.org/wiki/spigot-installation/";
-    private static final Logger LOGGER = Logger.getLogger("[Duels-Optimised]");
+    private static final Logger LOGGER = Logger.getLogger("[Duels]");
 
-    /**
-     * Handles the complete startup process
-     *
-     * @return true if startup was successful, false otherwise
-     */
     public boolean startup() {
         long start = System.currentTimeMillis();
 
@@ -43,11 +35,6 @@ public record StartupManager(DuelsPlugin plugin) {
         return true;
     }
 
-    /**
-     * Initializes database connections (MongoDB and Redis)
-     *
-     * @return true if successful, false otherwise
-     */
     private boolean initializeDatabase() {
         // Load DB.yml
         try {
@@ -98,11 +85,6 @@ public record StartupManager(DuelsPlugin plugin) {
         return true;
     }
 
-    /**
-     * Loads the log manager
-     *
-     * @return true if successful, false otherwise
-     */
     private boolean loadLogManager() {
         long start = System.currentTimeMillis();
 
@@ -118,11 +100,6 @@ public record StartupManager(DuelsPlugin plugin) {
         }
     }
 
-    /**
-     * Checks if the server is running on a Bukkit-compatible platform
-     *
-     * @return true if compatible, false otherwise
-     */
     private boolean checkBukkitCompatibility() {
         try {
             Class.forName("org.bukkit.Bukkit");
@@ -136,6 +113,4 @@ public record StartupManager(DuelsPlugin plugin) {
             return false;
         }
     }
-
-
 }

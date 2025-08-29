@@ -27,7 +27,9 @@ public final class EnumUtil {
             Field[] fields = clazz.getDeclaredFields();
             for (Field field : fields) {
                 if (field.getType() == clazz && field.getName().equalsIgnoreCase(name)) {
-                    return (E) field.get(null); // Get the static field value
+                    @SuppressWarnings("unchecked")
+                    E result = (E) field.get(null); // Get the static field value
+                    return result;
                 }
             }
         } catch (IllegalAccessException e) {

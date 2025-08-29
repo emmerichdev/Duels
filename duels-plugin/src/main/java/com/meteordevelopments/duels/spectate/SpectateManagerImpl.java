@@ -16,7 +16,6 @@ import com.meteordevelopments.duels.match.DuelMatch;
 import com.meteordevelopments.duels.config.Config;
 import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.hook.hooks.EssentialsHook;
-import com.meteordevelopments.duels.hook.hooks.MyPetHook;
 import com.meteordevelopments.duels.player.PlayerInfo;
 import com.meteordevelopments.duels.player.PlayerInfoManager;
 import com.meteordevelopments.duels.teleport.Teleport;
@@ -56,7 +55,7 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
     private final Multimap<Arena, SpectatorImpl> arenas = HashMultimap.create();
 
     private Teleport teleport;
-    private MyPetHook myPet;
+
     private EssentialsHook essentials;
 
     public SpectateManagerImpl(final DuelsPlugin plugin) {
@@ -73,7 +72,7 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
     public void handleLoad() {
         // Late-init since SpectateManager is loaded before below variables are loaded
         this.teleport = plugin.getTeleport();
-        this.myPet = plugin.getHookManager().getHook(MyPetHook.class);
+
         this.essentials = plugin.getHookManager().getHook(EssentialsHook.class);
     }
 
@@ -143,10 +142,7 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
                     });
         }
 
-        // Remove pet before teleport
-        if (myPet != null) {
-            myPet.removePet(player);
-        }
+
 
         // Cache current player state to return to after spectating is over
         playerManager.create(player);

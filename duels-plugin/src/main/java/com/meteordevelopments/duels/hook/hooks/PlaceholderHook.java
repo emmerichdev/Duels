@@ -6,13 +6,13 @@ import com.meteordevelopments.duels.api.kit.Kit;
 import com.meteordevelopments.duels.api.match.Match;
 import com.meteordevelopments.duels.api.spectate.Spectator;
 import com.meteordevelopments.duels.api.user.User;
-import com.meteordevelopments.duels.lb.LeaderboardEntry;
+import com.meteordevelopments.duels.leaderboard.LeaderboardEntry;
 import com.meteordevelopments.duels.rank.Rank;
 import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.compat.Ping;
 import com.meteordevelopments.duels.util.hook.PluginHook;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import org.apache.commons.lang.time.DurationFormatUtils;
+
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -262,7 +262,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                 }
 
                 if (identifier.equalsIgnoreCase("duration")) {
-                    return DurationFormatUtils.formatDuration(System.currentTimeMillis() - match.getStart(), plugin.getConfiguration().getDurationFormat());
+                    return formatDuration(System.currentTimeMillis() - match.getStart(), plugin.getConfiguration().getDurationFormat());
                 }
 
                 if (identifier.equalsIgnoreCase("kit")) {
@@ -333,6 +333,28 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
             } else {
                 return (float)(wins / losses);
             }
+        }
+
+        /**
+         * Formats duration in milliseconds using a simple pattern.
+         * Supports patterns like "mm:ss", "HH:mm:ss", etc.
+         */
+        private String formatDuration(long durationMillis, String pattern) {
+            long totalSeconds = durationMillis / 1000;
+            long hours = totalSeconds / 3600;
+            long minutes = (totalSeconds % 3600) / 60;
+            long seconds = totalSeconds % 60;
+
+            // Replace pattern tokens with actual values
+            String result = pattern;
+            result = result.replaceAll("HH", String.format("%02d", hours));
+            result = result.replaceAll("H", String.valueOf(hours));
+            result = result.replaceAll("mm", String.format("%02d", minutes));
+            result = result.replaceAll("m", String.valueOf(minutes));
+            result = result.replaceAll("ss", String.format("%02d", seconds));
+            result = result.replaceAll("s", String.valueOf(seconds));
+
+            return result;
         }
     }
 }
