@@ -63,15 +63,9 @@ public class QueueSignManagerImpl implements Loadable, QueueSignManager, Listene
             if (mongo != null) {
                 final var collection = mongo.collection("signs");
                 final String serverId = resolveServerId();
-                final Document filter = new Document("$or", java.util.List.of(
-                        new Document("serverId", serverId),
-                        new Document("serverId", new Document("$exists", false)),
-                        new Document("serverId", null)
-                ));
+                final Document filter = new Document("serverId", serverId);
 
                 for (final Document doc : collection.find(filter)) {
-                    boolean legacy = !doc.containsKey("serverId") || doc.get("serverId") == null;
-
                     final String json = doc.toJson();
                     final QueueSignData data = JsonUtil.getObjectMapper().readValue(json, QueueSignData.class);
                     if (data == null) { continue; }
@@ -80,16 +74,6 @@ public class QueueSignManagerImpl implements Loadable, QueueSignManager, Listene
                     if (queueSign == null) { continue; }
 
                     signs.put(queueSign.getLocation(), queueSign);
-
-                    if (legacy) {
-                        try {
-                            final Location loc = queueSign.getLocation();
-                            final String newId = loc.getWorld().getName() + ":" + loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ() + ":" + serverId;
-                            doc.put("serverId", serverId);
-                            doc.put("_id", newId);
-                            collection.replaceOne(new Document("_id", newId), doc, new ReplaceOptions().upsert(true));
-                        } catch (Exception ignored) {}
-                    }
                 }
             }
         } catch (Exception ex) {
