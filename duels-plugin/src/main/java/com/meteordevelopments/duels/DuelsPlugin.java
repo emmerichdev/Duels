@@ -303,7 +303,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     }
 
     // Convenience delegates used by commands
-    public com.meteordevelopments.duels.util.Loadable find(final String name) {
+    public Loadable find(final String name) {
         return loadableManager != null ? loadableManager.find(name) : null;
     }
 
