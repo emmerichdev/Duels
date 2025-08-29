@@ -2,7 +2,6 @@ package com.meteordevelopments.duels;
 
 import com.meteordevelopments.duels.startup.*;
 import com.meteordevelopments.duels.util.CC;
-import com.meteordevelopments.duels.util.UpdateManager;
 import com.meteordevelopments.duels.party.PartyManagerImpl;
 import com.meteordevelopments.duels.validator.ValidatorManager;
 import com.meteordevelopments.duels.util.Log;
@@ -57,8 +56,6 @@ import static com.meteordevelopments.duels.redis.RedisService.*;
 
 public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     
-    @Getter
-    private UpdateManager updateManager;
     @Getter
     private static DuelsPlugin instance;
     @Getter
@@ -133,7 +130,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
             setupRedisSubscriptions();
         }
         
-        checkForUpdatesAndMetrics();
+        // Update system removed in this fork
     }
 
     @Override
@@ -314,21 +311,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         return loadableManager != null ? loadableManager.getReloadableNames() : java.util.Collections.emptyList();
     }
 
-    private void checkForUpdatesAndMetrics() {
-        if (!configuration.isCheckForUpdates()) {
-            return;
-        }
-
-        this.updateManager = new UpdateManager(this);
-        this.updateManager.checkForUpdate();
-        if (updateManager.updateIsAvailable()){
-            sendMessage("&a===============================================");
-            sendMessage("&aAn update for " + getName() + " is available!");
-            sendMessage("&aDownload " + getName() + " v" + updateManager.getLatestVersion() + " here:");
-            sendMessage("&e" + getDescription().getWebsite());
-            sendMessage("&a===============================================");
-        }
-    }
+    // Update system removed in this fork
 
     private void setupRedisSubscriptions() {
         try {
