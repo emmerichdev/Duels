@@ -12,7 +12,6 @@ import org.bukkit.Bukkit;
 
 import java.util.Collection;
 import java.util.logging.Level;
-import java.util.Objects;
 
 public class WorldGuard7Handler implements WorldGuardHandler {
 

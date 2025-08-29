@@ -62,9 +62,7 @@ public class DuelManager implements Loadable {
     private Teleport teleport;
     private VaultHook vault;
     private EssentialsHook essentials;
-    private McMMOHook mcMMO;
     private WorldGuardHook worldGuard;
-    private MyPetHook myPet;
 
     private ScheduledTask durationCheckTask;
 
@@ -95,7 +93,7 @@ public class DuelManager implements Loadable {
 
             if (config.isSpawnFirework()) {
                 DuelsPlugin.getMorePaperLib().scheduling().regionSpecificScheduler(deadLocation).run(() -> {
-                    final Firework firework = (Firework) deadLocation.getWorld().spawnEntity(deadLocation, EntityType.FIREWORK);
+                    final Firework firework = (Firework) deadLocation.getWorld().spawnEntity(deadLocation, EntityType.FIREWORK_ROCKET);
                     final FireworkMeta meta = firework.getFireworkMeta();
                     String colourName = config.getFireworkColour();
                     String typeName = config.getFireworkType();
@@ -141,8 +139,7 @@ public class DuelManager implements Loadable {
         this.teleport = plugin.getTeleport();
         this.vault = plugin.getHookManager().getHook(VaultHook.class);
         this.essentials = plugin.getHookManager().getHook(EssentialsHook.class);
-        this.mcMMO = plugin.getHookManager().getHook(McMMOHook.class);
-        this.myPet = plugin.getHookManager().getHook(MyPetHook.class);
+
 
         if (config.getMaxDuration() > 0) {
             this.durationCheckTask = plugin.doSyncRepeat(() -> {
@@ -224,9 +221,7 @@ public class DuelManager implements Loadable {
             vault.add(match.getBet(), player);
         }
 
-        if (mcMMO != null) {
-            mcMMO.enableSkills(player);
-        }
+
 
         final PlayerInfo info = playerManager.get(player);
         final List<ItemStack> items = match.getItems(player);
@@ -282,9 +277,7 @@ public class DuelManager implements Loadable {
             }
         }
 
-        if (mcMMO != null) {
-            mcMMO.enableSkills(winner);
-        }
+
 
         final PlayerInfo info = playerManager.get(winner);
         final List<ItemStack> items = match.getItems();
@@ -444,17 +437,13 @@ public class DuelManager implements Loadable {
                 }
             }
 
-            if (myPet != null) {
-                myPet.removePet(player);
-            }
+
 
             if (essentials != null) {
                 essentials.tryUnvanish(player);
             }
 
-            if (mcMMO != null) {
-                mcMMO.disableSkills(player);
-            }
+
 
             arena.add(player);
         }
@@ -471,9 +460,7 @@ public class DuelManager implements Loadable {
                 return;
             }
 
-            if (mcMMO != null) {
-                mcMMO.enableSkills(player);
-            }
+
 
             final DuelMatch match = arena.getMatch();
 

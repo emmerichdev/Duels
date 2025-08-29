@@ -42,14 +42,6 @@ public class MongoService {
         client = MongoClients.create(settings);
         database = client.getDatabase(dbName);
         DuelsPlugin.sendMessage("&aConnected to MongoDB database '&f" + dbName + "&a'.");
-
-        // Ensure any additional indexes (avoid redundant _id index creation)
-        try {
-            // Example: index by user name if later used for lookups
-            // database.getCollection("users").createIndex(Indexes.ascending("name"));
-        } catch (Exception ex) {
-            Log.error("Failed creating Mongo indexes", ex);
-        }
     }
 
     public void close() {
@@ -64,10 +56,6 @@ public class MongoService {
         }
         return database.getCollection(name);
     }
-
-    private String getEnvOrDefault(final String key, final String def) { return def; }
-
-    // ===== Convenience methods for common data types =====
 
     public void saveUser(@NotNull final UserData user) {
         try {

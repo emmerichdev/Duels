@@ -1,3 +1,3 @@
-package com.meteordevelopments.duels.lb;
+package com.meteordevelopments.duels.leaderboard;
 
 public record LeaderboardEntry(String playerName, int elo) {}

@@ -71,7 +71,7 @@ public class CommandRegistrar {
             return false;
         }
 
-        result.child(new AbstractCommand<DuelsPlugin>(plugin, subCommand) {
+        result.child(new AbstractCommand<>(plugin, subCommand) {
             @Override
             protected void execute(final CommandSender sender, final String label, final String[] args) {
                 subCommand.execute(sender, label, args);

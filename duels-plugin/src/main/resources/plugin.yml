@@ -1,14 +1,12 @@
 name: Duels
 main: com.meteordevelopments.duels.DuelsPlugin
 version: @VERSION@
-softdepend: [ AxGraves, BountyHunters, CombatTagPlus, DeluxeCombat, Essentials, Factions, LeaderHeads, mcMMO, MVdWPlaceholderAPI, MyPet, PlaceholderAPI, NotBounties, PvPManager, SimpleClans, Vault, WorldGuard, Multiverse-Core, My_Worlds, MultiWorld ]
-# Multiverse-Core added as soft-depend due to locations being null when Duels is loaded first.
-# Add any world management plugins to softdepend list if arena doesn't load properly in the generated world.
-api-version: 1.13
+softdepend: [DeluxeCombat, Essentials, PlaceholderAPI, Vault, WorldGuard]
+api-version: 1.21
 
-author: Realized, DUMBO
-website: https://www.spigotmc.org/resources/duelsoptimised.118881/
-description: An ultimate solution to server owners wanting to create a duel system.
+author: Realized, DUMBO. Emmerich
+website: https://github.com/emmerichdev/Duels
+description: A fork of https://github.com/dumbo-the-developer/Duels
 
 commands:
   duel:
@@ -29,7 +27,6 @@ commands:
   rank:
     description: View your current rank information.
     aliases: [ r ]
-    permission: duels.rank
 
 permissions:
   duels.*:

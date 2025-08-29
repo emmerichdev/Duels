@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/duels-api/Duels-Optimised.duels-api.main.iml" filepath="$PROJECT_DIR$/.idea/modules/duels-api/Duels-Optimised.duels-api.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/duels-plugin/Duels-Optimised.duels-plugin.main.iml" filepath="$PROJECT_DIR$/.idea/modules/duels-plugin/Duels-Optimised.duels-plugin.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/duels-plugin/Duels-Optimised.duels-plugin.test.iml" filepath="$PROJECT_DIR$/.idea/modules/duels-plugin/Duels-Optimised.duels-plugin.test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/duels-worldguard/Duels-Optimised.duels-worldguard.main.iml" filepath="$PROJECT_DIR$/.idea/modules/duels-worldguard/Duels-Optimised.duels-worldguard.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/duels-api/Duels.duels-api.main.iml" filepath="$PROJECT_DIR$/.idea/modules/duels-api/Duels.duels-api.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/duels-plugin/Duels.duels-plugin.main.iml" filepath="$PROJECT_DIR$/.idea/modules/duels-plugin/Duels.duels-plugin.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/duels-plugin/Duels.duels-plugin.test.iml" filepath="$PROJECT_DIR$/.idea/modules/duels-plugin/Duels.duels-plugin.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/duels-worldguard/Duels.duels-worldguard.main.iml" filepath="$PROJECT_DIR$/.idea/modules/duels-worldguard/Duels.duels-worldguard.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/duels-api/com.meteordevelopments.Duels.duels-api.main.iml" filepath="$PROJECT_DIR$/.idea/modules/duels-api/com.meteordevelopments.Duels.duels-api.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/duels-plugin/com.meteordevelopments.Duels.duels-plugin.main.iml" filepath="$PROJECT_DIR$/.idea/modules/duels-plugin/com.meteordevelopments.Duels.duels-plugin.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/duels-worldguard/com.meteordevelopments.Duels.duels-worldguard.main.iml" filepath="$PROJECT_DIR$/.idea/modules/duels-worldguard/com.meteordevelopments.Duels.duels-worldguard.main.iml" />
     </modules>
   </component>
 </project>

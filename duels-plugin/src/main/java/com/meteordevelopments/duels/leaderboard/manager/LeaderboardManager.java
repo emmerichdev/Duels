@@ -1,8 +1,8 @@
-package com.meteordevelopments.duels.lb.manager;
+package com.meteordevelopments.duels.leaderboard.manager;
 
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.api.kit.Kit;
-import com.meteordevelopments.duels.lb.LeaderboardEntry;
+import com.meteordevelopments.duels.leaderboard.LeaderboardEntry;
 import com.meteordevelopments.duels.util.Loadable;
 import lombok.Getter;
 import space.arim.morepaperlib.scheduling.ScheduledTask;

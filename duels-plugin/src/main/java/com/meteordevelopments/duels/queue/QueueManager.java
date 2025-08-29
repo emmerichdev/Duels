@@ -1,7 +1,5 @@
 package com.meteordevelopments.duels.queue;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.common.base.Charsets;
 import com.meteordevelopments.duels.hook.hooks.*;
 import lombok.Getter;
 import com.meteordevelopments.duels.DuelsPlugin;
@@ -30,7 +28,6 @@ import com.meteordevelopments.duels.util.compat.Items;
 import com.meteordevelopments.duels.util.gui.MultiPageGui;
 import com.meteordevelopments.duels.util.inventory.InventoryUtil;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
-import com.meteordevelopments.duels.util.io.FileUtil;
 import com.meteordevelopments.duels.util.json.JsonUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -46,13 +43,10 @@ import org.jetbrains.annotations.Nullable;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class QueueManager implements Loadable, DQueueManager, Listener {
-
-    private static final String FILE_NAME = "queues.json";
 
     private static final String QUEUES_LOADED = "&2Loaded %s queue(s).";
 
@@ -64,12 +58,9 @@ public class QueueManager implements Loadable, DQueueManager, Listener {
     private final ArenaManagerImpl arenaManager;
     private final SpectateManagerImpl spectateManager;
     private final DuelManager duelManager;
-    private final File file;
 
     private final List<Queue> queues = new ArrayList<>();
 
-    private CombatTagPlusHook combatTagPlus;
-    private PvPManagerHook pvpManager;
     private DeluxeCombatHook deluxeCombat;
     private WorldGuardHook worldGuard;
     private VaultHook vault;
@@ -87,7 +78,6 @@ public class QueueManager implements Loadable, DQueueManager, Listener {
         this.arenaManager = plugin.getArenaManager();
         this.spectateManager = plugin.getSpectateManager();
         this.duelManager = plugin.getDuelManager();
-        this.file = new File(plugin.getDataFolder(), FILE_NAME);
 
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
@@ -140,8 +130,6 @@ public class QueueManager implements Loadable, DQueueManager, Listener {
         DuelsPlugin.sendMessage(String.format(QUEUES_LOADED, queues.size()));
         gui.calculatePages();
 
-        this.combatTagPlus = plugin.getHookManager().getHook(CombatTagPlusHook.class);
-        this.pvpManager = plugin.getHookManager().getHook(PvPManagerHook.class);
         this.deluxeCombat = plugin.getHookManager().getHook(DeluxeCombatHook.class);
         this.worldGuard = plugin.getHookManager().getHook(WorldGuardHook.class);
         this.vault = plugin.getHookManager().getHook(VaultHook.class);
@@ -366,9 +354,7 @@ public class QueueManager implements Loadable, DQueueManager, Listener {
             return false;
         }
 
-        if ((combatTagPlus != null && combatTagPlus.isTagged(player))
-                || (pvpManager != null && pvpManager.isTagged(player))
-                || (deluxeCombat != null && deluxeCombat.isTagged(player))) {
+        if (deluxeCombat != null && deluxeCombat.isTagged(player)) {
             lang.sendMessage(player, "ERROR.duel.is-tagged");
             return false;
         }

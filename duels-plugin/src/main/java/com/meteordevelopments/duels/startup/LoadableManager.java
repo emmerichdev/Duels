@@ -15,7 +15,7 @@ import com.meteordevelopments.duels.extension.ExtensionManager;
 import com.meteordevelopments.duels.hook.HookManager;
 import com.meteordevelopments.duels.inventories.InventoryManager;
 import com.meteordevelopments.duels.kit.KitManagerImpl;
-import com.meteordevelopments.duels.lb.manager.LeaderboardManager;
+import com.meteordevelopments.duels.leaderboard.manager.LeaderboardManager;
 import com.meteordevelopments.duels.logging.LogManager;
 import com.meteordevelopments.duels.party.PartyManagerImpl;
 import com.meteordevelopments.duels.player.PlayerInfoManager;
@@ -32,16 +32,12 @@ import com.meteordevelopments.duels.validator.ValidatorManager;
 import org.bukkit.event.HandlerList;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-/**
- * Manages the lifecycle of all loadable components
- */
 public class LoadableManager {
     
     private static final Logger LOGGER = Logger.getLogger("[Duels-Optimised]");
@@ -53,11 +49,7 @@ public class LoadableManager {
     public LoadableManager(DuelsPlugin plugin) {
         this.plugin = plugin;
     }
-    
-    /**
-     * Initializes all loadable components
-     * @return true if successful, false otherwise
-     */
+
     public boolean initializeLoadables() {
         long start = System.currentTimeMillis();
         DuelsPlugin.sendMessage("&eInitializing components...");
@@ -185,11 +177,7 @@ public class LoadableManager {
         DuelsPlugin.sendMessage("&dSuccessfully initialized all components in &f[" + CC.getTimeDifferenceAndColor(start, System.currentTimeMillis()) + "&f]");
         return true;
     }
-    
-    /**
-     * Loads all initialized loadables
-     * @return true if successful, false otherwise
-     */
+
     public boolean loadAll() {
         for (final Loadable loadable : loadables) {
             final String name = loadable.getClass().getSimpleName();
@@ -213,13 +201,10 @@ public class LoadableManager {
         }
         return true;
     }
-    
-    /**
-     * Unloads all loadables in reverse order
-     * @return true if successful, false otherwise
-     */
+
     public boolean unloadAll() {
         for (final Loadable loadable : Lists.reverse(loadables)) {
+            assert loadable != null;
             final String name = loadable.getClass().getSimpleName();
 
             try {
@@ -238,12 +223,7 @@ public class LoadableManager {
         }
         return true;
     }
-    
-    /**
-     * Reloads a specific loadable
-     * @param loadable the loadable to reload
-     * @return true if successful, false otherwise
-     */
+
     public boolean reload(final Loadable loadable) {
         boolean unloaded = false;
         try {
@@ -258,36 +238,24 @@ public class LoadableManager {
             return false;
         }
     }
-    
-    /**
-     * Finds a loadable by name
-     * @param name the class simple name
-     * @return the loadable or null if not found
-     */
+
     public Loadable find(final String name) {
         return loadables.stream()
                 .filter(loadable -> loadable.getClass().getSimpleName().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(null);
     }
-    
-    /**
-     * Gets all reloadable component names
-     * @return list of reloadable names
-     */
+
     public List<String> getReloadableNames() {
         return loadables.stream()
                 .filter(loadable -> loadable instanceof Reloadable)
                 .map(loadable -> loadable.getClass().getSimpleName())
                 .collect(Collectors.toList());
     }
-    
-    /**
-     * Cleans up extension listeners
-     */
+
     public void cleanupExtensionListeners() {
         HandlerList.getRegisteredListeners(plugin).stream()
-                .filter(listener -> ExtensionClassLoader.class.isInstance(listener.getListener().getClass().getClassLoader()))
+                .filter(listener -> listener.getListener().getClass().getClassLoader() instanceof ExtensionClassLoader)
                 .forEach(listener -> HandlerList.unregisterAll(listener.getListener()));
     }
     
@@ -299,9 +267,5 @@ public class LoadableManager {
             DuelsPlugin.sendMessage("&cFailed to initialize " + name + ": " + e.getMessage());
             throw new RuntimeException("Failed to initialize " + name, e);
         }
-    }
-    
-    public void addLoadable(Loadable loadable) {
-        loadables.add(loadable);
     }
 }

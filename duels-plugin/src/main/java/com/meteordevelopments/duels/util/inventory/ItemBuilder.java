@@ -1,26 +1,28 @@
 package com.meteordevelopments.duels.util.inventory;
 
+import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.util.EnumUtil;
 import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.compat.Items;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
+
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionData;
+
 import org.bukkit.potion.PotionType;
-import org.bukkit.util.Consumer;
+import java.util.function.Consumer;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public record ItemBuilder(ItemStack result) {
 
@@ -119,9 +121,39 @@ public record ItemBuilder(ItemStack result) {
     }
 
     public ItemBuilder potion(final PotionType type, final boolean extended, final boolean upgraded) {
-        PotionMeta meta = (PotionMeta) result.getItemMeta();
-        meta.setBasePotionData(new PotionData(type, extended, upgraded));
-        result.setItemMeta(meta);
+        if (result == null) {
+            return this;
+        }
+        
+        final ItemMeta itemMeta = result.getItemMeta();
+        if (itemMeta == null || !(itemMeta instanceof PotionMeta)) {
+            return this;
+        }
+        
+        final PotionMeta meta = (PotionMeta) itemMeta;
+        
+        // Compute target PotionType based on extended/upgraded flags
+        PotionType targetType = type;
+        if ((upgraded || extended) && type != null) {
+            final String typeName = type.name();
+            if (!typeName.startsWith("LONG_") && !typeName.startsWith("STRONG_")) {
+                String prefix = upgraded ? "STRONG_" : "LONG_";
+                String variantName = prefix + typeName;
+                
+                PotionType variant = EnumUtil.getByName(variantName, PotionType.class);
+                if (variant != null) {
+                    targetType = variant;
+                }
+                // If lookup returns null, fall back to the original type (already set)
+            }
+        }
+        
+        // Only set if we have a valid target type
+        if (targetType != null) {
+            meta.setBasePotionType(targetType);
+            result.setItemMeta(meta);
+        }
+        
         return this;
     }
 
@@ -135,16 +167,24 @@ public record ItemBuilder(ItemStack result) {
 
             final AttributeModifier modifier;
 
+            // Validate operation index
+            if (operation < 0 || operation >= AttributeModifier.Operation.values().length) {
+                return;
+            }
+
+            // Create NamespacedKey using plugin instance and include slot group if available
+            String keyName = name.toLowerCase().replace(" ", "_");
             if (slotName != null) {
                 final EquipmentSlot slot = EnumUtil.getByName(slotName, EquipmentSlot.class);
-
                 if (slot == null) {
                     return;
                 }
-
-                modifier = new AttributeModifier(UUID.randomUUID(), name, amount, AttributeModifier.Operation.values()[operation], slot);
+                keyName += "_" + slot.getGroup().toString().toLowerCase();
+                NamespacedKey key = new NamespacedKey(DuelsPlugin.getInstance(), keyName);
+                modifier = new AttributeModifier(key, amount, AttributeModifier.Operation.values()[operation], slot.getGroup());
             } else {
-                modifier = new AttributeModifier(UUID.randomUUID(), name, amount, AttributeModifier.Operation.values()[operation]);
+                NamespacedKey key = new NamespacedKey(DuelsPlugin.getInstance(), keyName);
+                modifier = new AttributeModifier(key, amount, AttributeModifier.Operation.values()[operation]);
             }
 
             meta.addAttributeModifier(attribute, modifier);

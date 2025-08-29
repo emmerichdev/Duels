@@ -1,7 +1,5 @@
 package com.meteordevelopments.duels.kit;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import com.meteordevelopments.duels.DuelsPlugin;
@@ -18,7 +16,6 @@ import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.compat.Items;
 import com.meteordevelopments.duels.util.gui.MultiPageGui;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
-import com.meteordevelopments.duels.util.io.FileUtil;
 import com.meteordevelopments.duels.util.json.JsonUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -32,15 +29,11 @@ import java.util.*;
 
 public class KitManagerImpl implements Loadable, KitManager {
 
-    private static final String FILE_NAME = "kits.json";
-
-    private static final String ERROR_NOT_ALPHANUMERIC = "&c&lCould not load kit %s: Name is not alphanumeric.";
     private static final String KITS_LOADED = "&2Loaded %s kit(s).";
 
     private final DuelsPlugin plugin;
     private final Config config;
     private final Lang lang;
-    private final File file;
 
     private final Map<String, KitImpl> kits = new LinkedHashMap<>();
 
@@ -51,7 +44,6 @@ public class KitManagerImpl implements Loadable, KitManager {
         this.plugin = plugin;
         this.config = plugin.getConfiguration();
         this.lang = plugin.getLang();
-        this.file = new File(plugin.getDataFolder(), FILE_NAME);
     }
 
     @Override

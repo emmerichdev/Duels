@@ -10,7 +10,7 @@ import com.meteordevelopments.duels.util.Log.LogSource;
 import com.meteordevelopments.duels.util.json.JsonUtil;
 import com.meteordevelopments.duels.data.ItemData;
 import com.meteordevelopments.duels.data.ItemData.ItemDataDeserializer;
-import com.meteordevelopments.duels.shaded.bstats.Metrics;
+
 import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.config.DatabaseConfig;
 import com.meteordevelopments.duels.mongo.MongoService;
@@ -31,7 +31,7 @@ import com.meteordevelopments.duels.request.RequestManager;
 import com.meteordevelopments.duels.hook.HookManager;
 import com.meteordevelopments.duels.teleport.Teleport;
 import com.meteordevelopments.duels.extension.ExtensionManager;
-import com.meteordevelopments.duels.lb.manager.LeaderboardManager;
+import com.meteordevelopments.duels.leaderboard.manager.LeaderboardManager;
 import com.meteordevelopments.duels.rank.manager.RankManager;
 import com.meteordevelopments.duels.logging.LogManager;
 import lombok.Getter;
@@ -50,13 +50,9 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.*;
 
 
 public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
-
-    private static final int BSTATS_ID = 20778;
     
     @Getter
     private UpdateManager updateManager;
@@ -99,7 +95,6 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     @Getter @Setter private RedisService redisService;
     @Getter @Setter private DatabaseConfig databaseConfig;
     private redis.clients.jedis.JedisPubSub redisSubscriber;
-    private static final Logger LOGGER = Logger.getLogger("[Duels-Optimised]");
 
     @Override
     public void onEnable() {
@@ -191,8 +186,6 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         instance = null;
         sendMessage("&2Disable process took " + (System.currentTimeMillis() - start) + "ms.");
     }
-
-
 
     @Override
     public boolean registerSubCommand(@NotNull final String command, @NotNull final SubCommand subCommand) {
@@ -321,10 +314,6 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         Bukkit.getConsoleSender().sendMessage(getPrefix() + CC.translate(message));
     }
 
-    /**
-     * Initializes the log manager (called by StartupManager)
-     * @throws IOException if log manager cannot be created
-     */
     public void initializeLogManager() throws IOException {
         logManager = new LogManager(this);
         Log.addSource(logManager);
@@ -332,8 +321,6 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     }
 
     private void checkForUpdatesAndMetrics() {
-        new Metrics(this, BSTATS_ID);
-
         if (!configuration.isCheckForUpdates()) {
             return;
         }
@@ -394,9 +381,9 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
             };
             this.redisSubscriber = sub;
             redisService.subscribe(sub,
-                    com.meteordevelopments.duels.redis.RedisService.CHANNEL_INVALIDATE_USER,
-                    com.meteordevelopments.duels.redis.RedisService.CHANNEL_INVALIDATE_KIT,
-                    com.meteordevelopments.duels.redis.RedisService.CHANNEL_INVALIDATE_ARENA
+                    RedisService.CHANNEL_INVALIDATE_USER,
+                    RedisService.CHANNEL_INVALIDATE_KIT,
+                    RedisService.CHANNEL_INVALIDATE_ARENA
             );
         } catch (Exception ex) {
             sendMessage("&eFailed to subscribe to Redis channels; continuing without cross-server sync.");
