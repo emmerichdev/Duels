@@ -14,7 +14,8 @@ import java.util.stream.Stream;
 
 import com.meteordevelopments.duels.DuelsPlugin;
 import lombok.Getter;
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.meteordevelopments.duels.util.json.JsonUtil;
 
 @SuppressWarnings("all")
 public class UpdateManager {
@@ -74,10 +75,22 @@ public class UpdateManager {
             }
             in.close();
 
-            // Parse JSON response
+            // Parse JSON response with Jackson
             String jsonResponse = response.toString();
-            JSONObject jsonObject = new JSONObject(jsonResponse);
-            String downloadUrl = jsonObject.getJSONArray("files").getJSONObject(0).getString("url");
+            JsonNode root = JsonUtil
+                    .getObjectMapper()
+                    .readTree(jsonResponse);
+            String downloadUrl = null;
+            if (root.has("files") && root.get("files").isArray() && root.get("files").size() > 0) {
+                JsonNode first = root.get("files").get(0);
+                if (first.has("url")) {
+                    downloadUrl = first.get("url").asText();
+                }
+            }
+
+            if (downloadUrl == null || downloadUrl.isEmpty()) {
+                throw new IllegalStateException("Failed to resolve Modrinth download URL from response");
+            }
 
             // Delete old jar files
             deleteOldFiles("plugins", "Duels-Optimised");

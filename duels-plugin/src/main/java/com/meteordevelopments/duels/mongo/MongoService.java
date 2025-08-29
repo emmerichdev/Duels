@@ -11,6 +11,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoCursor;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
@@ -88,7 +89,7 @@ public class MongoService {
 
     public List<UserData> loadAllUsers() {
         final List<UserData> users = new ArrayList<>();
-        try (com.mongodb.client.MongoCursor<Document> cursor = collection("users").find().iterator()) {
+        try (MongoCursor<Document> cursor = collection("users").find().iterator()) {
             while (cursor.hasNext()) {
                 final Document doc = cursor.next();
                 final Document copy = new Document(doc);

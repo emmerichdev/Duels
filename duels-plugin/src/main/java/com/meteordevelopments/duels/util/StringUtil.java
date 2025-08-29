@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 
 public final class StringUtil {
 
@@ -76,18 +77,18 @@ public final class StringUtil {
     }
 
     public static String join(final Object[] array, final String separator, final int startIndex, final int endIndex) {
-        return org.apache.commons.lang3.StringUtils.join(array, separator, startIndex, endIndex);
+        return StringUtils.join(array, separator, startIndex, endIndex);
     }
 
     public static String join(final Collection<?> collection, final String separator) {
-        return org.apache.commons.lang3.StringUtils.join(collection, separator);
+        return StringUtils.join(collection, separator);
     }
 
     public static String capitalize(final String s) {
-        return org.apache.commons.lang3.StringUtils.capitalize(s);
+        return StringUtils.capitalize(s);
     }
 
     public static boolean containsIgnoreCase(final String str, final String searchStr) {
-        return org.apache.commons.lang3.StringUtils.containsIgnoreCase(str, searchStr);
+        return StringUtils.containsIgnoreCase(str, searchStr);
     }
 }

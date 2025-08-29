@@ -31,6 +31,8 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.bson.Document;
+import com.mongodb.client.model.ReplaceOptions;
 
 /**
  * Manages:
@@ -86,7 +88,7 @@ public class PlayerInfoManager implements Loadable {
         try {
             final var mongo = plugin.getMongoService();
             if (mongo != null) {
-                final var doc = mongo.collection("meta").find(new org.bson.Document("_id", "lobby")).first();
+                final var doc = mongo.collection("meta").find(new Document("_id", "lobby")).first();
                 if (doc != null) {
                     final String json = doc.toJson();
                     this.lobby = JsonUtil.getObjectMapper().readValue(json, LocationData.class).toLocation();
@@ -156,9 +158,9 @@ public class PlayerInfoManager implements Loadable {
             if (mongo != null) {
                 final var collection = mongo.collection("meta");
                 final String json = JsonUtil.getObjectWriter().writeValueAsString(LocationData.fromLocation(lobby));
-                final org.bson.Document doc = org.bson.Document.parse(json);
+                final Document doc = Document.parse(json);
                 doc.put("_id", "lobby");
-                collection.replaceOne(new org.bson.Document("_id", "lobby"), doc, new com.mongodb.client.model.ReplaceOptions().upsert(true));
+                collection.replaceOne(new Document("_id", "lobby"), doc, new ReplaceOptions().upsert(true));
                 this.lobby = lobby;
                 return true;
             }

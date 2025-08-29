@@ -41,6 +41,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
+import org.bson.Document;
 
 import java.io.*;
 import java.util.*;
@@ -112,7 +113,7 @@ public class QueueManager implements Loadable, DQueueManager, Listener {
             final var mongo = plugin.getMongoService();
             if (mongo != null) {
                 final var collection = mongo.collection("queues");
-                for (final org.bson.Document doc : collection.find()) {
+                for (final Document doc : collection.find()) {
                     final String json = doc.toJson();
                     final QueueData data = JsonUtil.getObjectMapper().readValue(json, QueueData.class);
                     if (data != null) {
@@ -209,11 +210,11 @@ public class QueueManager implements Loadable, DQueueManager, Listener {
             final var mongo = plugin.getMongoService();
             if (mongo != null) {
                 final var collection = mongo.collection("queues");
-                collection.deleteMany(new org.bson.Document());
+                collection.deleteMany(new Document());
                 for (final Queue queue : queues) {
                     final QueueData qd = new QueueData(queue);
                     final String json = JsonUtil.getObjectWriter().writeValueAsString(qd);
-                    final org.bson.Document doc = org.bson.Document.parse(json);
+                    final Document doc = Document.parse(json);
                     final String id = (queue.getKit() != null ? queue.getKit().getName() : "-") + ":" + queue.getBet();
                     doc.put("_id", id);
                     collection.insertOne(doc);

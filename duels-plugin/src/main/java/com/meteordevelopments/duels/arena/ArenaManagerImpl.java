@@ -33,6 +33,12 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.bson.Document;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.BulkWriteOptions;
+import com.mongodb.client.model.ReplaceOneModel;
+import com.meteordevelopments.duels.redis.RedisService;
 
 import java.io.*;
 import java.util.*;
@@ -73,7 +79,7 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
             if (mongo != null) {
                 arenas.clear();
                 final var collection = mongo.collection("arenas");
-                for (final org.bson.Document doc : collection.find()) {
+                for (final Document doc : collection.find()) {
                     final String json = doc.toJson();
                     final ArenaData arenaData = JsonUtil.getObjectMapper().readValue(json, com.meteordevelopments.duels.data.ArenaData.class);
                     if (arenaData != null) {
@@ -115,32 +121,32 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
                     for (final ArenaImpl arena : arenas) {
                         final ArenaData data = new ArenaData(arena);
                         final String json = JsonUtil.getObjectWriter().writeValueAsString(data);
-                        final org.bson.Document doc = org.bson.Document.parse(json);
+                        final Document doc = Document.parse(json);
                         doc.put("_id", data.getName());
                         collection.replaceOne(
-                            new org.bson.Document("_id", data.getName()),
+                            new Document("_id", data.getName()),
                             doc,
-                            new com.mongodb.client.model.ReplaceOptions().upsert(true)
+                            new ReplaceOptions().upsert(true)
                         );
                     }
                     if (locked) {
                         final java.util.Set<String> names = arenas.stream().map(ArenaImpl::getName).collect(java.util.stream.Collectors.toSet());
                         // Find docs to prune first
                         final java.util.List<String> toDelete = new java.util.ArrayList<>();
-                        try (com.mongodb.client.MongoCursor<org.bson.Document> cur = collection.find(new org.bson.Document("_id", new org.bson.Document("$nin", names))).projection(new org.bson.Document("_id", 1)).iterator()) {
+                        try (MongoCursor<Document> cur = collection.find(new Document("_id", new Document("$nin", names))).projection(new Document("_id", 1)).iterator()) {
                             while (cur.hasNext()) {
-                                final org.bson.Document d = cur.next();
+                                final Document d = cur.next();
                                 final Object id = d.get("_id");
                                 if (id != null) toDelete.add(id.toString());
                             }
                         }
                         if (!toDelete.isEmpty()) {
-                            collection.deleteMany(new org.bson.Document("_id", new org.bson.Document("$in", toDelete)));
-                            toDelete.forEach(id -> redis.publish(com.meteordevelopments.duels.redis.RedisService.CHANNEL_INVALIDATE_ARENA, id));
+                            collection.deleteMany(new Document("_id", new Document("$in", toDelete)));
+                            toDelete.forEach(id -> redis.publish(RedisService.CHANNEL_INVALIDATE_ARENA, id));
                         }
                     }
                     if (redis != null) {
-                        arenas.forEach(a -> redis.publish(com.meteordevelopments.duels.redis.RedisService.CHANNEL_INVALIDATE_ARENA, a.getName()));
+                        arenas.forEach(a -> redis.publish(RedisService.CHANNEL_INVALIDATE_ARENA, a.getName()));
                     }
                 } finally {
                     if (locked) {
@@ -165,7 +171,7 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
         final var mongo = plugin.getMongoService();
         if (mongo == null) { return; }
         try {
-            final var doc = mongo.collection("arenas").find(new org.bson.Document("_id", name)).first();
+            final var doc = mongo.collection("arenas").find(new Document("_id", name)).first();
             if (doc == null) {
                 arenas.removeIf(a -> a.getName().equals(name));
                 if (gui != null) { gui.calculatePages(); }
@@ -222,7 +228,7 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
             saveArenas();
             try {
                 if (plugin.getRedisService() != null) {
-                    plugin.getRedisService().publish(com.meteordevelopments.duels.redis.RedisService.CHANNEL_INVALIDATE_ARENA, arena.getName());
+                    plugin.getRedisService().publish(RedisService.CHANNEL_INVALIDATE_ARENA, arena.getName());
                 }
             } catch (Exception ignored) {}
 
