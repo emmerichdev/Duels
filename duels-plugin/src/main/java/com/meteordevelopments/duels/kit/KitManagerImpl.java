@@ -14,6 +14,7 @@ import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.util.Log;
 import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.compat.Items;
+import com.meteordevelopments.duels.util.gui.GuiSetupUtil;
 import com.meteordevelopments.duels.util.gui.MultiPageGui;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
 import com.meteordevelopments.duels.util.json.JsonUtil;
@@ -49,10 +50,7 @@ public class KitManagerImpl implements Loadable, KitManager {
     @Override
     public void handleLoad() throws IOException {
         gui = new MultiPageGui<>(plugin, lang.getMessage("GUI.kit-selector.title"), config.getKitSelectorRows(), kits.values());
-        gui.setSpaceFiller(Items.from(config.getKitSelectorFillerType(), config.getKitSelectorFillerData()));
-        gui.setPrevButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.kit-selector.buttons.previous-page.name")).build());
-        gui.setNextButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.kit-selector.buttons.next-page.name")).build());
-        gui.setEmptyIndicator(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.kit-selector.buttons.empty.name")).build());
+        GuiSetupUtil.setupKitSelectorGui(gui, config, lang);
         plugin.getGuiListener().addGui(gui);
 
         // Load from MongoDB instead of file

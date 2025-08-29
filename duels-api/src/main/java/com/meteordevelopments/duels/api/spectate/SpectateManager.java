@@ -82,7 +82,7 @@ public interface SpectateManager {
         IN_MATCH,
         TARGET_NOT_IN_MATCH,
         EVENT_CANCELLED,
-        SUCCESS;
+        SUCCESS
 
     }
 }

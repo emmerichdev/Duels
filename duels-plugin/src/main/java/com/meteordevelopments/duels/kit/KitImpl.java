@@ -31,7 +31,7 @@ public class KitImpl extends BaseButton implements Kit {
     @Getter
     private boolean arenaSpecific;
     @Getter
-    private Set<Characteristic> characteristics;
+    private final Set<Characteristic> characteristics;
     @Getter
     @Setter(value = AccessLevel.PACKAGE)
     private boolean removed;

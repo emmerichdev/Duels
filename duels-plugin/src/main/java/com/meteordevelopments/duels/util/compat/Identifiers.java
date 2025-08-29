@@ -9,7 +9,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 public final class Identifiers {
 
-    private static transient final String DUELS_ITEM_IDENTIFIER = "DuelsKitContent";
+    private static final String DUELS_ITEM_IDENTIFIER = "DuelsKitContent";
 
     private Identifiers() {
     }

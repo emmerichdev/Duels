@@ -7,6 +7,8 @@ import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.setting.Settings;
 import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.util.TextBuilder;
+import com.meteordevelopments.duels.util.command.CommandUtil;
+import com.meteordevelopments.duels.util.command.SettingsDisplay;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
 import org.bukkit.Bukkit;
@@ -61,24 +63,22 @@ public class RequestManager implements Loadable, Listener {
         final boolean isParty = request.isPartyDuel();
         get(sender, true).put(isParty ? request.getTargetParty().getOwner().getUuid() : target.getUniqueId(), request);
 
-        final String kit = settings.getKit() != null ? settings.getKit().getName() : lang.getMessage("GENERAL.not-selected");
-        final String ownInventory = settings.isOwnInventory() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled");
-        final String arena = settings.getArena() != null ? settings.getArena().getName() : lang.getMessage("GENERAL.random");
+        final SettingsDisplay display = CommandUtil.formatSettingsDisplay(settings, lang);
 
         if (request.isPartyDuel()) {
             final Player targetPartyLeader = request.getTargetParty().getOwner().getPlayer();
             lang.sendMessage(Collections.singleton(sender), "COMMAND.duel.party-request.send.sender-party",
-                    "owner", sender.getName(), "name", target.getName(), "kit", kit, "own_inventory", ownInventory, "arena", arena);
+                    "owner", sender.getName(), "name", target.getName(), "kit", display.kit(), "own_inventory", display.ownInventory(), "arena", display.arena());
             lang.sendMessage(targetPartyLeader, "COMMAND.duel.party-request.send.receiver-party",
-                    "name", sender.getName(), "kit", kit, "own_inventory", ownInventory, "arena", arena);
+                    "name", sender.getName(), "kit", display.kit(), "own_inventory", display.ownInventory(), "arena", display.arena());
             sendClickableMessage("COMMAND.duel.party-request.send.clickable-text.", sender, Collections.singleton(targetPartyLeader));
         } else {
             final int betAmount = settings.getBet();
             final String itemBetting = settings.isItemBetting() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled");
             lang.sendMessage(sender, "COMMAND.duel.request.send.sender",
-                    "name", target.getName(), "kit", kit, "own_inventory", ownInventory, "arena", arena, "bet_amount", betAmount, "item_betting", itemBetting);
+                    "name", target.getName(), "kit", display.kit(), "own_inventory", display.ownInventory(), "arena", display.arena(), "bet_amount", betAmount, "item_betting", itemBetting);
             lang.sendMessage(target, "COMMAND.duel.request.send.receiver",
-                    "name", sender.getName(), "kit", kit, "own_inventory", ownInventory, "arena", arena, "bet_amount", betAmount, "item_betting", itemBetting);
+                    "name", sender.getName(), "kit", display.kit(), "own_inventory", display.ownInventory(), "arena", display.arena(), "bet_amount", betAmount, "item_betting", itemBetting);
             sendClickableMessage("COMMAND.duel.request.send.clickable-text.", sender, Collections.singleton(target));
         }
     }

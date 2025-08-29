@@ -4,6 +4,7 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.arena.ArenaImpl;
 import com.meteordevelopments.duels.command.BaseCommand;
 import com.meteordevelopments.duels.util.StringUtil;
+import com.meteordevelopments.duels.util.command.CommandUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -18,25 +19,22 @@ public class DeleteCommand extends BaseCommand {
 
     @Override
     protected void execute(final CommandSender sender, final String label, final String[] args) {
-        final String name = StringUtil.join(args, " ", 1, args.length).replace("-", " ");
-        final ArenaImpl arena = arenaManager.get(name);
-
+        final ArenaImpl arena = CommandUtil.parseAndValidateArena(args, 1, arenaManager, lang, sender);
         if (arena == null) {
-            lang.sendMessage(sender, "ERROR.arena.not-found", "name", name);
             return;
         }
 
         if (arena.isUsed()) {
-            lang.sendMessage(sender, "ERROR.arena.delete-failure", "name", name);
+            lang.sendMessage(sender, "ERROR.arena.delete-failure", "name", arena.getName());
             return;
         }
 
         arenaManager.remove(sender, arena);
-        lang.sendMessage(sender, "COMMAND.duels.delete", "name", name);
+        lang.sendMessage(sender, "COMMAND.duels.delete", "name", arena.getName());
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull final CommandSender sender, final Command command, final String alias, final String[] args) {
+    public List<String> onTabComplete(@NotNull final CommandSender sender, final @NotNull Command command, final @NotNull String alias, final String[] args) {
         if (args.length == 2) {
             return handleTabCompletion(args[1], arenaManager.getNames());
         }

@@ -4,6 +4,7 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.arena.ArenaImpl;
 import com.meteordevelopments.duels.command.BaseCommand;
 import com.meteordevelopments.duels.util.StringUtil;
+import com.meteordevelopments.duels.util.command.CommandUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -18,24 +19,21 @@ public class EnableCommand extends BaseCommand {
 
     @Override
     protected void execute(final CommandSender sender, final String label, final String[] args) {
-        final String name = StringUtil.join(args, " ", 1, args.length).replace("-", " ");
-        final ArenaImpl arena = arenaManager.get(name);
-
+        final ArenaImpl arena = CommandUtil.parseAndValidateArena(args, 1, arenaManager, lang, sender);
         if (arena == null) {
-            lang.sendMessage(sender, "ERROR.arena.not-found", "name", name);
             return;
         }
 
         if (!arena.isDisabled()) {
-            lang.sendMessage(sender, "COMMAND.duels.already-enabled", "name", name);
+            lang.sendMessage(sender, "COMMAND.duels.already-enabled", "name", arena.getName());
             return;
         }
 
         arena.setDisabled(sender, false);
-        lang.sendMessage(sender, "COMMAND.duels.enable", "name", name);
+        lang.sendMessage(sender, "COMMAND.duels.enable", "name", arena.getName());
     }
 
-    public List<String> onTabComplete(@NotNull final CommandSender sender, final Command command, final String alias, final String[] args) {
+    public List<String> onTabComplete(@NotNull final CommandSender sender, final @NotNull Command command, final @NotNull String alias, final String[] args) {
         if (args.length == 2) {
             return handleTabCompletion(args[1], arenaManager.getNames());
         }

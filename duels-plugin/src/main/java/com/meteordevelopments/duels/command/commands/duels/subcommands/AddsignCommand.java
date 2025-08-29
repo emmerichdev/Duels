@@ -5,8 +5,8 @@ import com.meteordevelopments.duels.command.BaseCommand;
 import com.meteordevelopments.duels.kit.KitImpl;
 import com.meteordevelopments.duels.queue.Queue;
 import com.meteordevelopments.duels.util.BlockUtil;
-import com.meteordevelopments.duels.util.NumberUtil;
 import com.meteordevelopments.duels.util.StringUtil;
+import com.meteordevelopments.duels.util.command.CommandUtil;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
@@ -14,7 +14,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class AddsignCommand extends BaseCommand {
@@ -33,20 +32,15 @@ public class AddsignCommand extends BaseCommand {
             return;
         }
 
-        final int bet = NumberUtil.parseInt(args[1]).orElse(0);
-        KitImpl kit = null;
-
-        if (!args[2].equals("-")) {
-            String name = StringUtil.join(args, " ", 2, args.length).replace("-", " ");
-            kit = kitManager.get(name);
-
-            if (kit == null) {
-                lang.sendMessage(sender, "ERROR.kit.not-found", "name", name);
-                return;
-            }
+        final int bet = CommandUtil.parseBetAmount(args, 1);
+        final KitImpl kit = CommandUtil.parseAndValidateOptionalKit(args, 2, kitManager, lang, sender);
+        
+        // If parsing failed (invalid kit name), return early
+        if (!args[2].equals("-") && kit == null) {
+            return;
         }
 
-        final String kitName = kit != null ? kit.getName() : lang.getMessage("GENERAL.none");
+        final String kitName = CommandUtil.getKitDisplayName(kit, lang);
         final Queue queue = queueManager.get(kit, bet);
 
         if (queue == null) {
@@ -64,9 +58,9 @@ public class AddsignCommand extends BaseCommand {
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull final CommandSender sender, final Command command, final String alias, final String[] args) {
+    public List<String> onTabComplete(@NotNull final CommandSender sender, final @NotNull Command command, final @NotNull String alias, final String[] args) {
         if (args.length == 2) {
-            return Arrays.asList("0", "10", "50", "100", "500", "1000");
+            return CommandUtil.getBetTabCompletion();
         }
 
         if (args.length > 2) {

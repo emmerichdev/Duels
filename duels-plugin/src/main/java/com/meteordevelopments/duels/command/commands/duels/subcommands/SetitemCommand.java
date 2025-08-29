@@ -4,6 +4,7 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.command.BaseCommand;
 import com.meteordevelopments.duels.kit.KitImpl;
 import com.meteordevelopments.duels.util.StringUtil;
+import com.meteordevelopments.duels.util.command.CommandUtil;
 import com.meteordevelopments.duels.util.inventory.InventoryUtil;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -30,21 +31,18 @@ public class SetitemCommand extends BaseCommand {
             return;
         }
 
-        final String name = StringUtil.join(args, " ", 1, args.length).replace("-", " ");
-        final KitImpl kit = kitManager.get(name);
-
+        final KitImpl kit = CommandUtil.parseAndValidateRequiredKit(args, 1, kitManager, lang, sender);
         if (kit == null) {
-            lang.sendMessage(sender, "ERROR.kit.not-found", "name", name);
             return;
         }
 
         kit.setDisplayed(held.clone());
         kitManager.getGui().calculatePages();
-        lang.sendMessage(sender, "COMMAND.duels.set-item", "name", name);
+        lang.sendMessage(sender, "COMMAND.duels.set-item", "name", kit.getName());
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull final CommandSender sender, final Command command, final String alias, final String[] args) {
+    public List<String> onTabComplete(@NotNull final CommandSender sender, final @NotNull Command command, final @NotNull String alias, final String[] args) {
         if (args.length == 2) {
             return handleTabCompletion(args[1], kitManager.getNames(false));
         }

@@ -57,7 +57,7 @@ public class TopCommand extends BaseCommand {
         for (int i = 0; i < top.size(); i++) {
             final TopData data = top.get(i);
             lang.sendMessage(sender, "COMMAND.duel.top.display-format",
-                    "rank", i + 1, "name", data.getName(), "score", data.getValue(), "identifier", topEntry.getIdentifier());
+                    "rank", i + 1, "name", data.name(), "score", data.value(), "identifier", topEntry.getIdentifier());
         }
 
         lang.sendMessage(sender, "COMMAND.duel.top.footer", "type", topEntry.getType());

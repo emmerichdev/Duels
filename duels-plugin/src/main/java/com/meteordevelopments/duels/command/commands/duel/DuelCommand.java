@@ -4,6 +4,7 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.command.BaseCommand;
 import com.meteordevelopments.duels.command.commands.duel.subcommands.*;
+import com.meteordevelopments.duels.command.commands.party.subcommands.AcceptCommand;
 import com.meteordevelopments.duels.hook.hooks.VaultHook;
 import com.meteordevelopments.duels.hook.hooks.worldguard.WorldGuardHook;
 import com.meteordevelopments.duels.kit.KitImpl;
@@ -197,7 +198,7 @@ public class DuelCommand extends BaseCommand {
 
     // Disables default TabCompleter
     @Override
-    public List<String> onTabComplete(@NotNull final CommandSender sender, final Command command, final String alias, final String[] args) {
+    public List<String> onTabComplete(@NotNull final CommandSender sender, final @NotNull Command command, final @NotNull String alias, final String[] args) {
         return Collections.emptyList();
     }
 }

@@ -5,6 +5,7 @@ import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.command.BaseCommand;
 import com.meteordevelopments.duels.party.Party;
 import com.meteordevelopments.duels.party.PartyInvite;
+import com.meteordevelopments.duels.util.command.CommandUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,10 +25,8 @@ public class AcceptCommand extends BaseCommand {
             return;
         }
 
-        final Player target = Bukkit.getPlayerExact(args[1]);
-
-        if (target == null || !player.canSee(target)) {
-            lang.sendMessage(sender, "ERROR.player.not-found", "name", args[1]);
+        final Player target = CommandUtil.validatePlayerTarget(args[1], sender, lang);
+        if (target == null) {
             return;
         }
 

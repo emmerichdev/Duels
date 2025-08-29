@@ -102,8 +102,7 @@ public record ItemBuilder(ItemStack result) {
 
     public ItemBuilder head(final String owner) {
         editMeta(meta -> {
-            if (owner != null && Items.equals(Items.HEAD, result) && meta instanceof SkullMeta) {
-                final SkullMeta skullMeta = (SkullMeta) meta;
+            if (owner != null && Items.equals(Items.HEAD, result) && meta instanceof SkullMeta skullMeta) {
                 skullMeta.setOwner(owner);
             }
         });
@@ -126,12 +125,10 @@ public record ItemBuilder(ItemStack result) {
         }
         
         final ItemMeta itemMeta = result.getItemMeta();
-        if (itemMeta == null || !(itemMeta instanceof PotionMeta)) {
+        if (itemMeta == null || !(itemMeta instanceof PotionMeta meta)) {
             return this;
         }
-        
-        final PotionMeta meta = (PotionMeta) itemMeta;
-        
+
         // Compute target PotionType based on extended/upgraded flags
         PotionType targetType = type;
         if ((upgraded || extended) && type != null) {

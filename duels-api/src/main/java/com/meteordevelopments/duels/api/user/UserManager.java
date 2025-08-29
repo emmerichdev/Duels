@@ -146,55 +146,21 @@ public interface UserManager {
         }
     }
 
-    class TopData implements Comparable<TopData> {
+    record TopData(UUID uuid, String name, int value) implements Comparable<TopData> {
 
-        private final UUID uuid;
-        private final String name;
-        private final int value;
-
-        public TopData(@NotNull final UUID uuid, @NotNull final String name, final int value) {
-            Objects.requireNonNull(uuid, "uuid");
-            Objects.requireNonNull(name, "name");
-            this.uuid = uuid;
-            this.name = name;
-            this.value = value;
-        }
-
-        public UUID getUuid() {
-            return uuid;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        @Override
-        public int compareTo(@NotNull final TopData data) {
-            Objects.requireNonNull(data, "data");
-            return Integer.compare(value, data.value);
-        }
-
-        @Override
-        public boolean equals(final Object other) {
-            if (this == other) {
-                return true;
+            public TopData(@NotNull final UUID uuid, @NotNull final String name, final int value) {
+                Objects.requireNonNull(uuid, "uuid");
+                Objects.requireNonNull(name, "name");
+                this.uuid = uuid;
+                this.name = name;
+                this.value = value;
             }
 
-            if (other == null || getClass() != other.getClass()) {
-                return false;
+            @Override
+            public int compareTo(@NotNull final TopData data) {
+                Objects.requireNonNull(data, "data");
+                return Integer.compare(value, data.value);
             }
 
-            final TopData topData = (TopData) other;
-            return value == topData.value && Objects.equals(uuid, topData.uuid) && Objects.equals(name, topData.name);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(uuid, name, value);
-        }
     }
 }

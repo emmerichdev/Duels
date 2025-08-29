@@ -100,7 +100,7 @@ public class PartyCommand extends BaseCommand {
 
     // Disables default TabCompleter
     @Override
-    public List<String> onTabComplete(@NotNull final CommandSender sender, final Command command, final String alias, final String[] args) {
+    public List<String> onTabComplete(@NotNull final CommandSender sender, final @NotNull Command command, final @NotNull String alias, final String[] args) {
         return Collections.emptyList();
     }
 }

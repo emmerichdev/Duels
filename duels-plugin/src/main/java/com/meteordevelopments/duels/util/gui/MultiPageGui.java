@@ -264,13 +264,5 @@ public class MultiPageGui<P extends JavaPlugin> extends AbstractGui<P> {
         boolean isPart(final Inventory inventory) {
             return find(inventory) != null;
         }
-
-//        boolean hasViewers() {
-//            if (!inventory.getViewers().isEmpty()) {
-//                return true;
-//            }
-//
-//            return next != null && !next.hasViewers();
-//        }
     }
 }
