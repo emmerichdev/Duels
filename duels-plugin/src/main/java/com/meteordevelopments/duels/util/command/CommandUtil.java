@@ -7,7 +7,9 @@ import com.meteordevelopments.duels.kit.KitImpl;
 import com.meteordevelopments.duels.kit.KitManagerImpl;
 import com.meteordevelopments.duels.util.NumberUtil;
 import com.meteordevelopments.duels.util.StringUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -117,10 +119,10 @@ public final class CommandUtil {
      * @return Player if valid, null if invalid (error message sent)
      */
     @Nullable
-    public static org.bukkit.entity.Player validatePlayerTarget(String targetName, CommandSender sender, Lang lang) {
-        org.bukkit.entity.Player target = org.bukkit.Bukkit.getPlayerExact(targetName);
+    public static Player validatePlayerTarget(String targetName, CommandSender sender, Lang lang) {
+        Player target = Bukkit.getPlayerExact(targetName);
         
-        if (target == null || (sender instanceof org.bukkit.entity.Player && !((org.bukkit.entity.Player) sender).canSee(target))) {
+        if (target == null || (sender instanceof Player && !((Player) sender).canSee(target))) {
             lang.sendMessage(sender, "ERROR.player.not-found", "name", targetName);
             return null;
         }

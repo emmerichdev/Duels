@@ -135,7 +135,7 @@ public class KitManagerImpl implements Loadable, KitManager {
                         .convertValue(doc, KitData.class);
             if (data == null
                 || data.getName() == null
-                || !com.meteordevelopments.duels.util.StringUtil.isAlphanumeric(data.getName())) {
+                || !StringUtil.isAlphanumeric(data.getName())) {
                 return;
             }
 
@@ -145,7 +145,7 @@ public class KitManagerImpl implements Loadable, KitManager {
                 if (gui != null) gui.calculatePages();
             });
         } catch (Exception ex) {
-            com.meteordevelopments.duels.util.Log.error(this,
+            Log.error(this,
                 "Failed to reload kit: " + name, ex);
         }
     }
@@ -199,7 +199,7 @@ public class KitManagerImpl implements Loadable, KitManager {
                     redis.publish(RedisService.CHANNEL_INVALIDATE_KIT, name);
                 }
             } catch (Exception ex) {
-                com.meteordevelopments.duels.util.Log.error(this, "Failed to finalize removal for kit: " + name, ex);
+                Log.error(this, "Failed to finalize removal for kit: " + name, ex);
             }
         });
 
