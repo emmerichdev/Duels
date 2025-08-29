@@ -179,12 +179,6 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
         return Result.SUCCESS;
     }
 
-    /**
-     * Puts player out of spectator mode.
-     *
-     * @param player    Player to put out of spectator mode
-     * @param spectator {@link SpectatorImpl} instance associated to this player
-     */
     public void stopSpectating(final Player player, final SpectatorImpl spectator) {
         spectators.remove(player.getUniqueId());
         arenas.remove(spectator.getArena(), spectator);
@@ -224,22 +218,12 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
         Bukkit.getPluginManager().callEvent(event);
     }
 
-    /**
-     * Puts player out of spectator mode.
-     *
-     * @see #stopSpectating(Player, SpectatorImpl)
-     */
     @Override
     public void stopSpectating(@NotNull final Player player) {
         Objects.requireNonNull(player, "player");
         stopSpectating(player, get(player));
     }
 
-    /**
-     * Puts all spectators of the given {@link ArenaImpl} out of spectator mode.
-     *
-     * @param arena {@link ArenaImpl} to end spectating
-     */
     public void stopSpectating(final ArenaImpl arena) {
         final Collection<SpectatorImpl> spectators = arenas.asMap().remove(arena);
 

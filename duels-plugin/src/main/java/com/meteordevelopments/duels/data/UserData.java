@@ -158,10 +158,6 @@ public class UserData implements User {
         }
     }
     
-    /**
-     * Sets the total ELO for this user
-     * @param totalElo The total ELO value to set
-     */
     public void setTotalElo(final int totalElo) {
         this.totalElo = totalElo;
         
@@ -170,10 +166,6 @@ public class UserData implements User {
         }
     }
     
-    /**
-     * Calculates the total ELO by summing all kit ELOs
-     * This method is called automatically when individual kit ratings change
-     */
     public void calculateTotalElo() {
         if (this.rating == null || this.rating.isEmpty()) {
             this.totalElo = 0;

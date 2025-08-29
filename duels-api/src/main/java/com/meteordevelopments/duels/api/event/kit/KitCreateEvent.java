@@ -8,11 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-/**
- * Called when a {@link Kit} is created.
- *
- * @see KitManager#create(Player, String)
- */
 public class KitCreateEvent extends KitEvent {
 
     private static final HandlerList handlers = new HandlerList();

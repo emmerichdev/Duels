@@ -12,16 +12,6 @@ public final class GuiSetupUtil {
     private GuiSetupUtil() {
     }
 
-    /**
-     * Sets up common GUI elements (space filler, navigation buttons)
-     * @param gui The GUI to set up
-     * @param lang Language instance
-     * @param fillerType Filler material type
-     * @param fillerData Filler material data
-     * @param prevPageKey Language key for previous page button
-     * @param nextPageKey Language key for next page button
-     * @param emptyKey Language key for empty indicator
-     */
     public static <T extends DuelsPlugin> void setupCommonGuiElements(
             MultiPageGui<T> gui, Lang lang,
             String fillerType, short fillerData,
@@ -33,12 +23,6 @@ public final class GuiSetupUtil {
         gui.setEmptyIndicator(ItemBuilder.of(Material.PAPER).name(lang.getMessage(emptyKey)).build());
     }
 
-    /**
-     * Sets up kit selector GUI elements
-     * @param gui The GUI to set up
-     * @param config Configuration instance
-     * @param lang Language instance
-     */
     public static <T extends DuelsPlugin> void setupKitSelectorGui(MultiPageGui<T> gui, Config config, Lang lang) {
         setupCommonGuiElements(gui, lang,
             config.getKitSelectorFillerType(), config.getKitSelectorFillerData(),
@@ -47,12 +31,6 @@ public final class GuiSetupUtil {
             "GUI.kit-selector.buttons.empty.name");
     }
 
-    /**
-     * Sets up arena selector GUI elements
-     * @param gui The GUI to set up
-     * @param config Configuration instance
-     * @param lang Language instance
-     */
     public static <T extends DuelsPlugin> void setupArenaSelectorGui(MultiPageGui<T> gui, Config config, Lang lang) {
         setupCommonGuiElements(gui, lang,
             config.getArenaSelectorFillerType(), config.getArenaSelectorFillerData(),

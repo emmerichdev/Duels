@@ -17,9 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Handles registration of all plugin commands
- */
 public class CommandRegistrar {
     
     private final DuelsPlugin plugin;
@@ -29,9 +26,6 @@ public class CommandRegistrar {
         this.plugin = plugin;
     }
     
-    /**
-     * Registers all plugin commands
-     */
     public void registerCommands() {
         long start = System.currentTimeMillis();
         DuelsPlugin.sendMessage("&eRegistering commands...");
@@ -46,21 +40,11 @@ public class CommandRegistrar {
         DuelsPlugin.sendMessage("&dSuccessfully registered commands [" + CC.getTimeDifferenceAndColor(start, System.currentTimeMillis()) + ChatColor.WHITE + "]");
     }
     
-    /**
-     * Registers a single command
-     * @param command the command to register
-     */
     private void registerCommand(AbstractCommand<DuelsPlugin> command) {
         commands.put(command.getName().toLowerCase(), command);
         command.register();
     }
     
-    /**
-     * Registers a subcommand to an existing command
-     * @param commandName the parent command name
-     * @param subCommand the subcommand to register
-     * @return true if successful, false otherwise
-     */
     public boolean registerSubCommand(String commandName, SubCommand subCommand) {
         Objects.requireNonNull(commandName, "command");
         Objects.requireNonNull(subCommand, "subCommand");
@@ -80,9 +64,6 @@ public class CommandRegistrar {
         return true;
     }
     
-    /**
-     * Clears all registered commands
-     */
     public void clearCommands() {
         commands.clear();
     }

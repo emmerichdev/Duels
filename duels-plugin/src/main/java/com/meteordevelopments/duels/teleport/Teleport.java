@@ -13,9 +13,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-/**
- * Handles force teleporting of players.
- */
 public final class Teleport implements Loadable, Listener {
 
     public static final String METADATA_KEY = "Duels-Teleport";
@@ -40,13 +37,6 @@ public final class Teleport implements Loadable, Listener {
     public void handleUnload() {
     }
 
-    /**
-     * Attempts to force-teleport a player by storing a metadata value in the player before teleportation
-     * and uncancelling the teleport by the player in a MONITOR-priority listener if cancelled by other plugins.
-     *
-     * @param player   Player to force-teleport to a location
-     * @param location Location to force-teleport the player
-     */
     public void tryTeleport(final Player player, final Location location) {
         if (location == null || location.getWorld() == null) {
             Log.warn(this, "Could not teleport " + player.getName() + "! Location is null");

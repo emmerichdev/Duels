@@ -8,12 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-/**
- * Called when a player is leaving a {@link DQueue}.
- *
- * @see DQueueManager#removeFromQueue(Player)
- * @since 3.2.0
- */
 public class QueueLeaveEvent extends QueueEvent {
 
     private static final HandlerList handlers = new HandlerList();
@@ -30,11 +24,6 @@ public class QueueLeaveEvent extends QueueEvent {
         return handlers;
     }
 
-    /**
-     * {@link Player} who is leaving the {@link DQueue}.
-     *
-     * @return Never-null {@link Player} who is leaving the {@link DQueue}.
-     */
     @NotNull
     @Override
     public Player getSource() {

@@ -7,11 +7,6 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Called when an {@link Arena} is enabled or disabled.
- *
- * @see Arena#setDisabled(CommandSender, boolean)
- */
 public class ArenaStateChangeEvent extends ArenaEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -28,20 +23,10 @@ public class ArenaStateChangeEvent extends ArenaEvent implements Cancellable {
         return handlers;
     }
 
-    /**
-     * Whether or not the {@link Arena} is disabling.
-     *
-     * @return True if the {@link Arena} will be disabled. False otherwise.
-     */
     public boolean isDisabled() {
         return disabled;
     }
 
-    /**
-     * Sets a new state for the {@link Arena}.
-     *
-     * @param disabled True to disable the {@link Arena}. False to enable.
-     */
     public void setDisabled(final boolean disabled) {
         this.disabled = disabled;
     }

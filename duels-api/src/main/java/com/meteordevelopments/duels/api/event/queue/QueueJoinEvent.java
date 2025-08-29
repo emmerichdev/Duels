@@ -9,12 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-/**
- * Called when a player is joining a {@link DQueue}.
- *
- * @see DQueueManager#addToQueue(Player, DQueue)
- * @since 3.2.0
- */
 public class QueueJoinEvent extends QueueEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -32,11 +26,6 @@ public class QueueJoinEvent extends QueueEvent implements Cancellable {
         return handlers;
     }
 
-    /**
-     * {@link Player} who is joining the {@link DQueue}.
-     *
-     * @return Never-null {@link Player} who is joining the {@link DQueue}.
-     */
     @NotNull
     @Override
     public Player getSource() {

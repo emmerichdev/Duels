@@ -160,10 +160,6 @@ public abstract class DuelsExtension {
     public void onDisable() {
     }
 
-    /**
-     * @return The version of Duels that this extension requires in order to enable.
-     * @deprecated As of v3.2.0. Specify 'api-version' in extension.yml instead.
-     */
     @Deprecated
     @Nullable
     public String getRequiredVersion() {

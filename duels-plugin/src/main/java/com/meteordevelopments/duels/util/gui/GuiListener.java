@@ -45,9 +45,6 @@ public class GuiListener<P extends JavaPlugin> implements Loadable, Listener {
         publicGuis.add(gui);
     }
 
-    /**
-     * @param removeSameType Prevents memory leaks in case of gui open failing for guis that remove themselves on inventory close.
-     */
     public <T extends AbstractGui<P>> T addGui(final Player player, final T gui, final boolean removeSameType) {
         if (removeSameType) {
             final Collection<AbstractGui<P>> guis = privateGuis.asMap().get(player.getUniqueId());

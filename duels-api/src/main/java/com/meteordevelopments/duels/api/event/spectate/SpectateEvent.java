@@ -7,9 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-/**
- * Represents an event caused by a {@link Spectator}.
- */
 public abstract class SpectateEvent extends SourcedEvent {
 
     private final Player source;
@@ -29,11 +26,6 @@ public abstract class SpectateEvent extends SourcedEvent {
         return source;
     }
 
-    /**
-     * {@link Spectator} instance associated with this event.
-     *
-     * @return Never-null {@link Spectator} instance associated with this event.
-     */
     @NotNull
     public Spectator getSpectator() {
         return spectator;

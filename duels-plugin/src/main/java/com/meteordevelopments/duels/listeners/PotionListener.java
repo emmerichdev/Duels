@@ -11,9 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
-/**
- * Removes empty potion bottle after consumption if enabled.
- */
 public class PotionListener implements Listener {
 
     private final ArenaManagerImpl arenaManager;

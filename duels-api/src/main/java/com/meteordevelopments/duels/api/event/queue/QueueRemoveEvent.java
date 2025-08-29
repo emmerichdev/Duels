@@ -8,13 +8,6 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Called when a {@link DQueue} is removed.
- *
- * @see DQueueManager#remove(CommandSender, Kit, int)
- * @see DQueue#isRemoved()
- * @since 3.2.0
- */
 public class QueueRemoveEvent extends QueueEvent {
 
     private static final HandlerList handlers = new HandlerList();

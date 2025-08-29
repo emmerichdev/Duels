@@ -5,9 +5,6 @@ public final class TimeCalculator {
     private TimeCalculator() {
     }
 
-    /**
-     * Calculates time components from seconds
-     */
     public static class TimeComponents {
         public final long years;
         public final long months;
@@ -38,23 +35,10 @@ public final class TimeCalculator {
         }
     }
 
-    /**
-     * Converts milliseconds to seconds with rounding up
-     * @param ms Milliseconds
-     * @return Seconds (rounded up if there are remaining milliseconds)
-     */
     public static long millisecondsToSeconds(long ms) {
         return ms / 1000 + (ms % 1000 > 0 ? 1 : 0);
     }
 
-    /**
-     * Appends time unit to StringBuilder with proper spacing
-     * @param builder StringBuilder to append to
-     * @param hasExistingContent Whether there's already content in the builder
-     * @param value Time value
-     * @param unit Unit name (e.g., "year", "month")
-     * @return true if content was added
-     */
     public static boolean appendTimeUnit(StringBuilder builder, boolean hasExistingContent, 
                                        long value, String unit) {
         if (value > 0) {

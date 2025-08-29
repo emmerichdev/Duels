@@ -10,9 +10,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 
-/**
- * Prevents spectators from being affected by lingering potions.
- */
 public class LingerPotionListener implements Listener {
 
     private final ArenaManagerImpl arenaManager;

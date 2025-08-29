@@ -335,10 +335,6 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
             }
         }
 
-        /**
-         * Formats duration in milliseconds using a simple pattern.
-         * Supports patterns like "mm:ss", "HH:mm:ss", etc.
-         */
         private String formatDuration(long durationMillis, String pattern) {
             long totalSeconds = durationMillis / 1000;
             long hours = totalSeconds / 3600;

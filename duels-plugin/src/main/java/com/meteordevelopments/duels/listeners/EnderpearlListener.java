@@ -21,9 +21,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.UUID;
 
-/**
- * Prevents players throwing an enderpearl before entering a duel and teleporting out with kit items.
- */
 public class EnderpearlListener implements Listener {
 
     private static final long PEARL_EXPIRY = 60 * 1000L;

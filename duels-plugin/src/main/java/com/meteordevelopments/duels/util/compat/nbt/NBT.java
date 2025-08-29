@@ -6,9 +6,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 
 import java.lang.reflect.Method;
 
-/**
- * Used to store kit item identifiers in items for versions 1.8 - 1.13. For 1.14 and above, {@link PersistentDataContainer} is used instead.
- */
 public final class NBT {
 
     private static final Method AS_NMS_COPY;

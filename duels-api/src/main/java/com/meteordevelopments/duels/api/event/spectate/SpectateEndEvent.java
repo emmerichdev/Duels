@@ -5,9 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Called before a player stops spectating.
- */
 public class SpectateEndEvent extends SpectateEvent {
 
     private static final HandlerList handlers = new HandlerList();

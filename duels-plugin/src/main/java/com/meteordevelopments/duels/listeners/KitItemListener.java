@@ -20,10 +20,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-/**
- * Prevents players from using kit items outside of a duel by checking
- * for an NBT tag stored in the item by Duels.
- */
 public class KitItemListener implements Listener {
 
     // Warning sent to player attempting to use kit item

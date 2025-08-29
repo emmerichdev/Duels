@@ -31,9 +31,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
-/**
- * Applies kit characteristics (options) to duels.
- */
 public class KitOptionsListener implements Listener {
 
     private static final String METADATA_KEY = "Duels-MaxNoDamageTicks";

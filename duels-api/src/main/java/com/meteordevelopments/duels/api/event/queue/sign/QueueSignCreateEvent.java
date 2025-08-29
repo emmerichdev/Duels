@@ -5,11 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Called when a {@link QueueSign} is created.
- *
- * @since 3.2.0
- */
 public class QueueSignCreateEvent extends QueueSignEvent {
 
     private static final HandlerList handlers = new HandlerList();
