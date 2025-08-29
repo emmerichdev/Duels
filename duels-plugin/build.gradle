@@ -21,11 +21,11 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.38'
 
     implementation 'org.apache.commons:commons-lang3:3.18.0'
-    implementation 'com.mojang:authlib:3.13.56'
-    implementation 'me.clip:placeholderapi:2.11.6'
-    implementation 'com.github.timderspieler:DeluxeCombat-API:1.5.1'
-    implementation 'com.github.MilkBowl:VaultAPI:1.7.1'
-    implementation('net.essentialsx:EssentialsX:2.21.2')
+    compileOnly 'com.mojang:authlib:3.13.56'
+    compileOnly 'me.clip:placeholderapi:2.11.6'
+    compileOnly 'com.github.timderspieler:DeluxeCombat-API:1.5.1'
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
+    compileOnly('net.essentialsx:EssentialsX:2.21.2')
     implementation 'space.arim.morepaperlib:morepaperlib:0.4.4'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.2'
     implementation 'org.json:json:20250517'

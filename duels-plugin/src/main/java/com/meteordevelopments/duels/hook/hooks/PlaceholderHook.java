@@ -345,14 +345,19 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
             long minutes = (totalSeconds % 3600) / 60;
             long seconds = totalSeconds % 60;
 
-            // Replace pattern tokens with actual values
+            // Default pattern if null or empty
+            if (pattern == null || pattern.trim().isEmpty()) {
+                pattern = "H:mm:ss";
+            }
+
+            // Replace pattern tokens with actual values (literal replacements, longer tokens first)
             String result = pattern;
-            result = result.replaceAll("HH", String.format("%02d", hours));
-            result = result.replaceAll("H", String.valueOf(hours));
-            result = result.replaceAll("mm", String.format("%02d", minutes));
-            result = result.replaceAll("m", String.valueOf(minutes));
-            result = result.replaceAll("ss", String.format("%02d", seconds));
-            result = result.replaceAll("s", String.valueOf(seconds));
+            result = result.replace("HH", String.format("%02d", hours));
+            result = result.replace("H", String.valueOf(hours));
+            result = result.replace("mm", String.format("%02d", minutes));
+            result = result.replace("m", String.valueOf(minutes));
+            result = result.replace("ss", String.format("%02d", seconds));
+            result = result.replace("s", String.valueOf(seconds));
 
             return result;
         }

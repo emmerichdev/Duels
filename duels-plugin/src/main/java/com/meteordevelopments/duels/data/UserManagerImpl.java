@@ -89,7 +89,13 @@ public class UserManagerImpl implements Loadable, Listener, UserManager {
                         user.refreshMatches();
                         user.calculateTotalElo();
                         final String userName = user.getName();
-                        names.putIfAbsent(userName.toLowerCase(Locale.ROOT), uuid);
+                        if (userName != null && !userName.trim().isEmpty()) {
+                            final String normalizedName = userName.toLowerCase(Locale.ROOT);
+                            final UUID existingUuid = names.put(normalizedName, uuid);
+                            if (existingUuid != null && !existingUuid.equals(uuid)) {
+                                Log.info(this, "Name mapping updated: '" + normalizedName + "' changed from " + existingUuid + " to " + uuid);
+                            }
+                        }
                         users.putIfAbsent(uuid, user);
                     }
                 }
@@ -217,7 +223,11 @@ public class UserManagerImpl implements Loadable, Listener, UserManager {
                 user.calculateTotalElo();
                 users.put(uuid, user);
                 final String userName = user.getName();
-                names.put(userName.toLowerCase(Locale.ROOT), uuid);
+                if (userName != null && !userName.trim().isEmpty()) {
+                    names.put(userName.toLowerCase(Locale.ROOT), uuid);
+                } else {
+                    Log.warn(this, "Skipping name mapping for UUID " + uuid + " - userName is null or empty during reload");
+                }
             } catch (Exception ex) {
                 plugin.getLogger().log(Level.WARNING, "Failed to load user data for UUID " + uuid, ex);
             }

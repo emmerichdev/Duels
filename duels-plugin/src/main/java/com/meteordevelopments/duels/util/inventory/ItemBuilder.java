@@ -1,5 +1,6 @@
 package com.meteordevelopments.duels.util.inventory;
 
+import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.util.EnumUtil;
 import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.compat.Items;
@@ -121,7 +122,20 @@ public record ItemBuilder(ItemStack result) {
 
     public ItemBuilder potion(final PotionType type, final boolean extended, final boolean upgraded) {
         PotionMeta meta = (PotionMeta) result.getItemMeta();
-        meta.setBasePotionType(type);
+        
+        // Compute target PotionType based on extended/upgraded flags
+        PotionType targetType = type;
+        if (upgraded || extended) {
+            String prefix = upgraded ? "STRONG_" : (extended ? "LONG_" : "");
+            try {
+                targetType = PotionType.valueOf(prefix + type.name());
+            } catch (IllegalArgumentException e) {
+                // Fall back to original type if variant doesn't exist
+                targetType = type;
+            }
+        }
+        
+        meta.setBasePotionType(targetType);
         result.setItemMeta(meta);
         return this;
     }
@@ -136,17 +150,23 @@ public record ItemBuilder(ItemStack result) {
 
             final AttributeModifier modifier;
 
-            NamespacedKey key = NamespacedKey.minecraft(name.toLowerCase().replace(" ", "_"));
+            // Validate operation index
+            if (operation < 0 || operation >= AttributeModifier.Operation.values().length) {
+                return;
+            }
 
+            // Create NamespacedKey using plugin instance and include slot group if available
+            String keyName = name.toLowerCase().replace(" ", "_");
             if (slotName != null) {
                 final EquipmentSlot slot = EnumUtil.getByName(slotName, EquipmentSlot.class);
-
                 if (slot == null) {
                     return;
                 }
-
+                keyName += "_" + slot.getGroup().toString().toLowerCase();
+                NamespacedKey key = new NamespacedKey(DuelsPlugin.getInstance(), keyName);
                 modifier = new AttributeModifier(key, amount, AttributeModifier.Operation.values()[operation], slot.getGroup());
             } else {
+                NamespacedKey key = new NamespacedKey(DuelsPlugin.getInstance(), keyName);
                 modifier = new AttributeModifier(key, amount, AttributeModifier.Operation.values()[operation]);
             }
 
