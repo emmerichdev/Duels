@@ -80,8 +80,7 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
                 arenas.clear();
                 final var collection = mongo.collection("arenas");
                 for (final Document doc : collection.find()) {
-                    final String json = doc.toJson();
-                    final ArenaData arenaData = JsonUtil.getObjectMapper().readValue(json, com.meteordevelopments.duels.data.ArenaData.class);
+                    final ArenaData arenaData = JsonUtil.getObjectMapper().convertValue(doc, ArenaData.class);
                     if (arenaData != null) {
                         if (!StringUtil.isAlphanumeric(arenaData.getName())) {
                             DuelsPlugin.sendMessage(String.format(ERROR_NOT_ALPHANUMERIC, arenaData.getName()));
@@ -120,8 +119,8 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
                 try {
                     for (final ArenaImpl arena : arenas) {
                         final ArenaData data = new ArenaData(arena);
-                        final String json = JsonUtil.getObjectWriter().writeValueAsString(data);
-                        final Document doc = Document.parse(json);
+                        final java.util.Map<String, Object> bson = JsonUtil.getObjectMapper().convertValue(data, java.util.Map.class);
+                        final Document doc = new Document(bson);
                         doc.put("_id", data.getName());
                         collection.replaceOne(
                             new Document("_id", data.getName()),
@@ -177,8 +176,7 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
                 if (gui != null) { gui.calculatePages(); }
                 return;
             }
-            final String json = doc.toJson();
-            final ArenaData data = JsonUtil.getObjectMapper().readValue(json, ArenaData.class);
+            final ArenaData data = JsonUtil.getObjectMapper().convertValue(doc, ArenaData.class);
             if (data == null) { return; }
             final ArenaImpl arena = data.toArena(plugin);
             // Replace existing
