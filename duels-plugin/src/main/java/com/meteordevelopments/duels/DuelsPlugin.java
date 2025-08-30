@@ -284,10 +284,15 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     }
 
     public static void sendMessage(String message) {
-        if (message != null && message.contains("§")) {
-            Bukkit.getConsoleSender().sendMessage(getPrefix() + message);
+        final String prefix = getPrefix();
+        if (message == null || message.isEmpty()) {
+            Bukkit.getConsoleSender().sendMessage(prefix);
+            return;
+        }
+        if (message.indexOf('§') >= 0) {
+            Bukkit.getConsoleSender().sendMessage(prefix + message);
         } else {
-            Bukkit.getConsoleSender().sendMessage(getPrefix() + CC.translateConsole(message));
+            Bukkit.getConsoleSender().sendMessage(prefix + CC.translateConsole(message));
         }
     }
 
