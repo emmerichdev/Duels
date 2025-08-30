@@ -1,7 +1,6 @@
 package com.meteordevelopments.duels.betting;
 
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.gui.betting.BettingGui;
 import com.meteordevelopments.duels.hook.hooks.VaultHook;
 import com.meteordevelopments.duels.setting.Settings;

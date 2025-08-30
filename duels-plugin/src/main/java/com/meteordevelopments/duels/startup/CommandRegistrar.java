@@ -19,16 +19,8 @@ public class CommandRegistrar {
     private final DuelsPlugin plugin;
     private final Map<String, AbstractCommand<DuelsPlugin>> commands = new HashMap<>();
     private final List<QueuedSubCommand> queuedSubCommands = new ArrayList<>();
-    
-    private static class QueuedSubCommand {
-        final String commandName;
-        final SubCommand subCommand;
-        
-        QueuedSubCommand(String commandName, SubCommand subCommand) {
-            this.commandName = commandName;
-            this.subCommand = subCommand;
-        }
-    }
+
+    private record QueuedSubCommand(String commandName, SubCommand subCommand) {}
     
     public CommandRegistrar(DuelsPlugin plugin) {
         this.plugin = plugin;

@@ -4,8 +4,6 @@ import com.google.common.collect.Lists;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
 import com.meteordevelopments.duels.betting.BettingManager;
-import com.meteordevelopments.duels.config.Config;
-import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.data.UserManagerImpl;
 import com.meteordevelopments.duels.duel.DuelManager;
 import com.meteordevelopments.duels.extension.ExtensionClassLoader;

@@ -4,7 +4,6 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
 import com.meteordevelopments.duels.util.Log;
-import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.compat.Identifiers;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

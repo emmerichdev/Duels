@@ -1,7 +1,6 @@
 package com.meteordevelopments.duels.util.gui;
 
 import com.meteordevelopments.duels.util.CC;
-import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.inventory.InventoryBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

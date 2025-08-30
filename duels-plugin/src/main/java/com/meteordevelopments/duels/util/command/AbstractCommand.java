@@ -3,7 +3,6 @@ package com.meteordevelopments.duels.util.command;
 import com.google.common.collect.Lists;
 import com.meteordevelopments.duels.api.command.SubCommand;
 import com.meteordevelopments.duels.util.CC;
-import com.meteordevelopments.duels.util.StringUtil;
 import lombok.Getter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
