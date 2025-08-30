@@ -2,8 +2,6 @@ package com.meteordevelopments.duels.startup;
 
 import com.google.common.collect.Lists;
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.util.Loadable;
-import com.meteordevelopments.duels.util.Reloadable;
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
 import com.meteordevelopments.duels.betting.BettingManager;
 import com.meteordevelopments.duels.config.Config;
@@ -27,6 +25,7 @@ import com.meteordevelopments.duels.setting.SettingsManager;
 import com.meteordevelopments.duels.spectate.SpectateManagerImpl;
 import com.meteordevelopments.duels.teleport.Teleport;
 import com.meteordevelopments.duels.util.CC;
+import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.util.gui.GuiListener;
 import com.meteordevelopments.duels.validator.ValidatorManager;
 import org.bukkit.event.HandlerList;
@@ -36,7 +35,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
+
 
 public class LoadableManager {
     
@@ -202,7 +201,7 @@ public class LoadableManager {
         return true;
     }
 
-    public boolean unloadAll() {
+    public void unloadAll() {
         for (final Loadable loadable : Lists.reverse(loadables)) {
             assert loadable != null;
             final String name = loadable.getClass().getSimpleName();
@@ -218,24 +217,8 @@ public class LoadableManager {
                 plugin.getLogManager().debug(name + " has been unloaded. (took " + (System.currentTimeMillis() - now) + "ms)");
             } catch (Exception ex) {
                 DuelsPlugin.sendMessage("&c&lThere was an error while unloading " + name + "! If you believe this is an issue from the plugin, please contact the developer.");
-                return false;
+                // Log the error but continue with shutdown - don't halt the process
             }
-        }
-        return true;
-    }
-
-    public boolean reload(final Loadable loadable) {
-        boolean unloaded = false;
-        try {
-            loadable.handleUnload();
-            unloaded = true;
-            loadable.handleLoad();
-            return true;
-        } catch (Exception ex) {
-            DuelsPlugin.sendMessage("&c&lThere was an error while " + (unloaded ? "loading " : "unloading ")
-                    + loadable.getClass().getSimpleName()
-                    + "! If you believe this is an issue from the plugin, please contact the developer.");
-            return false;
         }
     }
 
@@ -244,13 +227,6 @@ public class LoadableManager {
                 .filter(loadable -> loadable.getClass().getSimpleName().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(null);
-    }
-
-    public List<String> getReloadableNames() {
-        return loadables.stream()
-                .filter(loadable -> loadable instanceof Reloadable)
-                .map(loadable -> loadable.getClass().getSimpleName())
-                .collect(Collectors.toList());
     }
 
     public void cleanupExtensionListeners() {

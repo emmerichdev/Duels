@@ -1,7 +1,7 @@
 package com.meteordevelopments.duels.util.gui;
 
-import lombok.Getter;
 import com.meteordevelopments.duels.util.inventory.Slots;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;

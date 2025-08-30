@@ -1,7 +1,7 @@
 package com.meteordevelopments.duels.queue;
 
-import lombok.Getter;
 import com.meteordevelopments.duels.setting.CachedInfo;
+import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

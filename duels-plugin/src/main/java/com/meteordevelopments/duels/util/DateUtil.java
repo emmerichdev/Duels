@@ -24,35 +24,35 @@ public final class DateUtil {
             return "updating...";
         }
 
-        TimeCalculator.TimeComponents time = new TimeCalculator.TimeComponents(seconds);
+        TimeComponents time = calculateTimeComponents(seconds);
         StringBuilder sb = new StringBuilder();
 
-        if (time.years > 0) {
-            sb.append(time.years).append("yr");
+        if (time.years() > 0) {
+            sb.append(time.years()).append("yr");
         }
 
-        if (time.months > 0) {
-            sb.append(time.months).append("mo");
+        if (time.months() > 0) {
+            sb.append(time.months()).append("mo");
         }
 
-        if (time.weeks > 0) {
-            sb.append(time.weeks).append("w");
+        if (time.weeks() > 0) {
+            sb.append(time.weeks()).append("w");
         }
 
-        if (time.days > 0) {
-            sb.append(time.days).append("d");
+        if (time.days() > 0) {
+            sb.append(time.days()).append("d");
         }
 
-        if (time.hours > 0) {
-            sb.append(time.hours).append("h");
+        if (time.hours() > 0) {
+            sb.append(time.hours()).append("h");
         }
 
-        if (time.minutes > 0) {
-            sb.append(time.minutes).append("m");
+        if (time.minutes() > 0) {
+            sb.append(time.minutes()).append("m");
         }
 
-        if (time.seconds > 0) {
-            sb.append(time.seconds).append("s");
+        if (time.seconds() > 0) {
+            sb.append(time.seconds()).append("s");
         }
 
         return sb.toString();
@@ -63,19 +63,57 @@ public final class DateUtil {
             return "0 second";
         }
 
-        long totalSeconds = TimeCalculator.millisecondsToSeconds(ms);
-        TimeCalculator.TimeComponents time = new TimeCalculator.TimeComponents(totalSeconds);
-        StringBuilder builder = new StringBuilder();
+        long totalSeconds = ms / 1000;
+        TimeComponents time = calculateTimeComponents(totalSeconds);
 
+        StringBuilder builder = new StringBuilder();
         boolean hasContent = false;
-        hasContent |= TimeCalculator.appendTimeUnit(builder, hasContent, time.years, "year");
-        hasContent |= TimeCalculator.appendTimeUnit(builder, hasContent, time.months, "month");
-        hasContent |= TimeCalculator.appendTimeUnit(builder, hasContent, time.weeks, "week");
-        hasContent |= TimeCalculator.appendTimeUnit(builder, hasContent, time.days, "day");
-        hasContent |= TimeCalculator.appendTimeUnit(builder, hasContent, time.hours, "hour");
-        hasContent |= TimeCalculator.appendTimeUnit(builder, hasContent, time.minutes, "minute");
-        TimeCalculator.appendTimeUnit(builder, hasContent, time.seconds, "second");
+        
+        hasContent = appendTimeUnit(builder, hasContent, time.years(), "year");
+        hasContent = appendTimeUnit(builder, hasContent, time.months(), "month");
+        hasContent = appendTimeUnit(builder, hasContent, time.weeks(), "week");
+        hasContent = appendTimeUnit(builder, hasContent, time.days(), "day");
+        hasContent = appendTimeUnit(builder, hasContent, time.hours(), "hour");
+        hasContent = appendTimeUnit(builder, hasContent, time.minutes(), "minute");
+        appendTimeUnit(builder, hasContent, time.seconds(), "second");
 
         return builder.toString();
     }
+    
+    private static boolean appendTimeUnit(StringBuilder builder, boolean hasContent, long value, String unit) {
+        if (value > 0) {
+            if (hasContent) {
+                builder.append(", ");
+            }
+            builder.append(value).append(" ").append(unit);
+            if (value > 1) {
+                builder.append("s");
+            }
+            return true;
+        }
+        return hasContent;
+    }
+    
+    private static TimeComponents calculateTimeComponents(long totalSeconds) {
+        long years = totalSeconds / 31556952;
+        long remaining = totalSeconds - (years * 31556952);
+        
+        long months = remaining / 2592000;
+        remaining -= months * 2592000;
+        
+        long weeks = remaining / 604800;
+        remaining -= weeks * 604800;
+        
+        long days = remaining / 86400;
+        remaining -= days * 86400;
+        
+        long hours = remaining / 3600;
+        remaining -= hours * 3600;
+        
+        long minutes = remaining / 60;
+        long seconds = remaining - (minutes * 60);
+        
+        return new TimeComponents(years, months, weeks, days, hours, minutes, seconds);
+    }
+    
 }

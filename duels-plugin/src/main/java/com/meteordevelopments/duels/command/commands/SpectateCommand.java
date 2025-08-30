@@ -4,15 +4,13 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.api.spectate.SpectateManager.Result;
 import com.meteordevelopments.duels.arena.ArenaImpl;
-import com.meteordevelopments.duels.match.DuelMatch;
 import com.meteordevelopments.duels.command.BaseCommand;
+import com.meteordevelopments.duels.match.DuelMatch;
 import com.meteordevelopments.duels.spectate.SpectatorImpl;
 import com.meteordevelopments.duels.util.inventory.InventoryUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.Objects;
 
 public class SpectateCommand extends BaseCommand {
 

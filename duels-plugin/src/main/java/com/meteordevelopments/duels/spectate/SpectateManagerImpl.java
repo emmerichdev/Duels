@@ -12,10 +12,10 @@ import com.meteordevelopments.duels.api.spectate.SpectateManager;
 import com.meteordevelopments.duels.api.spectate.Spectator;
 import com.meteordevelopments.duels.arena.ArenaImpl;
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
-import com.meteordevelopments.duels.match.DuelMatch;
 import com.meteordevelopments.duels.config.Config;
 import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.hook.hooks.EssentialsHook;
+import com.meteordevelopments.duels.match.DuelMatch;
 import com.meteordevelopments.duels.player.PlayerInfo;
 import com.meteordevelopments.duels.player.PlayerInfoManager;
 import com.meteordevelopments.duels.teleport.Teleport;
@@ -23,7 +23,6 @@ import com.meteordevelopments.duels.util.BlockUtil;
 import com.meteordevelopments.duels.util.EventUtil;
 import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.util.PlayerUtil;
-import com.meteordevelopments.duels.util.compat.CompatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -134,11 +133,7 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
                     .stream()
                     .filter(arenaPlayer -> arenaPlayer.isOnline() && arenaPlayer.canSee(player))
                     .forEach(arenaPlayer -> {
-                        if (CompatUtil.hasHidePlayer()) {
-                            arenaPlayer.hidePlayer(plugin, player);
-                        } else {
-                            arenaPlayer.hidePlayer(player);
-                        }
+                        arenaPlayer.hidePlayer(plugin, player);
                     });
         }
 
@@ -206,11 +201,7 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
                     .stream()
                     .filter(Player::isOnline)
                     .forEach(arenaPlayer -> {
-                        if (CompatUtil.hasHidePlayer()) {
-                            arenaPlayer.showPlayer(plugin, player);
-                        } else {
-                            arenaPlayer.showPlayer(player);
-                        }
+                        arenaPlayer.showPlayer(plugin, player);
                     });
         }
 
@@ -348,7 +339,7 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
         // Prevents spectators (in adventure mode) blocking players from placing blocks.
         @EventHandler
         public void on(final BlockCanBuildEvent event) {
-            if (!CompatUtil.hasGetPlayer() || config.isSpecUseSpectatorGamemode()) {
+            if (config.isSpecUseSpectatorGamemode()) {
                 return;
             }
 

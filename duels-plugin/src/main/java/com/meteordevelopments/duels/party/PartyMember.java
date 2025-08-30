@@ -1,12 +1,11 @@
 package com.meteordevelopments.duels.party;
 
-import java.util.Objects;
-import java.util.UUID;
-
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import lombok.Getter;
+import java.util.Objects;
+import java.util.UUID;
 
 @Getter
 public class PartyMember {

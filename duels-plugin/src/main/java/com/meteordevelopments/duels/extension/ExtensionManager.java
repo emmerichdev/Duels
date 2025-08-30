@@ -36,7 +36,9 @@ public class ExtensionManager implements Loadable {
         this.folder = new File(plugin.getDataFolder(), "extensions");
 
         if (!folder.exists()) {
-            folder.mkdir();
+            if (!folder.mkdir()) {
+                Log.error(this, "Failed to create extensions directory: " + folder.getAbsolutePath());
+            }
         }
     }
 
@@ -67,29 +69,22 @@ public class ExtensionManager implements Loadable {
                     continue;
                 }
 
-                final ExtensionClassLoader classLoader = new ExtensionClassLoader(file, info, DuelsExtension.class.getClassLoader());
-                final DuelsExtension extension = classLoader.getExtension();
+                try (final ExtensionClassLoader classLoader = new ExtensionClassLoader(file, info, DuelsExtension.class.getClassLoader())) {
+                    final DuelsExtension extension = classLoader.getExtension();
 
-                if (extension == null) {
-                    Log.error(this, "Could not load extension " + file.getName() + ": Failed to initiate main class");
-                    continue;
+                    if (extension == null) {
+                        Log.error(this, "Could not load extension " + file.getName() + ": Failed to initiate main class");
+                        continue;
+                    }
+
+                    INIT_EXTENSION.invoke(extension, plugin, info.getName(), folder, file);
+                    extension.setEnabled(true);
+                    Log.info(this, "Extension '" + extension.getName() + " v" + info.getVersion() + "' is now enabled.");
+                    extensions.put(extension.getName(), extension);
+                    this.info.put(extension, info);
                 }
-
-                final String requiredVersion = extension.getRequiredVersion();
-
-                if (requiredVersion != null && NumberUtil.isLower(plugin.getVersion(), requiredVersion)) {
-                    Log.error(this, "Could not load extension " + file.getName() + ": This extension requires Duels v" + requiredVersion + " or higher!");
-                    continue;
-                }
-
-                INIT_EXTENSION.invoke(extension, plugin, info.getName(), folder, file);
-                extension.setEnabled(true);
-                Log.info(this, "Extension '" + extension.getName() + " v" + info.getVersion() + "' is now enabled.");
-                extensions.put(extension.getName(), extension);
-                this.info.put(extension, info);
             } catch (Throwable thrown) {
                 Log.error(this, "Could not enable extension " + file.getName() + "!", thrown);
-                thrown.printStackTrace();
             }
         }
     }
@@ -112,13 +107,5 @@ public class ExtensionManager implements Loadable {
         });
         extensions.clear();
         info.clear();
-    }
-
-    public DuelsExtension getExtension(final String name) {
-        return extensions.get(name);
-    }
-
-    public ExtensionInfo getInfo(final DuelsExtension extension) {
-        return info.get(extension);
     }
 }

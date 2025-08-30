@@ -2,11 +2,11 @@ package com.meteordevelopments.duels.config;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import lombok.Getter;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.config.converters.ConfigConverter9_10;
 import com.meteordevelopments.duels.util.EnumUtil;
 import com.meteordevelopments.duels.util.config.AbstractConfiguration;
+import lombok.Getter;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -22,8 +22,6 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
     private final Map<String, MessageSound> sounds = new HashMap<>();
     @Getter
     private int version;
-    @Getter
-    private boolean checkForUpdates;
     @Getter
     private boolean ctpPreventDuel;
     @Getter
@@ -243,8 +241,6 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
     private String fireworkType;
     @Getter
     private boolean clearItemsAfterMatch;
-    @Getter
-    private boolean stayUpToDate;
     @Getter
     private boolean disableEnderpearlInEndgame;
     @Getter

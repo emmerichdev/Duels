@@ -7,11 +7,7 @@ import com.meteordevelopments.duels.util.Log;
 import com.meteordevelopments.duels.util.json.JsonUtil;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.MongoCursor;
+import com.mongodb.client.*;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 

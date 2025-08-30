@@ -8,10 +8,9 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 
 import org.bukkit.entity.Player;
-import org.bukkit.Bukkit;
 
 import java.util.Collection;
-import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WorldGuard7Handler implements WorldGuardHandler {
 
@@ -58,7 +57,7 @@ public class WorldGuard7Handler implements WorldGuardHandler {
             return null;
         } catch (Exception e) {
             // Log error with proper context instead of printStackTrace
-            Bukkit.getLogger().log(Level.WARNING, "Failed to check WorldGuard regions for player " + player.getName(), e);
+            Logger.getLogger(WorldGuard7Handler.class.getName()).warning("Failed to check WorldGuard regions for player " + player.getName() + ": " + e.getMessage());
             return null;
         }
     }

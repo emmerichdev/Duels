@@ -260,7 +260,7 @@ public class RankManager implements Loadable {
         }
         
         // Execute commands with delay
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        plugin.doSyncAfter(() -> {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
                 for (String command : rank.getPromotionCommands()) {
@@ -282,7 +282,7 @@ public class RankManager implements Loadable {
         }
         
         // Execute commands with delay
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        plugin.doSyncAfter(() -> {
             for (String command : rank.getDemotionCommands()) {
                 executeCommand(player, command);
             }
@@ -307,7 +307,7 @@ public class RankManager implements Loadable {
             // Mark as claimed atomically
             if (claimedRewards.add(currentRank.getId())) {
                 // Execute one-time commands
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                plugin.doSyncAfter(() -> {
                     Player player = Bukkit.getPlayer(uuid);
                     if (player != null) {
                         for (String command : currentRank.getOneTimeCommands()) {
@@ -333,10 +333,5 @@ public class RankManager implements Loadable {
         } catch (Exception e) {
             Log.error("Failed to execute command: " + command, e);
         }
-    }
-
-    public void reload() {
-        loadRanks();
-        Log.info("Rank configuration reloaded");
     }
 }

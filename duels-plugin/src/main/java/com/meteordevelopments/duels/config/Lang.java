@@ -3,7 +3,6 @@ package com.meteordevelopments.duels.config;
 import com.google.common.collect.Sets;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.util.Log;
-import com.meteordevelopments.duels.util.Reloadable;
 import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.config.AbstractConfiguration;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -15,7 +14,7 @@ import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class Lang extends AbstractConfiguration<DuelsPlugin> implements Reloadable {
+public class Lang extends AbstractConfiguration<DuelsPlugin> {
 
     private final Config config;
     private final Map<String, String> messages = new HashMap<>();

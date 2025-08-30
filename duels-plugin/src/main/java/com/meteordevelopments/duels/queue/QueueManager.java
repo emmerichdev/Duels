@@ -1,7 +1,5 @@
 package com.meteordevelopments.duels.queue;
 
-import com.meteordevelopments.duels.hook.hooks.*;
-import lombok.Getter;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.api.event.queue.QueueCreateEvent;
 import com.meteordevelopments.duels.api.event.queue.QueueJoinEvent;
@@ -17,6 +15,8 @@ import com.meteordevelopments.duels.data.QueueData;
 import com.meteordevelopments.duels.data.UserData;
 import com.meteordevelopments.duels.data.UserManagerImpl;
 import com.meteordevelopments.duels.duel.DuelManager;
+import com.meteordevelopments.duels.hook.hooks.DeluxeCombatHook;
+import com.meteordevelopments.duels.hook.hooks.VaultHook;
 import com.meteordevelopments.duels.hook.hooks.worldguard.WorldGuardHook;
 import com.meteordevelopments.duels.kit.KitManagerImpl;
 import com.meteordevelopments.duels.setting.Settings;
@@ -29,6 +29,8 @@ import com.meteordevelopments.duels.util.gui.MultiPageGui;
 import com.meteordevelopments.duels.util.inventory.InventoryUtil;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
 import com.meteordevelopments.duels.util.json.JsonUtil;
+import lombok.Getter;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -41,9 +43,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
-import org.bson.Document;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 

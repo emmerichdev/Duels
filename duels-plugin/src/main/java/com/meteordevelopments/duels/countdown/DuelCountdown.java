@@ -1,12 +1,5 @@
 package com.meteordevelopments.duels.countdown;
 
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
-
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.arena.ArenaImpl;
 import com.meteordevelopments.duels.config.Config;
@@ -20,6 +13,13 @@ import com.meteordevelopments.duels.util.function.Pair;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
+
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DuelCountdown extends BukkitRunnable {
 

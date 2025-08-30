@@ -3,19 +3,6 @@ package com.meteordevelopments.duels.util.validator;
 import com.google.common.collect.ImmutableList;
 
 public final class ValidatorUtil {
-    
-    @SafeVarargs
-    public static <T> ImmutableList<Validator<T>> buildList(final Validator<T>... validators) {
-        final ImmutableList.Builder<Validator<T>> builder = ImmutableList.builder();
-
-        for (final Validator<T> validator : validators) {
-            if (validator.shouldValidate()) {
-                builder.add(validator);
-            }
-        }
-
-        return builder.build();
-    }
 
     @SafeVarargs
     public static <T1, T2> ImmutableList<BiValidator<T1, T2>> buildList(final BiValidator<T1, T2>... biValidators) {

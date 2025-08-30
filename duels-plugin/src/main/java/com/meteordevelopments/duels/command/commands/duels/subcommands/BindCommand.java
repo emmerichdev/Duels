@@ -4,7 +4,6 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.command.BaseCommand;
 import com.meteordevelopments.duels.gui.bind.BindGui;
 import com.meteordevelopments.duels.kit.KitImpl;
-import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.command.CommandUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

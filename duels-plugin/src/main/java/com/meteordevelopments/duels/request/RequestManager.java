@@ -6,18 +6,22 @@ import com.meteordevelopments.duels.config.Config;
 import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.setting.Settings;
 import com.meteordevelopments.duels.util.Loadable;
-import com.meteordevelopments.duels.util.TextBuilder;
 import com.meteordevelopments.duels.util.command.CommandUtil;
 import com.meteordevelopments.duels.util.command.SettingsDisplay;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent.Action;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class RequestManager implements Loadable, Listener {
 
@@ -71,7 +75,7 @@ public class RequestManager implements Loadable, Listener {
                     "owner", sender.getName(), "name", target.getName(), "kit", display.kit(), "own_inventory", display.ownInventory(), "arena", display.arena());
             lang.sendMessage(targetPartyLeader, "COMMAND.duel.party-request.send.receiver-party",
                     "name", sender.getName(), "kit", display.kit(), "own_inventory", display.ownInventory(), "arena", display.arena());
-            sendClickableMessage("COMMAND.duel.party-request.send.clickable-text.", sender, Collections.singleton(targetPartyLeader));
+            sendClickableMessage("COMMAND.duel.party-request.send.clickable-text.", sender, targetPartyLeader);
         } else {
             final int betAmount = settings.getBet();
             final String itemBetting = settings.isItemBetting() ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled");
@@ -79,20 +83,26 @@ public class RequestManager implements Loadable, Listener {
                     "name", target.getName(), "kit", display.kit(), "own_inventory", display.ownInventory(), "arena", display.arena(), "bet_amount", betAmount, "item_betting", itemBetting);
             lang.sendMessage(target, "COMMAND.duel.request.send.receiver",
                     "name", sender.getName(), "kit", display.kit(), "own_inventory", display.ownInventory(), "arena", display.arena(), "bet_amount", betAmount, "item_betting", itemBetting);
-            sendClickableMessage("COMMAND.duel.request.send.clickable-text.", sender, Collections.singleton(target));
+            sendClickableMessage("COMMAND.duel.request.send.clickable-text.", sender, target);
         }
     }
 
-    private void sendClickableMessage(final String path, final Player sender, final Collection<Player> targets) {
-        TextBuilder
-                .of(lang.getMessage(path + "info.text"), null, null, Action.SHOW_TEXT, lang.getMessage(path + "info.hover-text"))
-                .add(lang.getMessage(path + "accept.text"),
-                        ClickEvent.Action.RUN_COMMAND, "/duel accept " + sender.getName(),
-                        Action.SHOW_TEXT, lang.getMessage(path + "accept.hover-text"))
-                .add(lang.getMessage(path + "deny.text"),
-                        ClickEvent.Action.RUN_COMMAND, "/duel deny " + sender.getName(),
-                        Action.SHOW_TEXT, lang.getMessage(path + "deny.hover-text"))
-                .send(targets);
+    private void sendClickableMessage(final String path, final Player sender, final Player target) {
+        Component infoComponent = Component.text(lang.getMessage(path + "info.text"))
+                .hoverEvent(HoverEvent.showText(Component.text(lang.getMessage(path + "info.hover-text"))));
+        
+        Component acceptComponent = Component.text(lang.getMessage(path + "accept.text"))
+                .clickEvent(ClickEvent.suggestCommand("/duel accept " + sender.getName()))
+                .hoverEvent(HoverEvent.showText(Component.text(lang.getMessage(path + "accept.hover-text"))))
+                .color(NamedTextColor.GREEN);
+        
+        Component denyComponent = Component.text(lang.getMessage(path + "deny.text"))
+                .clickEvent(ClickEvent.suggestCommand("/duel deny " + sender.getName()))
+                .hoverEvent(HoverEvent.showText(Component.text(lang.getMessage(path + "deny.hover-text"))))
+                .color(NamedTextColor.RED);
+        
+        Component fullMessage = infoComponent.append(acceptComponent).append(denyComponent);
+        target.sendMessage(fullMessage);
     }
 
     public RequestImpl get(final Player sender, final Player target) {

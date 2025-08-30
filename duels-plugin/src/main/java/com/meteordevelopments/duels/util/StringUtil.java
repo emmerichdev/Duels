@@ -1,13 +1,13 @@
 package com.meteordevelopments.duels.util;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Location;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.StringUtils;
 
 public final class StringUtil {
 
@@ -76,6 +76,7 @@ public final class StringUtil {
         return ALPHANUMERIC.matcher(input.replace(" ", "")).matches();
     }
 
+    // Direct delegation to Apache Commons Lang - these are just thin wrappers
     public static String join(final Object[] array, final String separator, final int startIndex, final int endIndex) {
         return StringUtils.join(array, separator, startIndex, endIndex);
     }
@@ -89,6 +90,9 @@ public final class StringUtil {
     }
 
     public static boolean containsIgnoreCase(final String str, final String searchStr) {
-        return StringUtils.containsIgnoreCase(str, searchStr);
+        if (str == null || searchStr == null) {
+            return false;
+        }
+        return str.toLowerCase().contains(searchStr.toLowerCase());
     }
 }

@@ -1,9 +1,9 @@
 package com.meteordevelopments.duels.util.command;
 
 import com.google.common.collect.Lists;
-import lombok.Getter;
 import com.meteordevelopments.duels.api.command.SubCommand;
 import com.meteordevelopments.duels.util.StringUtil;
+import lombok.Getter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;

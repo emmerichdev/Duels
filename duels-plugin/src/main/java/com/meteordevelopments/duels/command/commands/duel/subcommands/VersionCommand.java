@@ -5,7 +5,7 @@ import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.command.BaseCommand;
 import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.TextBuilder;
-import net.md_5.bungee.api.chat.ClickEvent.Action;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -24,7 +24,7 @@ public class VersionCommand extends BaseCommand {
         
         final String website = info.getWebsite();
         if (website != null && !website.trim().isEmpty()) {
-            textBuilder.setClickEvent(Action.OPEN_URL, website);
+            textBuilder.setClickEvent(ClickEvent.Action.OPEN_URL, website);
         }
         
         textBuilder.send((Player) sender);

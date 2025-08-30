@@ -1,11 +1,6 @@
 package com.meteordevelopments.duels.validator;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.common.collect.ImmutableList;
-
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.party.Party;
 import com.meteordevelopments.duels.setting.Settings;
@@ -17,9 +12,12 @@ import com.meteordevelopments.duels.util.validator.ValidatorUtil;
 import com.meteordevelopments.duels.validator.validators.match.*;
 import com.meteordevelopments.duels.validator.validators.request.self.*;
 import com.meteordevelopments.duels.validator.validators.request.target.*;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 
-import lombok.Getter;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ValidatorManager implements Loadable {
 

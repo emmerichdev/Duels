@@ -8,6 +8,7 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.UnifiedJedis;
 import redis.clients.jedis.params.SetParams;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -59,8 +60,6 @@ public class RedisService {
         }
     }
 
-    public UnifiedJedis client() { return client; }
-
     public void publish(final String channel, final String message) {
         try {
             // Prefix with serverId to allow receivers to ignore self-originated events
@@ -84,8 +83,6 @@ public class RedisService {
             }
         });
     }
-
-    private String getEnvOrDefault(final String key, final String def) { return def; }
 
     public boolean tryAcquireLock(final String key, final int ttlSeconds, final String value) {
         try {

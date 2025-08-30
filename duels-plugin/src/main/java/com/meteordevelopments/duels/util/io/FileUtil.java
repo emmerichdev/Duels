@@ -11,7 +11,9 @@ public final class FileUtil {
     public static boolean checkNonEmpty(final File file, final boolean create) throws IOException {
         if (!file.exists()) {
             if (create) {
-                file.createNewFile();
+                if (!file.createNewFile()) {
+                    throw new IOException("Failed to create file: " + file.getAbsolutePath());
+                }
             }
             return false;
         }

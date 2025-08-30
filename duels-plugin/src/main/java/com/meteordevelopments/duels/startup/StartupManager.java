@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 public record StartupManager(DuelsPlugin plugin) {
 
-    private static final String SPIGOT_INSTALLATION_URL = "https://www.spigotmc.org/wiki/spigot-installation/";
+    private static final String PAPER_INSTALLATION_URL = "https://docs.papermc.io/paper/getting-started";
     private static final Logger LOGGER = Logger.getLogger("[Duels]");
 
     public boolean startup() {
@@ -106,9 +106,9 @@ public record StartupManager(DuelsPlugin plugin) {
             return true;
         } catch (ClassNotFoundException ex) {
             DuelsPlugin.sendMessage("&c&l================= *** DUELS LOAD FAILURE *** =================");
-            DuelsPlugin.sendMessage("&c&lDuels requires a Bukkit-compatible server (Spigot, Paper, etc.)!");
-            DuelsPlugin.sendMessage("&c&lFor Spigot installation, follow this guide: " + SPIGOT_INSTALLATION_URL);
-            DuelsPlugin.sendMessage("&c&lOther compatible servers include Paper, Purpur, and other Bukkit forks.");
+            DuelsPlugin.sendMessage("&c&lDuels requires a Paper-compatible server!");
+            DuelsPlugin.sendMessage("&c&lFor Paper installation, follow this guide: " + PAPER_INSTALLATION_URL);
+            DuelsPlugin.sendMessage("&c&lOther compatible servers include Purpur and other Paper forks.");
             DuelsPlugin.sendMessage("&c&l================= *** DUELS LOAD FAILURE *** =================");
             return false;
         }
