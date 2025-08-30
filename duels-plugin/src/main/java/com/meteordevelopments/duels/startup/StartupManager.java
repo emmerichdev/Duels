@@ -21,10 +21,6 @@ public record StartupManager(DuelsPlugin plugin) {
             return false;
         }
 
-        if (!loadLogManager()) {
-            return false;
-        }
-
         if (!checkBukkitCompatibility()) {
             return false;
         }
@@ -84,22 +80,6 @@ public record StartupManager(DuelsPlugin plugin) {
         }
 
         return true;
-    }
-
-    private boolean loadLogManager() {
-        long start = System.currentTimeMillis();
-
-        DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.startup.loading-log-manager"));
-        try {
-            plugin.initializeLogManager();
-            String timeString = CC.getTimeDifferenceAndColor(start, System.currentTimeMillis());
-            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.startup.log-manager-success", "time", timeString)));
-            return true;
-        } catch (Exception ex) {
-            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.errors.log-manager-failed")));
-            LOGGER.log(Level.SEVERE, "Could not load LogManager. Please contact the developer.", ex);
-            return false;
-        }
     }
 
     private boolean checkBukkitCompatibility() {

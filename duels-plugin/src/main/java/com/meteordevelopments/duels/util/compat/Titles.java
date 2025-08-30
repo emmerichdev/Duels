@@ -1,7 +1,6 @@
 package com.meteordevelopments.duels.util.compat;
 
 import com.meteordevelopments.duels.util.CC;
-import com.meteordevelopments.duels.util.StringUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;

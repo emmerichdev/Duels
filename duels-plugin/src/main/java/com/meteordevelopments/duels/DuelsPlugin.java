@@ -102,18 +102,23 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         Log.addSource(this);
         JsonUtil.registerDeserializer(ItemData.class, ItemDataDeserializer.class);
         
-        // Initialize managers
-        // Managers
-        StartupManager startupManager = new StartupManager(this);
-        loadableManager = new LoadableManager(this);
-        commandRegistrar = new CommandRegistrar(this);
-        listenerManager = new ListenerManager(this);
-        
         // Initialize basic configurations first (Config and Lang are needed for startup messages)
         if (!initializeBasicConfigurations()) {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        
+        // Initialize LogManager early - MUST be done before LoadableManager and other startup components
+        if (!initializeLogManagerEarly()) {
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        
+        // Initialize managers (LogManager is now available for use)
+        StartupManager startupManager = new StartupManager(this);
+        loadableManager = new LoadableManager(this);
+        commandRegistrar = new CommandRegistrar(this);
+        listenerManager = new ListenerManager(this);
         
         // Handle startup
         if (!startupManager.startup()) {
