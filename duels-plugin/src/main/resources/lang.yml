@@ -39,7 +39,7 @@ SYSTEM:
     log-manager-success: '&dSuccessfully loaded Log Manager in &f[%time%&f]'
   database:
     db-config-failed: '&cFailed to load DB.yml. Disabling plugin.'
-    mongodb-connect-failed: '&cFailed to connect to MongoDB. Disabling plugin.'
+    mongodb-connect-failed: '&cFailed to connect to MongoDB: %error%. Disabling plugin.'
     mongodb-connected: '&aConnected to MongoDB database ''&f%database%&a''.'
     redis-connect-failed: '&eRedis connection failed, continuing without cross-server sync cache.'
     redis-connected: '&aConnected to Redis at &f%host%:%port% &a(db=%database%)'
@@ -49,12 +49,7 @@ SYSTEM:
     initialization-failed: '&cFailed to initialize %name%: %error%'
     hook-manager-failed: '&cFailed to initialize hook manager: %error%'
     log-manager-failed: '&c&lCould not load LogManager. Please contact the developer.'
-  compatibility:
-    paper-required-header: '&c&l================= *** DUELS LOAD FAILURE *** ================='
-    paper-required-message: '&c&lDuels requires a Paper-compatible server!'
-    paper-installation-guide: '&c&lFor Paper installation, follow this guide: %url%'
-    paper-compatible-servers: '&c&lOther compatible servers include Purpur and other Paper forks.'
-    paper-required-footer: '&c&l================= *** DUELS LOAD FAILURE *** ================='
+
   hooks:
     successful: '&aSuccessfully hooked into ''%name%''!'
     vault-not-found: '&bVault was not found! Money betting feature will be automatically disabled.'

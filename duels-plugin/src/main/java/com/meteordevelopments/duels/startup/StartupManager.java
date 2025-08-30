@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 public record StartupManager(DuelsPlugin plugin) {
 
-    private static final String PAPER_INSTALLATION_URL = "https://docs.papermc.io/paper/getting-started";
     private static final Logger LOGGER = Logger.getLogger("[Duels]");
 
     public boolean startup() {
@@ -21,13 +20,9 @@ public record StartupManager(DuelsPlugin plugin) {
             return false;
         }
 
-        if (!checkBukkitCompatibility()) {
-            return false;
-        }
-
         long end = System.currentTimeMillis();
         String timeString = CC.getTimeDifferenceAndColor(start, end);
-        DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.startup.startup-complete", "time", timeString)));
+        DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.startup.startup-complete", "time", timeString));
 
         return true;
     }
@@ -40,7 +35,7 @@ public record StartupManager(DuelsPlugin plugin) {
             plugin.setDatabaseConfig(databaseConfig);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Failed to load database configuration (DB.yml)", ex);
-            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.database.db-config-failed")));
+            DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.database.db-config-failed"));
             plugin.setDatabaseConfig(null); // Clear any stale config
             return false;
         }
@@ -52,7 +47,8 @@ public record StartupManager(DuelsPlugin plugin) {
             plugin.setMongoService(mongoService);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Failed to connect to MongoDB", ex);
-            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.database.mongodb-connect-failed")));
+            String errorMessage = ex.getMessage() != null ? ex.getMessage() : "Unknown error";
+            DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.database.mongodb-connect-failed", "error", errorMessage));
             // Clean up any partially initialized MongoDB resources
             try {
                 mongoService.close();
@@ -68,7 +64,7 @@ public record StartupManager(DuelsPlugin plugin) {
             redisService.connect();
             plugin.setRedisService(redisService);
         } catch (Exception ex) {
-            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.database.redis-connect-failed")));
+            DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.database.redis-connect-failed"));
             LOGGER.log(Level.WARNING, "Redis connection failed; continuing without Redis.", ex);
             // Clean up any partially initialized Redis resources
             try {
@@ -82,17 +78,5 @@ public record StartupManager(DuelsPlugin plugin) {
         return true;
     }
 
-    private boolean checkBukkitCompatibility() {
-        try {
-            Class.forName("org.bukkit.Bukkit");
-            return true;
-        } catch (ClassNotFoundException ex) {
-            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.compatibility.paper-required-header")));
-            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.compatibility.paper-required-message")));
-            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.compatibility.paper-installation-guide", "url", PAPER_INSTALLATION_URL)));
-            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.compatibility.paper-compatible-servers")));
-            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.compatibility.paper-required-footer")));
-            return false;
-        }
-    }
+
 }

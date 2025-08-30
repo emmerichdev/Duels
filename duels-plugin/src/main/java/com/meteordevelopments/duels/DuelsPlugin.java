@@ -306,6 +306,16 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         Log.addSource(logManager);
         logManager.debug("onEnable start -> " + System.currentTimeMillis() + "\n");
     }
+
+    private boolean initializeLogManagerEarly() {
+        try {
+            initializeLogManager();
+            return true;
+        } catch (Exception ex) {
+            getLogger().severe("Failed to initialize LogManager: " + ex.getMessage());
+            return false;
+        }
+    }
     
     private boolean initializeBasicConfigurations() {
         try {
