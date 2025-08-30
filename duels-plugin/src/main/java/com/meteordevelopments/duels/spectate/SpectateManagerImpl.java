@@ -31,6 +31,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockCanBuildEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -132,9 +133,7 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
             match.getAllPlayers()
                     .stream()
                     .filter(arenaPlayer -> arenaPlayer.isOnline() && arenaPlayer.canSee(player))
-                    .forEach(arenaPlayer -> {
-                        arenaPlayer.hidePlayer(plugin, player);
-                    });
+                    .forEach(arenaPlayer -> arenaPlayer.hidePlayer(plugin, player));
         }
 
 
@@ -200,9 +199,7 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
             match.getAllPlayers()
                     .stream()
                     .filter(Player::isOnline)
-                    .forEach(arenaPlayer -> {
-                        arenaPlayer.showPlayer(plugin, player);
-                    });
+                    .forEach(arenaPlayer -> arenaPlayer.showPlayer(plugin, player));
         }
 
         final SpectateEndEvent event = new SpectateEndEvent(player, spectator);
@@ -308,8 +305,12 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
         }
 
         @EventHandler(ignoreCancelled = true)
-        public void on(final PlayerPickupItemEvent event) {
-            if (!isSpectating(event.getPlayer())) {
+        public void on(final EntityPickupItemEvent event) {
+            if (!(event.getEntity() instanceof Player player)) {
+                return;
+            }
+            
+            if (!isSpectating(player)) {
                 return;
             }
 
