@@ -284,7 +284,11 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     }
 
     public static void sendMessage(String message) {
-        Bukkit.getConsoleSender().sendMessage(getPrefix() + CC.translateConsole(message));
+        if (message != null && message.contains("§")) {
+            Bukkit.getConsoleSender().sendMessage(getPrefix() + message);
+        } else {
+            Bukkit.getConsoleSender().sendMessage(getPrefix() + CC.translateConsole(message));
+        }
     }
 
     public void initializeLogManager() throws IOException {
