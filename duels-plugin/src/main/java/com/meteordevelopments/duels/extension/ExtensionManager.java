@@ -27,6 +27,7 @@ public class ExtensionManager implements Loadable {
 
     private final Map<String, DuelsExtension> extensions = new HashMap<>();
     private final Map<DuelsExtension, ExtensionInfo> info = new HashMap<>();
+    private final Map<DuelsExtension, ExtensionClassLoader> classLoaders = new HashMap<>();
 
     private final DuelsPlugin plugin;
     private final File folder;
@@ -36,9 +37,7 @@ public class ExtensionManager implements Loadable {
         this.folder = new File(plugin.getDataFolder(), "extensions");
 
         if (!folder.exists()) {
-            if (!folder.mkdir()) {
-                Log.error(this, "Failed to create extensions directory: " + folder.getAbsolutePath());
-            }
+            folder.mkdir();
         }
     }
 
@@ -69,22 +68,36 @@ public class ExtensionManager implements Loadable {
                     continue;
                 }
 
-                try (final ExtensionClassLoader classLoader = new ExtensionClassLoader(file, info, DuelsExtension.class.getClassLoader())) {
-                    final DuelsExtension extension = classLoader.getExtension();
+                final ExtensionClassLoader classLoader = new ExtensionClassLoader(file, info, DuelsExtension.class.getClassLoader());
+                final DuelsExtension extension = classLoader.getExtension();
 
-                    if (extension == null) {
-                        Log.error(this, "Could not load extension " + file.getName() + ": Failed to initiate main class");
-                        continue;
-                    }
-
-                    INIT_EXTENSION.invoke(extension, plugin, info.getName(), folder, file);
-                    extension.setEnabled(true);
-                    Log.info(this, "Extension '" + extension.getName() + " v" + info.getVersion() + "' is now enabled.");
-                    extensions.put(extension.getName(), extension);
-                    this.info.put(extension, info);
+                if (extension == null) {
+                    Log.error(this, "Could not load extension " + file.getName() + ": Failed to initiate main class");
+                    try {
+                        classLoader.close();
+                    } catch (Exception ignored) {}
+                    continue;
                 }
+
+                final String requiredVersion = extension.getRequiredVersion();
+
+                if (requiredVersion != null && NumberUtil.isLower(plugin.getVersion(), requiredVersion)) {
+                    Log.error(this, "Could not load extension " + file.getName() + ": This extension requires Duels v" + requiredVersion + " or higher!");
+                    try {
+                        classLoader.close();
+                    } catch (Exception ignored) {}
+                    continue;
+                }
+
+                INIT_EXTENSION.invoke(extension, plugin, info.getName(), folder, file);
+                extension.setEnabled(true);
+                Log.info(this, "Extension '" + extension.getName() + " v" + info.getVersion() + "' is now enabled.");
+                extensions.put(extension.getName(), extension);
+                this.info.put(extension, info);
+                classLoaders.put(extension, classLoader);
             } catch (Throwable thrown) {
                 Log.error(this, "Could not enable extension " + file.getName() + "!", thrown);
+                thrown.printStackTrace();
             }
         }
     }
@@ -94,10 +107,10 @@ public class ExtensionManager implements Loadable {
         extensions.values().forEach(extension -> {
             try {
                 extension.setEnabled(false);
-                final ClassLoader classLoader = extension.getClass().getClassLoader();
+                final ExtensionClassLoader classLoader = classLoaders.get(extension);
 
-                if (classLoader instanceof ExtensionClassLoader) {
-                    ((ExtensionClassLoader) classLoader).close();
+                if (classLoader != null) {
+                    classLoader.close();
                 }
 
                 Log.info(this, "Extension '" + extension.getName() + " v" + info.get(extension).getVersion() + "' is now disabled.");
@@ -107,5 +120,14 @@ public class ExtensionManager implements Loadable {
         });
         extensions.clear();
         info.clear();
+        classLoaders.clear();
+    }
+
+    public DuelsExtension getExtension(final String name) {
+        return extensions.get(name);
+    }
+
+    public ExtensionInfo getInfo(final DuelsExtension extension) {
+        return info.get(extension);
     }
 }

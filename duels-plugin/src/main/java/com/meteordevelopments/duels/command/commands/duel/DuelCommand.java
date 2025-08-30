@@ -4,7 +4,7 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.command.BaseCommand;
 import com.meteordevelopments.duels.command.commands.duel.subcommands.*;
-import com.meteordevelopments.duels.command.commands.party.subcommands.AcceptCommand;
+import com.meteordevelopments.duels.command.commands.duel.subcommands.AcceptCommand;
 import com.meteordevelopments.duels.hook.hooks.VaultHook;
 import com.meteordevelopments.duels.hook.hooks.worldguard.WorldGuardHook;
 import com.meteordevelopments.duels.kit.KitImpl;

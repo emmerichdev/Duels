@@ -1,8 +1,8 @@
 package com.meteordevelopments.duels.extension;
 
 import com.google.common.io.ByteStreams;
-import com.meteordevelopments.duels.api.extension.DuelsExtension;
 import lombok.Getter;
+import com.meteordevelopments.duels.api.extension.DuelsExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class ExtensionClassLoader extends URLClassLoader {
             throw new RuntimeException(mainClass.getName() + " does not extend DuelsExtension");
         }
 
-        this.extension = mainClass.asSubclass(DuelsExtension.class).getDeclaredConstructor().newInstance();
+        this.extension = mainClass.asSubclass(DuelsExtension.class).newInstance();
     }
 
     protected Class<?> findClass(final String name) throws ClassNotFoundException {
@@ -63,7 +63,7 @@ public class ExtensionClassLoader extends URLClassLoader {
                 if (dot != -1) {
                     final String pkgName = name.substring(0, dot);
 
-                    if (getDefinedPackage(pkgName) == null) {
+                    if (getPackage(pkgName) == null) {
                         try {
                             if (manifest != null) {
                                 definePackage(pkgName, manifest, url);
@@ -71,7 +71,7 @@ public class ExtensionClassLoader extends URLClassLoader {
                                 definePackage(pkgName, null, null, null, null, null, null, null);
                             }
                         } catch (IllegalArgumentException ex) {
-                            if (getDefinedPackage(pkgName) == null) {
+                            if (getPackage(pkgName) == null) {
                                 throw new IllegalStateException("Cannot find package " + pkgName);
                             }
                         }

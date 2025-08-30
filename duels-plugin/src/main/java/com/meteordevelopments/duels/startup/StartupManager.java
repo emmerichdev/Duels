@@ -30,7 +30,7 @@ public record StartupManager(DuelsPlugin plugin) {
         }
 
         long end = System.currentTimeMillis();
-        DuelsPlugin.sendMessage("&2Successfully completed startup in " + CC.getTimeDifferenceAndColor(start, end) + "&a.");
+        DuelsPlugin.sendMessage("&2Successfully completed startup in " + CC.getTimeDifferenceAndColorConsole(start, end) + "&a.");
 
         return true;
     }
@@ -91,7 +91,7 @@ public record StartupManager(DuelsPlugin plugin) {
         DuelsPlugin.sendMessage("&eLoading log manager...");
         try {
             plugin.initializeLogManager();
-            DuelsPlugin.sendMessage("&dSuccessfully loaded Log Manager in &f[" + CC.getTimeDifferenceAndColor(start, System.currentTimeMillis()) + "&f]");
+            DuelsPlugin.sendMessage("&dSuccessfully loaded Log Manager in &f[" + CC.getTimeDifferenceAndColorConsole(start, System.currentTimeMillis()) + "&f]");
             return true;
         } catch (Exception ex) {
             DuelsPlugin.sendMessage("&c&lCould not load LogManager. Please contact the developer.");

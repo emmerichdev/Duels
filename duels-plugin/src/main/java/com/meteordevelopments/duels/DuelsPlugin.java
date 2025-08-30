@@ -276,11 +276,11 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     }
 
     public static String getPrefix() {
-        return CC.translate("&b&lDuels Optimised &7» ");
+        return CC.translateConsole("&b&lDuels Optimised &7» ");
     }
 
     public static void sendMessage(String message) {
-        Bukkit.getConsoleSender().sendMessage(getPrefix() + CC.translate(message));
+        Bukkit.getConsoleSender().sendMessage(getPrefix() + CC.translateConsole(message));
     }
 
     public void initializeLogManager() throws IOException {

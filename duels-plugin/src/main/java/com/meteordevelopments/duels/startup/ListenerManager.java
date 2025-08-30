@@ -34,7 +34,7 @@ public class ListenerManager {
         registerListener(new KitOptionsListener(plugin));
         registerListener(new LingerPotionListener(plugin));
         
-        DuelsPlugin.sendMessage("&dSuccessfully registered listeners in &f[" + CC.getTimeDifferenceAndColor(start, System.currentTimeMillis()) + "&f]");
+        DuelsPlugin.sendMessage("&dSuccessfully registered listeners in &f[" + CC.getTimeDifferenceAndColorConsole(start, System.currentTimeMillis()) + "&f]");
     }
 
     public void registerListener(Listener listener) {
@@ -49,7 +49,7 @@ public class ListenerManager {
         
         registerListener(listener);
         
-        DuelsPlugin.sendMessage("&dSuccessfully registered listeners after plugin startup in [" + CC.getTimeDifferenceAndColor(start, System.currentTimeMillis()) + "&f]");
+        DuelsPlugin.sendMessage("&dSuccessfully registered listeners after plugin startup in [" + CC.getTimeDifferenceAndColorConsole(start, System.currentTimeMillis()) + "&f]");
     }
 
     public void unregisterAllListeners() {

@@ -12,14 +12,23 @@ import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.command.AbstractCommand;
 import org.bukkit.command.CommandSender;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class CommandRegistrar {
     
     private final DuelsPlugin plugin;
     private final Map<String, AbstractCommand<DuelsPlugin>> commands = new HashMap<>();
+    private final List<QueuedSubCommand> queuedSubCommands = new ArrayList<>();
+    
+    private static class QueuedSubCommand {
+        final String commandName;
+        final SubCommand subCommand;
+        
+        QueuedSubCommand(String commandName, SubCommand subCommand) {
+            this.commandName = commandName;
+            this.subCommand = subCommand;
+        }
+    }
     
     public CommandRegistrar(DuelsPlugin plugin) {
         this.plugin = plugin;
@@ -36,7 +45,10 @@ public class CommandRegistrar {
         registerCommand(new DuelsCommand(plugin));
         registerCommand(new RankCommand(plugin));
         
-        DuelsPlugin.sendMessage("&dSuccessfully registered commands [" + CC.getTimeDifferenceAndColor(start, System.currentTimeMillis()) + "&f]");
+        DuelsPlugin.sendMessage("&dSuccessfully registered commands [" + CC.getTimeDifferenceAndColorConsole(start, System.currentTimeMillis()) + "&f]");
+        
+        // Process queued subcommands from extensions
+        processQueuedSubCommands();
     }
     
     private void registerCommand(AbstractCommand<DuelsPlugin> command) {
@@ -50,17 +62,52 @@ public class CommandRegistrar {
 
         final AbstractCommand<DuelsPlugin> result = commands.get(commandName.toLowerCase());
 
-        if (result == null || result.isChild(subCommand.getName().toLowerCase())) {
+        if (result == null) {
+            // Queue the subcommand for later registration
+            queuedSubCommands.add(new QueuedSubCommand(commandName, subCommand));
+            plugin.getLogger().info("Queued subcommand '" + subCommand.getName() + "' for command '" + commandName + "' (command not yet registered)");
+            return true;
+        }
+
+        return registerSubCommandNow(commandName, subCommand, result);
+    }
+    
+    private boolean registerSubCommandNow(String commandName, SubCommand subCommand, AbstractCommand<DuelsPlugin> command) {
+        if (command.isChild(subCommand.getName().toLowerCase())) {
+            plugin.getLogger().warning("Failed to register subcommand '" + subCommand.getName() + "': Subcommand already exists");
             return false;
         }
 
-        result.child(new AbstractCommand<>(plugin, subCommand) {
+        command.child(new AbstractCommand<>(plugin, subCommand) {
             @Override
             protected void execute(final CommandSender sender, final String label, final String[] args) {
                 subCommand.execute(sender, label, args);
             }
         });
+        
+        plugin.getLogger().info("Successfully registered subcommand '" + subCommand.getName() + "' for command '" + commandName + "'");
         return true;
+    }
+    
+    private void processQueuedSubCommands() {
+        if (queuedSubCommands.isEmpty()) {
+            return;
+        }
+        
+        plugin.getLogger().info("Processing " + queuedSubCommands.size() + " queued subcommand(s)...");
+        
+        Iterator<QueuedSubCommand> iterator = queuedSubCommands.iterator();
+        while (iterator.hasNext()) {
+            QueuedSubCommand queued = iterator.next();
+            final AbstractCommand<DuelsPlugin> command = commands.get(queued.commandName.toLowerCase());
+            
+            if (command != null) {
+                registerSubCommandNow(queued.commandName, queued.subCommand, command);
+                iterator.remove();
+            } else {
+                plugin.getLogger().warning("Failed to register queued subcommand '" + queued.subCommand.getName() + "': Command '" + queued.commandName + "' still not found");
+            }
+        }
     }
     
     public void clearCommands() {

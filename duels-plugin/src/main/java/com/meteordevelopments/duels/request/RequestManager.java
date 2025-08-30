@@ -88,17 +88,31 @@ public class RequestManager implements Loadable, Listener {
     }
 
     private void sendClickableMessage(final String path, final Player sender, final Player target) {
-        Component infoComponent = Component.text(lang.getMessage(path + "info.text"))
-                .hoverEvent(HoverEvent.showText(Component.text(lang.getMessage(path + "info.hover-text"))));
+        String infoText = lang.getMessage(path + "info.text");
+        String infoHoverText = lang.getMessage(path + "info.hover-text");
+        String acceptText = lang.getMessage(path + "accept.text");
+        String acceptHoverText = lang.getMessage(path + "accept.hover-text");
+        String denyText = lang.getMessage(path + "deny.text");
+        String denyHoverText = lang.getMessage(path + "deny.hover-text");
         
-        Component acceptComponent = Component.text(lang.getMessage(path + "accept.text"))
+        // Return early if any required text is null to prevent NPE
+        if (infoText == null || acceptText == null || denyText == null) {
+            // Fallback to a simple message if language keys are missing
+            target.sendMessage("Duel request from " + sender.getName() + ". Use /duel accept " + sender.getName() + " or /duel deny " + sender.getName());
+            return;
+        }
+        
+        Component infoComponent = Component.text(infoText)
+                .hoverEvent(HoverEvent.showText(Component.text(infoHoverText != null ? infoHoverText : "")));
+        
+        Component acceptComponent = Component.text(acceptText)
                 .clickEvent(ClickEvent.suggestCommand("/duel accept " + sender.getName()))
-                .hoverEvent(HoverEvent.showText(Component.text(lang.getMessage(path + "accept.hover-text"))))
+                .hoverEvent(HoverEvent.showText(Component.text(acceptHoverText != null ? acceptHoverText : "Click to accept this request")))
                 .color(NamedTextColor.GREEN);
         
-        Component denyComponent = Component.text(lang.getMessage(path + "deny.text"))
+        Component denyComponent = Component.text(denyText)
                 .clickEvent(ClickEvent.suggestCommand("/duel deny " + sender.getName()))
-                .hoverEvent(HoverEvent.showText(Component.text(lang.getMessage(path + "deny.hover-text"))))
+                .hoverEvent(HoverEvent.showText(Component.text(denyHoverText != null ? denyHoverText : "Click to deny this request")))
                 .color(NamedTextColor.RED);
         
         Component fullMessage = infoComponent.append(acceptComponent).append(denyComponent);

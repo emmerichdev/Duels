@@ -173,7 +173,7 @@ public class LoadableManager {
             return false;
         }
 
-        DuelsPlugin.sendMessage("&dSuccessfully initialized all components in &f[" + CC.getTimeDifferenceAndColor(start, System.currentTimeMillis()) + "&f]");
+        DuelsPlugin.sendMessage("&dSuccessfully initialized all components in &f[" + CC.getTimeDifferenceAndColorConsole(start, System.currentTimeMillis()) + "&f]");
         return true;
     }
 
