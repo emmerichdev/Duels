@@ -10,7 +10,6 @@ import com.meteordevelopments.duels.command.commands.party.PartyCommand;
 import com.meteordevelopments.duels.command.commands.queue.QueueCommand;
 import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.command.AbstractCommand;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.HashMap;
@@ -37,7 +36,7 @@ public class CommandRegistrar {
         registerCommand(new DuelsCommand(plugin));
         registerCommand(new RankCommand(plugin));
         
-        DuelsPlugin.sendMessage("&dSuccessfully registered commands [" + CC.getTimeDifferenceAndColor(start, System.currentTimeMillis()) + ChatColor.WHITE + "]");
+        DuelsPlugin.sendMessage("&dSuccessfully registered commands [" + CC.getTimeDifferenceAndColor(start, System.currentTimeMillis()) + "&f]");
     }
     
     private void registerCommand(AbstractCommand<DuelsPlugin> command) {

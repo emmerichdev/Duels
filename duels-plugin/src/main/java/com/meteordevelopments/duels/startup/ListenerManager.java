@@ -4,7 +4,7 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.listeners.*;
 import com.meteordevelopments.duels.util.CC;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
@@ -49,7 +49,7 @@ public class ListenerManager {
         
         registerListener(listener);
         
-        DuelsPlugin.sendMessage("&dSuccessfully registered listeners after plugin startup in [" + CC.getTimeDifferenceAndColor(start, System.currentTimeMillis()) + ChatColor.WHITE + "]");
+        DuelsPlugin.sendMessage("&dSuccessfully registered listeners after plugin startup in [" + CC.getTimeDifferenceAndColor(start, System.currentTimeMillis()) + "&f]");
     }
 
     public void unregisterAllListeners() {
