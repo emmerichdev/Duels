@@ -37,8 +37,6 @@ public interface Duels extends Plugin {
 
     void registerListener(@NotNull final Listener listener);
 
-    boolean reload();
-
     ScheduledTask doSync(@NotNull final Runnable task);
 
     ScheduledTask doSyncAfter(@NotNull final Runnable task, long delay);

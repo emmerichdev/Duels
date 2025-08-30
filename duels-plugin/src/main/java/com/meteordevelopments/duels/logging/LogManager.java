@@ -1,9 +1,10 @@
 package com.meteordevelopments.duels.logging;
 
-import lombok.Getter;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.util.DateUtil;
 import com.meteordevelopments.duels.util.Log.LogSource;
+import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,17 +20,7 @@ public class LogManager implements LogSource {
     private final FileHandler handler;
 
     public LogManager(final DuelsPlugin plugin) throws IOException {
-        final File pluginFolder = plugin.getDataFolder();
-
-        if (!pluginFolder.exists()) {
-            pluginFolder.mkdir();
-        }
-
-        final File folder = new File(pluginFolder, "logs");
-
-        if (!folder.exists()) {
-            folder.mkdir();
-        }
+        final File folder = getFile(plugin);
 
         logger.setLevel(Level.ALL);
         logger.setUseParentHandlers(false);
@@ -37,7 +28,9 @@ public class LogManager implements LogSource {
         final File file = new File(folder, DateUtil.formatDate(new Date()) + ".log");
 
         if (!file.exists()) {
-            file.createNewFile();
+            if (!file.createNewFile()) {
+                throw new IOException("Failed to create log file: " + file.getAbsolutePath());
+            }
         }
 
         handler = new FileHandler(file.getCanonicalPath(), true);
@@ -59,6 +52,25 @@ public class LogManager implements LogSource {
             }
         });
         logger.addHandler(handler);
+    }
+
+    private static @NotNull File getFile(DuelsPlugin plugin) throws IOException {
+        final File pluginFolder = plugin.getDataFolder();
+
+        if (!pluginFolder.exists()) {
+            if (!pluginFolder.mkdir()) {
+                throw new IOException("Failed to create plugin data folder: " + pluginFolder.getAbsolutePath());
+            }
+        }
+
+        final File folder = new File(pluginFolder, "logs");
+
+        if (!folder.exists()) {
+            if (!folder.mkdir()) {
+                throw new IOException("Failed to create logs folder: " + folder.getAbsolutePath());
+            }
+        }
+        return folder;
     }
 
     public void handleDisable() {

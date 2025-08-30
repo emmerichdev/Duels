@@ -1,11 +1,11 @@
 package com.meteordevelopments.duels.command.commands.party.subcommands;
 
+import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.Permissions;
+import com.meteordevelopments.duels.command.BaseCommand;
 import com.meteordevelopments.duels.data.UserData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.command.BaseCommand;
 
 public class ToggleCommand extends BaseCommand {
     

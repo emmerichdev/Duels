@@ -1,6 +1,5 @@
 package com.meteordevelopments.duels.arena;
 
-import lombok.Getter;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.api.arena.Arena;
 import com.meteordevelopments.duels.api.arena.ArenaManager;
@@ -11,17 +10,19 @@ import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.data.ArenaData;
 import com.meteordevelopments.duels.kit.KitImpl;
 import com.meteordevelopments.duels.queue.Queue;
+import com.meteordevelopments.duels.redis.RedisService;
 import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.util.Log;
 import com.meteordevelopments.duels.util.StringUtil;
-import com.meteordevelopments.duels.util.compat.Items;
 import com.meteordevelopments.duels.util.gui.GuiSetupUtil;
 import com.meteordevelopments.duels.util.gui.MultiPageGui;
-import com.meteordevelopments.duels.util.inventory.ItemBuilder;
 import com.meteordevelopments.duels.util.json.JsonUtil;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.ReplaceOptions;
+import lombok.Getter;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,14 +34,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.bson.Document;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.ReplaceOptions;
-import com.mongodb.client.model.BulkWriteOptions;
-import com.mongodb.client.model.ReplaceOneModel;
-import com.meteordevelopments.duels.redis.RedisService;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -119,7 +114,7 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
                 try {
                     for (final ArenaImpl arena : arenas) {
                         final ArenaData data = new ArenaData(arena);
-                        final java.util.Map<String, Object> bson = JsonUtil.getObjectMapper().convertValue(data, java.util.Map.class);
+                        final java.util.Map<String, Object> bson = JsonUtil.getObjectMapper().convertValue(data, new com.fasterxml.jackson.core.type.TypeReference<>() {});
                         final Document doc = new Document(bson);
                         doc.put("_id", data.getName());
                         collection.replaceOne(
@@ -129,9 +124,9 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
                         );
                     }
                     if (locked) {
-                        final java.util.Set<String> names = arenas.stream().map(ArenaImpl::getName).collect(java.util.stream.Collectors.toSet());
+                        final Set<String> names = arenas.stream().map(ArenaImpl::getName).collect(Collectors.toSet());
                         // Find docs to prune first
-                        final java.util.List<String> toDelete = new java.util.ArrayList<>();
+                        final List<String> toDelete = new ArrayList<>();
                         try (MongoCursor<Document> cur = collection.find(new Document("_id", new Document("$nin", names))).projection(new Document("_id", 1)).iterator()) {
                             while (cur.hasNext()) {
                                 final Document d = cur.next();

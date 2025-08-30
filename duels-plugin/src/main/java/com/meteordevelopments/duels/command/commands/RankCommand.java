@@ -18,25 +18,25 @@ public class RankCommand extends BaseCommand {
         Player player = (Player) sender;
 
         if (!plugin.getRankManager().isEnabled()) {
-            sender.sendMessage(CC.translate("&cRank system is currently disabled."));
+            lang.sendMessage(sender, "RANK.system-disabled");
             return;
         }
 
         Rank currentRank = plugin.getRankManager().getPlayerRank(player);
         if (currentRank == null) {
-            sender.sendMessage(CC.translate(plugin.getLang().getMessage("RANK.not-found")));
+            lang.sendMessage(sender, "RANK.not-found");
             return;
         }
 
         // Send rank information
-        sender.sendMessage(CC.translate("&9&l=== Rank Information ==="));
-        sender.sendMessage(CC.translate("&7Rank: " + currentRank.getColoredName()));
-        sender.sendMessage(CC.translate("&7Description: " + currentRank.getDescription()));
+        lang.sendMessage(sender, "RANK.info.header");
+        lang.sendMessage(sender, "RANK.info.rank", "rank", currentRank.getColoredName());
+        lang.sendMessage(sender, "RANK.info.description", "description", currentRank.getDescription());
         
         // Show progress to next rank
         var userData = plugin.getUserManager().get(player);
         if (userData == null) {
-            sender.sendMessage(CC.translate("&cUnable to load your user data."));
+            lang.sendMessage(sender, "RANK.data-load-error");
             return;
         }
         
@@ -45,13 +45,15 @@ public class RankCommand extends BaseCommand {
         
         Rank nextRank = plugin.getRankManager().getNextRank(player);
         if (nextRank == null) {
-            sender.sendMessage(CC.translate(plugin.getLang().getMessage("RANK.max-rank")));
+            lang.sendMessage(sender, "RANK.max-rank");
         } else {
             int eloNeeded = Math.max(0, nextRank.getMinElo() - currentElo);
-            sender.sendMessage(CC.translate(String.format("&7Progress to &e%s&7: &e%.1f%%&7 (&e%d&7 ELO needed)", 
-                nextRank.getName(), progress, eloNeeded)));
+            lang.sendMessage(sender, "RANK.info.progress-to-next", 
+                "next_rank", nextRank.getName(), 
+                "progress", String.format("%.1f", progress),
+                "elo_needed", String.valueOf(eloNeeded));
         }
         
-        sender.sendMessage(CC.translate("&7Total ELO: &e" + currentElo));
+        lang.sendMessage(sender, "RANK.info.total-elo", "elo", String.valueOf(currentElo));
     }
 }

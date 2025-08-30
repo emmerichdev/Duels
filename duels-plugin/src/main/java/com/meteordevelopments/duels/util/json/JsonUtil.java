@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.meteordevelopments.duels.util.Log;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
@@ -57,7 +58,7 @@ public final class JsonUtil {
                         return deserializerClass.getConstructor(JsonDeserializer.class).newInstance(deserializer);
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                              NoSuchMethodException ex) {
-                        ex.printStackTrace();
+                        Log.error("Failed to instantiate JSON deserializer", ex);
                         return deserializer;
                     }
                 }

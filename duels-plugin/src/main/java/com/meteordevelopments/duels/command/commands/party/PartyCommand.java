@@ -1,8 +1,5 @@
 package com.meteordevelopments.duels.command.commands.party;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.command.BaseCommand;
@@ -14,6 +11,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
 
 public class PartyCommand extends BaseCommand {
     

@@ -1,15 +1,12 @@
 package com.meteordevelopments.duels.match;
 
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.api.match.Match;
 import com.meteordevelopments.duels.arena.ArenaImpl;
 import com.meteordevelopments.duels.kit.KitImpl;
 import com.meteordevelopments.duels.party.PartyManagerImpl;
 import com.meteordevelopments.duels.queue.Queue;
+import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -19,7 +16,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import lombok.Getter;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class DuelMatch implements Match {
     
@@ -157,21 +156,5 @@ public class DuelMatch implements Match {
         currentRound++;
         // Reset player death states for next round
         players.replaceAll((p, v) -> false);
-    }
-
-    public void handleMatchEnd(Player winner, Player loser) {
-        // Mark loser as dead
-        markAsDead(loser);
-
-        // Set winner's health to full
-        winner.setHealth(winner.getMaxHealth());
-
-        // Clear any effects or states that might interfere
-        winner.setFireTicks(0);
-        winner.setFallDistance(0);
-        winner.setVelocity(new org.bukkit.util.Vector(0, 0, 0));
-
-        // Set match as finished
-        setFinished();
     }
 }

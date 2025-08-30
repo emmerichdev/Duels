@@ -4,7 +4,7 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
 import com.meteordevelopments.duels.util.Log;
-import com.meteordevelopments.duels.util.StringUtil;
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.compat.Identifiers;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -13,17 +13,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class KitItemListener implements Listener {
 
+    private final DuelsPlugin plugin;
+    
     // Warning sent to player attempting to use kit item
-    private static final String WARNING = StringUtil.color("&4[Duels] Kit contents cannot be used when not in a duel.");
+    private String getWarningMessage() {
+        return plugin.getLang().getMessage("FALLBACK.kit-item-warning");
+    }
 
     // Warning printed on console
     private static final String WARNING_CONSOLE = "%s has attempted to use a kit item while not in duel, but was prevented by KitItemListener.";
@@ -31,6 +35,7 @@ public class KitItemListener implements Listener {
     private final ArenaManagerImpl arenaManager;
 
     public KitItemListener(final DuelsPlugin plugin) {
+        this.plugin = plugin;
         this.arenaManager = plugin.getArenaManager();
 
         // Only register listener if enabled in config.yml
@@ -68,7 +73,7 @@ public class KitItemListener implements Listener {
         }
 
         event.setCurrentItem(null);
-        player.sendMessage(WARNING);
+        player.sendMessage(getWarningMessage());
         Log.warn(String.format(WARNING_CONSOLE, player.getName()));
     }
 
@@ -88,13 +93,15 @@ public class KitItemListener implements Listener {
 
         event.setCancelled(true);
         player.getInventory().remove(item);
-        player.sendMessage(WARNING);
+        player.sendMessage(getWarningMessage());
         Log.warn(String.format(WARNING_CONSOLE, player.getName()));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void on(final PlayerPickupItemEvent event) {
-        final Player player = event.getPlayer();
+    public void on(final EntityPickupItemEvent event) {
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
 
         if (isExcluded(player)) {
             return;
@@ -108,7 +115,7 @@ public class KitItemListener implements Listener {
 
         event.setCancelled(true);
         item.remove();
-        player.sendMessage(WARNING);
+        player.sendMessage(getWarningMessage());
         Log.warn(String.format(WARNING_CONSOLE, player.getName()));
     }
 }

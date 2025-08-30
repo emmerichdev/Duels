@@ -1,16 +1,19 @@
 package com.meteordevelopments.duels.player;
 
 import com.google.common.collect.Lists;
-import lombok.Getter;
-import lombok.Setter;
 import com.meteordevelopments.duels.util.PlayerUtil;
 import com.meteordevelopments.duels.util.inventory.InventoryUtil;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Getter
 public class PlayerInfo {

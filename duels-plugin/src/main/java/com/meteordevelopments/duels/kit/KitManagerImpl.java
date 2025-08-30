@@ -1,7 +1,6 @@
 package com.meteordevelopments.duels.kit;
 
 import com.google.common.collect.Lists;
-import lombok.Getter;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.api.event.kit.KitCreateEvent;
 import com.meteordevelopments.duels.api.event.kit.KitRemoveEvent;
@@ -10,25 +9,23 @@ import com.meteordevelopments.duels.api.kit.KitManager;
 import com.meteordevelopments.duels.config.Config;
 import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.data.KitData;
+import com.meteordevelopments.duels.redis.RedisService;
 import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.util.Log;
 import com.meteordevelopments.duels.util.StringUtil;
-import com.meteordevelopments.duels.util.compat.Items;
 import com.meteordevelopments.duels.util.gui.GuiSetupUtil;
 import com.meteordevelopments.duels.util.gui.MultiPageGui;
-import com.meteordevelopments.duels.util.inventory.ItemBuilder;
 import com.meteordevelopments.duels.util.json.JsonUtil;
+import com.mongodb.client.model.ReplaceOptions;
+import lombok.Getter;
+import org.bson.Document;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.bson.Document;
-import com.mongodb.client.model.ReplaceOptions;
-import com.meteordevelopments.duels.redis.RedisService;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.*;
 
 public class KitManagerImpl implements Loadable, KitManager {
@@ -140,7 +137,7 @@ public class KitManagerImpl implements Loadable, KitManager {
             }
 
             // Schedule the mutation and GUI update on the main server thread
-            org.bukkit.Bukkit.getScheduler().runTask(plugin, () -> {
+            plugin.doSync(() -> {
                 kits.put(data.getName(), data.toKit(plugin));
                 if (gui != null) gui.calculatePages();
             });
@@ -188,7 +185,7 @@ public class KitManagerImpl implements Loadable, KitManager {
         kit.setRemoved(true);
         plugin.getArenaManager().clearBinds(kit);
         saveKits();
-        org.bukkit.Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        plugin.doAsync(() -> {
             try {
                 final var mongo = plugin.getMongoService();
                 if (mongo != null) {

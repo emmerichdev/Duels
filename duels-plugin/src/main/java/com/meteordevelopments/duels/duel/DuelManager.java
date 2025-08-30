@@ -5,25 +5,26 @@ import com.meteordevelopments.duels.api.event.match.MatchEndEvent.Reason;
 import com.meteordevelopments.duels.api.event.match.MatchStartEvent;
 import com.meteordevelopments.duels.arena.ArenaImpl;
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
-import com.meteordevelopments.duels.match.DuelMatch;
 import com.meteordevelopments.duels.arena.fireworks.FireworkUtils;
 import com.meteordevelopments.duels.config.Config;
 import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.data.UserManagerImpl;
-import com.meteordevelopments.duels.hook.hooks.*;
-import com.meteordevelopments.duels.party.Party;
-import com.meteordevelopments.duels.party.PartyManagerImpl;
-import com.meteordevelopments.duels.util.*;
-import com.meteordevelopments.duels.hook.hooks.worldguard.WorldGuardHook;
+import com.meteordevelopments.duels.hook.hooks.EssentialsHook;
+import com.meteordevelopments.duels.hook.hooks.VaultHook;
 import com.meteordevelopments.duels.inventories.InventoryManager;
 import com.meteordevelopments.duels.kit.KitImpl;
+import com.meteordevelopments.duels.match.DuelMatch;
+import com.meteordevelopments.duels.party.Party;
+import com.meteordevelopments.duels.party.PartyManagerImpl;
 import com.meteordevelopments.duels.player.PlayerInfo;
 import com.meteordevelopments.duels.player.PlayerInfoManager;
 import com.meteordevelopments.duels.queue.Queue;
 import com.meteordevelopments.duels.queue.QueueManager;
 import com.meteordevelopments.duels.setting.Settings;
 import com.meteordevelopments.duels.teleport.Teleport;
-import com.meteordevelopments.duels.util.compat.CompatUtil;
+import com.meteordevelopments.duels.util.Loadable;
+import com.meteordevelopments.duels.util.Log;
+import com.meteordevelopments.duels.util.PlayerUtil;
 import com.meteordevelopments.duels.util.compat.Titles;
 import com.meteordevelopments.duels.util.inventory.InventoryUtil;
 import com.meteordevelopments.duels.util.validator.ValidatorUtil;
@@ -35,6 +36,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -62,7 +64,6 @@ public class DuelManager implements Loadable {
     private Teleport teleport;
     private VaultHook vault;
     private EssentialsHook essentials;
-    private WorldGuardHook worldGuard;
 
     private ScheduledTask durationCheckTask;
 
@@ -292,14 +293,14 @@ public class DuelManager implements Loadable {
         }
     }
 
-    public boolean startMatch(final Collection<Player> first, final Collection<Player> second, final Settings settings, final Map<UUID, List<ItemStack>> items, final Queue source) {
+    public void startMatch(final Collection<Player> first, final Collection<Player> second, final Settings settings, final Map<UUID, List<ItemStack>> items, final Queue source) {
         final Collection<Player> players = new ArrayList<>(first.size() + second.size());
         players.addAll(first);
         players.addAll(second);
 
         if (!ValidatorUtil.validate(plugin.getValidatorManager().getMatchValidators(), players, settings)) {
             refundItems(players, items);
-            return false;
+            return;
         }
 
         final KitImpl kit = settings.getKit();
@@ -308,13 +309,13 @@ public class DuelManager implements Loadable {
         if (arena == null || !arena.isAvailable()) {
             lang.sendMessage(players, "DUEL.start-failure." + (settings.getArena() != null ? "arena-in-use" : "no-arena-available"));
             refundItems(players, items);
-            return false;
+            return;
         }
 
         if (kit != null && !arenaManager.isSelectable(kit, arena)) {
             lang.sendMessage(players, "DUEL.start-failure.arena-not-applicable", "kit", kit.getName(), "arena", arena.getName());
             refundItems(players, items);
-            return false;
+            return;
         }
 
         final int bet = settings.getBet();
@@ -323,7 +324,7 @@ public class DuelManager implements Loadable {
             if (!vault.has(bet, players)) {
                 lang.sendMessage(players, "DUEL.start-failure.not-enough-money", "bet_amount", bet);
                 refundItems(players, items);
-                return false;
+                return;
             }
 
             vault.remove(bet, players);
@@ -341,7 +342,7 @@ public class DuelManager implements Loadable {
                     if (bet > 0 && vault != null) {
                         vault.add(bet, players);
                     }
-                    return false;
+                    return;
                 }
             }
 
@@ -356,7 +357,7 @@ public class DuelManager implements Loadable {
                     vault.add(bet, players);
                 }
                 lang.sendMessage(players, "DUEL.start-failure.arena-in-use");
-                return false;
+                return;
             }
 
         if (config.isCdEnabled()) {
@@ -365,7 +366,6 @@ public class DuelManager implements Loadable {
 
             final MatchStartEvent event = new MatchStartEvent(match, players.toArray(new Player[0]));
             Bukkit.getPluginManager().callEvent(event);
-            return true;
         } finally {
             if (lockKey != null && plugin.getRedisService() != null) {
                 plugin.getRedisService().releaseLock(lockKey, lockVal);
@@ -454,7 +454,7 @@ public class DuelManager implements Loadable {
 
             // Skip death handling for ROUNDS3 as it's handled in EntityDamageEvent
             if (match.getKit() != null && match.getKit().hasCharacteristic(KitImpl.Characteristic.ROUNDS3)) {
-                event.setDeathMessage(null);
+                event.deathMessage(null);
                 event.getDrops().clear();
                 event.setKeepLevel(true);
                 event.setDroppedExp(0);
@@ -576,13 +576,17 @@ public class DuelManager implements Loadable {
         }
 
         @EventHandler(ignoreCancelled = true)
-        public void on(final PlayerPickupItemEvent event) {
-            // Fix players not being able to use the Loyalty enchantment in a duel if item pickup is disabled in config.
-            if (!CompatUtil.isPre1_13() && event.getItem().getItemStack().getType() == Material.TRIDENT) {
+        public void on(final EntityPickupItemEvent event) {
+            if (!(event.getEntity() instanceof Player player)) {
                 return;
             }
 
-            if (!config.isPreventItemPickup() || !arenaManager.isInMatch(event.getPlayer())) {
+            // Fix players not being able to use the Loyalty enchantment in a duel if item pickup is disabled in config.
+            if (event.getItem().getItemStack().getType() == Material.TRIDENT) {
+                return;
+            }
+
+            if (!config.isPreventItemPickup() || !arenaManager.isInMatch(player)) {
                 return;
             }
 

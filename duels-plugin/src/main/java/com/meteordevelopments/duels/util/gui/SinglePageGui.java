@@ -1,5 +1,6 @@
 package com.meteordevelopments.duels.util.gui;
 
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.inventory.InventoryBuilder;
 import org.bukkit.entity.Player;
@@ -13,7 +14,7 @@ public class SinglePageGui<P extends JavaPlugin> extends AbstractGui<P> {
 
     public SinglePageGui(final P plugin, final String title, final int rows) {
         super(plugin);
-        this.inventory = InventoryBuilder.of(StringUtil.color(title), rows * 9).build();
+        this.inventory = InventoryBuilder.of(CC.translate(title), rows * 9).build();
     }
 
     protected void set(final int slot, final Button<P> button) {

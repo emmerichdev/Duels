@@ -124,7 +124,7 @@ public abstract class AbstractConfiguration<P extends JavaPlugin> implements Loa
 
             configuration = YamlConfiguration.loadConfiguration(file);
             final FileConfigurationOptions options = configuration.options();
-            options.header(null);
+            options.setHeader(null);
 
             final Method method = ReflectionUtil.getDeclaredMethodUnsafe(FileConfigurationOptions.class, "parseComments", Boolean.TYPE);
 

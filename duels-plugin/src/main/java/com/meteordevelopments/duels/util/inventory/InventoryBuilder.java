@@ -1,5 +1,6 @@
 package com.meteordevelopments.duels.util.inventory;
 
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -9,7 +10,8 @@ public final class InventoryBuilder {
     private final Inventory inventory;
 
     private InventoryBuilder(final String title, final int size) {
-        this.inventory = Bukkit.createInventory(null, size, title);
+        this.inventory = Bukkit.createInventory(null, size, 
+            LegacyComponentSerializer.legacySection().deserialize(title));
     }
 
     public static InventoryBuilder of(final String title, final int size) {

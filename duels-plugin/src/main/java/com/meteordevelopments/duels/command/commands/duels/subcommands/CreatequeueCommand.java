@@ -7,6 +7,7 @@ import com.meteordevelopments.duels.util.command.CommandUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class CreatequeueCommand extends BaseCommand {

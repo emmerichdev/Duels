@@ -1,11 +1,11 @@
 package com.meteordevelopments.duels.request;
 
-import com.meteordevelopments.duels.party.Party;
-import lombok.Getter;
 import com.meteordevelopments.duels.api.arena.Arena;
 import com.meteordevelopments.duels.api.kit.Kit;
 import com.meteordevelopments.duels.api.request.Request;
+import com.meteordevelopments.duels.party.Party;
 import com.meteordevelopments.duels.setting.Settings;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 

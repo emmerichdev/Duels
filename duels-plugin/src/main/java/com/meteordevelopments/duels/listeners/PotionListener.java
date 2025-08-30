@@ -2,7 +2,6 @@ package com.meteordevelopments.duels.listeners;
 
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
-import com.meteordevelopments.duels.util.compat.CompatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -39,9 +38,6 @@ public class PotionListener implements Listener {
 
         DuelsPlugin.getMorePaperLib().scheduling().entitySpecificScheduler(player).run(() -> {
             if (item.getAmount() <= 1) {
-                if (CompatUtil.isPre1_10()) {
-                    player.getInventory().setItem(player.getInventory().getHeldItemSlot(), null);
-                } else {
                     final ItemStack held = player.getInventory().getItemInMainHand();
 
                     if (held.getType() == Material.GLASS_BOTTLE) {
@@ -49,7 +45,6 @@ public class PotionListener implements Listener {
                     } else {
                         player.getInventory().setItemInOffHand(null);
                     }
-                }
             } else {
                 player.getInventory().removeItem(new ItemStack(Material.GLASS_BOTTLE, 1));
             }

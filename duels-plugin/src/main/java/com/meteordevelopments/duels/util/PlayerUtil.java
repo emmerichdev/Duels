@@ -1,6 +1,5 @@
 package com.meteordevelopments.duels.util;
 
-import com.meteordevelopments.duels.util.compat.CompatUtil;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
@@ -19,17 +18,13 @@ public final class PlayerUtil {
     }
 
     public static double getMaxHealth(final Player player) {
-        if (CompatUtil.isPre1_9()) {
-            return player.getMaxHealth();
-        } else {
-            final AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
+        final AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
 
-            if (attribute == null) {
-                return DEFAULT_MAX_HEALTH;
-            }
-
-            return attribute.getValue();
+        if (attribute == null) {
+            return DEFAULT_MAX_HEALTH;
         }
+
+        return attribute.getValue();
     }
 
     private static void setMaxHealth(final Player player) {

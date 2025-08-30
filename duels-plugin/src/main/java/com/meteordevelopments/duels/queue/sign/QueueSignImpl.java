@@ -1,15 +1,20 @@
 package com.meteordevelopments.duels.queue.sign;
 
+import com.meteordevelopments.duels.util.CC;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import com.meteordevelopments.duels.api.queue.sign.QueueSign;
 import com.meteordevelopments.duels.queue.Queue;
 import com.meteordevelopments.duels.util.StringUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
 
 import java.util.Objects;
 
@@ -47,15 +52,20 @@ public class QueueSignImpl implements QueueSign {
             return;
         }
 
-        sign.setLine(0, replace(lines[0], 0, 0));
-        sign.setLine(1, replace(lines[1], 0, 0));
-        sign.setLine(2, replace(lines[2], 0, 0));
-        sign.setLine(3, replace(lines[3], 0, 0));
+        final SignSide frontSide = sign.getSide(Side.FRONT);
+        frontSide.line(0, createComponent(replace(lines[0], 0, 0)));
+        frontSide.line(1, createComponent(replace(lines[1], 0, 0)));
+        frontSide.line(2, createComponent(replace(lines[2], 0, 0)));
+        frontSide.line(3, createComponent(replace(lines[3], 0, 0)));
         sign.update();
     }
 
     private String replace(final String line, final int inQueue, final long inMatch) {
-        return StringUtil.color(line.replace("%in_queue%", String.valueOf(inQueue)).replace("%in_match%", String.valueOf(inMatch)));
+        return CC.translate(line.replace("%in_queue%", String.valueOf(inQueue)).replace("%in_match%", String.valueOf(inMatch)));
+    }
+
+    private Component createComponent(final String text) {
+        return LegacyComponentSerializer.legacySection().deserialize(text);
     }
 
     public void update() {
@@ -81,10 +91,11 @@ public class QueueSignImpl implements QueueSign {
         this.lastInQueue = inQueue;
         this.lastInMatch = inMatch;
 
-        sign.setLine(0, replace(lines[0], inQueue, inMatch));
-        sign.setLine(1, replace(lines[1], inQueue, inMatch));
-        sign.setLine(2, replace(lines[2], inQueue, inMatch));
-        sign.setLine(3, replace(lines[3], inQueue, inMatch));
+        final SignSide frontSide = sign.getSide(Side.FRONT);
+        frontSide.line(0, createComponent(replace(lines[0], inQueue, inMatch)));
+        frontSide.line(1, createComponent(replace(lines[1], inQueue, inMatch)));
+        frontSide.line(2, createComponent(replace(lines[2], inQueue, inMatch)));
+        frontSide.line(3, createComponent(replace(lines[3], inQueue, inMatch)));
         sign.update();
     }
 

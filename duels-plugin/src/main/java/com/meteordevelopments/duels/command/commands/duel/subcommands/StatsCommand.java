@@ -6,7 +6,6 @@ import com.meteordevelopments.duels.command.BaseCommand;
 import com.meteordevelopments.duels.data.UserData;
 import com.meteordevelopments.duels.util.DateUtil;
 import com.meteordevelopments.duels.util.TextBuilder;
-import net.md_5.bungee.api.chat.HoverEvent.Action;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -78,8 +77,7 @@ public class StatsCommand extends BaseCommand {
                 final String timeSince = DateUtil.formatMilliseconds(calendar.getTimeInMillis() - match.getCreation());
                 TextBuilder
                         .of(lang.getMessage("COMMAND.duel.stats.match.format", "winner", match.getWinner(), "loser", match.getLoser()))
-                        .setHoverEvent(Action.SHOW_TEXT,
-                                lang.getMessage("COMMAND.duel.stats.match.hover-text",
+                        .setHoverEvent(lang.getMessage("COMMAND.duel.stats.match.hover-text",
                                         "kit", kit, "duration", duration, "time", timeSince, "health", match.getHealth()))
                         .send(sender);
             });

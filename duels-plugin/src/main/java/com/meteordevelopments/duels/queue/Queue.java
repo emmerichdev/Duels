@@ -1,18 +1,21 @@
 package com.meteordevelopments.duels.queue;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.api.kit.Kit;
 import com.meteordevelopments.duels.api.queue.DQueue;
 import com.meteordevelopments.duels.gui.BaseButton;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public class Queue extends BaseButton implements DQueue {
 

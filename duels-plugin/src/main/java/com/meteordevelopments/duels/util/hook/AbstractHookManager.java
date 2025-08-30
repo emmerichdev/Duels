@@ -1,6 +1,7 @@
 package com.meteordevelopments.duels.util.hook;
 
 import com.meteordevelopments.duels.DuelsPlugin;
+import com.meteordevelopments.duels.util.CC;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,7 +32,7 @@ public abstract class AbstractHookManager<P extends JavaPlugin> {
                 return;
             }
 
-            DuelsPlugin.sendMessage("&aSuccessfully hooked into '" + name + "'!");
+            DuelsPlugin.sendMessage(((DuelsPlugin)plugin).getLang().getMessage("SYSTEM.hooks.successful", "name", name));
         } catch (Throwable throwable) {
             Throwable throwable1 = throwable;
             if (throwable1.getCause() != null) {

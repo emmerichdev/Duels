@@ -15,10 +15,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class GuiListener<P extends JavaPlugin> implements Loadable, Listener {
 
@@ -35,9 +32,9 @@ public class GuiListener<P extends JavaPlugin> implements Loadable, Listener {
 
     @Override
     public void handleUnload() {
-        privateGuis.values().forEach(AbstractGui::clear);
+        privateGuis.values().stream().filter(Objects::nonNull).forEach(AbstractGui::clear);
         privateGuis.clear();
-        publicGuis.forEach(AbstractGui::clear);
+        publicGuis.stream().filter(Objects::nonNull).forEach(AbstractGui::clear);
         publicGuis.clear();
     }
 

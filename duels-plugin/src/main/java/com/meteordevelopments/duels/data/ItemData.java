@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.meteordevelopments.duels.util.EnumUtil;
 import com.meteordevelopments.duels.util.collection.StreamUtil;
-import com.meteordevelopments.duels.util.compat.CompatUtil;
 import com.meteordevelopments.duels.util.compat.Identifiers;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
 import com.meteordevelopments.duels.util.inventory.ItemUtil;
@@ -63,10 +62,6 @@ public class ItemData {
             return null;
         }
 
-        if (CompatUtil.isPre1_12()) {
-            patchItemFlags(item);
-        }
-
         final String dumped = YamlUtil.yamlDump(item);
         ItemStack item = YamlUtil.bukkitYamlLoadAs(dumped, ItemStack.class);
         return kitItem ? Identifiers.addIdentifier(item) : item;
@@ -89,7 +84,7 @@ public class ItemData {
             JsonNode node = null;
             JsonParser actual = parser;
 
-            // Create a copy of current json as node tree in case old json version is detected.
+
             if (checkOldJson) {
                 node = parser.readValueAsTree();
                 actual = parser.getCodec().treeAsTokens(node);
@@ -143,7 +138,7 @@ public class ItemData {
                     });
                 }
 
-                if (node.has("flags") && CompatUtil.hasItemFlag()) {
+                if (node.has("flags")) {
                     final JsonNode flags = node.get("flags");
                     StreamUtil.asStream(flags).forEach(flagNode -> {
                         final ItemFlag flag = EnumUtil.getByName(flagNode.textValue(), ItemFlag.class);
@@ -188,7 +183,7 @@ public class ItemData {
                     });
                 }
 
-                if (node.has("itemData") && !CompatUtil.isPre1_9()) {
+                if (node.has("itemData")) {
                     final List<String> args = Arrays.asList(node.get("itemData").textValue().split("-"));
                     final PotionType potionType = EnumUtil.getByName(args.getFirst(), PotionType.class);
 
@@ -197,7 +192,7 @@ public class ItemData {
                     }
                 }
 
-                if (node.has("attributeModifiers") && CompatUtil.hasAttributes()) {
+                if (node.has("attributeModifiers")) {
                     final JsonNode attributes = node.get("attributeModifiers");
                     StreamUtil.asStream(attributes).forEach(attributeNode -> builder.attribute(
                             attributeNode.get("name").textValue(),

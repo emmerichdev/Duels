@@ -1,6 +1,5 @@
 package com.meteordevelopments.duels.gui.options;
 
-import lombok.Getter;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.gui.options.buttons.OptionButton;
 import com.meteordevelopments.duels.kit.KitImpl;
@@ -8,6 +7,7 @@ import com.meteordevelopments.duels.kit.KitImpl.Characteristic;
 import com.meteordevelopments.duels.util.compat.Items;
 import com.meteordevelopments.duels.util.gui.SinglePageGui;
 import com.meteordevelopments.duels.util.inventory.Slots;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;

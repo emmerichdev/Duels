@@ -1,12 +1,12 @@
 package com.meteordevelopments.duels.command.commands.party.subcommands;
 
+import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.Permissions;
+import com.meteordevelopments.duels.command.BaseCommand;
+import com.meteordevelopments.duels.party.Party;
 import com.meteordevelopments.duels.party.PartyMember;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.command.BaseCommand;
-import com.meteordevelopments.duels.party.Party;
 
 public class KickCommand extends BaseCommand {
     

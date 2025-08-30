@@ -24,6 +24,48 @@ GENERAL:
   betting: 'Betting'
 
 
+SYSTEM:
+  startup:
+    registering-listeners: '&eRegistering listeners...'
+    listeners-success: '&dSuccessfully registered listeners in &f[%time%&f]'
+    registering-commands: '&eRegistering commands...'
+    commands-success: '&dSuccessfully registered commands [%time%&f]'
+    registering-post-listeners: '&eRegistering post listeners...'
+    post-listeners-success: '&dSuccessfully registered listeners after plugin startup in [%time%&f]'
+    initializing-components: '&eInitializing components...'
+    components-success: '&dSuccessfully initialized all components in &f[%time%&f]'
+    startup-complete: '&2Successfully completed startup in %time%&a.'
+    loading-log-manager: '&eLoading log manager...'
+    log-manager-success: '&dSuccessfully loaded Log Manager in &f[%time%&f]'
+  database:
+    db-config-failed: '&cFailed to load DB.yml. Disabling plugin.'
+    mongodb-connect-failed: '&cFailed to connect to MongoDB. Disabling plugin.'
+    mongodb-connected: '&aConnected to MongoDB database ''&f%database%&a''.'
+    redis-connect-failed: '&eRedis connection failed, continuing without cross-server sync cache.'
+    redis-connected: '&aConnected to Redis at &f%host%:%port% &a(db=%database%)'
+  errors:
+    load-failure: '&c&lThere was an error while loading %name%! If you believe this is an issue from the plugin, please contact the developer.'
+    unload-failure: '&c&lThere was an error while unloading %name%! If you believe this is an issue from the plugin, please contact the developer.'
+    initialization-failed: '&cFailed to initialize %name%: %error%'
+    hook-manager-failed: '&cFailed to initialize hook manager: %error%'
+    log-manager-failed: '&c&lCould not load LogManager. Please contact the developer.'
+  compatibility:
+    paper-required-header: '&c&l================= *** DUELS LOAD FAILURE *** ================='
+    paper-required-message: '&c&lDuels requires a Paper-compatible server!'
+    paper-installation-guide: '&c&lFor Paper installation, follow this guide: %url%'
+    paper-compatible-servers: '&c&lOther compatible servers include Purpur and other Paper forks.'
+    paper-required-footer: '&c&l================= *** DUELS LOAD FAILURE *** ================='
+  hooks:
+    successful: '&aSuccessfully hooked into ''%name%''!'
+    vault-not-found: '&bVault was not found! Money betting feature will be automatically disabled.'
+    economy-not-found: '&bEconomy plugin supporting Vault was not found! Money betting feature will be automatically disabled.'
+
+
+FALLBACK:
+  duel-request: 'Duel request from %sender%. Use /duel accept %sender% or /duel deny %sender%'
+  kit-item-warning: '&4[Duels] Kit contents cannot be used when not in a duel.'
+
+
 ERROR:
   no-permission: '{PREFIX} &cNope! You are lacking the following permission: ''%permission%'''
   data:
@@ -445,6 +487,8 @@ COMMAND:
       - '{LINE}'
 
   sub-command-usage: '{PREFIX} &f/%command% %usage% &e- &7%description%'
+  
+  version: '&b%plugin_name% by %authors% &l[Click]'
 
 
 DUEL:
@@ -701,3 +745,11 @@ RANK:
   max-rank: '{PREFIX} &6You have reached the maximum rank!'
   not-found: '{PREFIX} &cRank not found.'
   reloaded: '{PREFIX} &aRank configuration has been reloaded.'
+  system-disabled: '{PREFIX} &cRank system is currently disabled.'
+  data-load-error: '{PREFIX} &cUnable to load your user data.'
+  info:
+    header: '&9&l=== Rank Information ==='
+    rank: '&7Rank: %rank%'
+    description: '&7Description: %description%'
+    progress-to-next: '&7Progress to &e%next_rank%&7: &e%progress%&7% (&e%elo_needed%&7 ELO needed)'
+    total-elo: '&7Total ELO: &e%elo%'

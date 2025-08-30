@@ -1,5 +1,6 @@
 package com.meteordevelopments.duels.rank;
 
+import com.meteordevelopments.duels.util.CC;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.configuration.ConfigurationSection;
@@ -98,8 +99,7 @@ public class Rank {
     }
 
     public String getColoredName() {
-        // TODO: Implement gradient animation
-        return color + name;
+        return CC.translate(color + name);
     }
     
     @Override

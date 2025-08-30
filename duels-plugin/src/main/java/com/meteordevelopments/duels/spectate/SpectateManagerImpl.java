@@ -12,10 +12,10 @@ import com.meteordevelopments.duels.api.spectate.SpectateManager;
 import com.meteordevelopments.duels.api.spectate.Spectator;
 import com.meteordevelopments.duels.arena.ArenaImpl;
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
-import com.meteordevelopments.duels.match.DuelMatch;
 import com.meteordevelopments.duels.config.Config;
 import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.hook.hooks.EssentialsHook;
+import com.meteordevelopments.duels.match.DuelMatch;
 import com.meteordevelopments.duels.player.PlayerInfo;
 import com.meteordevelopments.duels.player.PlayerInfoManager;
 import com.meteordevelopments.duels.teleport.Teleport;
@@ -23,7 +23,6 @@ import com.meteordevelopments.duels.util.BlockUtil;
 import com.meteordevelopments.duels.util.EventUtil;
 import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.util.PlayerUtil;
-import com.meteordevelopments.duels.util.compat.CompatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -32,6 +31,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockCanBuildEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -133,13 +133,7 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
             match.getAllPlayers()
                     .stream()
                     .filter(arenaPlayer -> arenaPlayer.isOnline() && arenaPlayer.canSee(player))
-                    .forEach(arenaPlayer -> {
-                        if (CompatUtil.hasHidePlayer()) {
-                            arenaPlayer.hidePlayer(plugin, player);
-                        } else {
-                            arenaPlayer.hidePlayer(player);
-                        }
-                    });
+                    .forEach(arenaPlayer -> arenaPlayer.hidePlayer(plugin, player));
         }
 
 
@@ -205,13 +199,7 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
             match.getAllPlayers()
                     .stream()
                     .filter(Player::isOnline)
-                    .forEach(arenaPlayer -> {
-                        if (CompatUtil.hasHidePlayer()) {
-                            arenaPlayer.showPlayer(plugin, player);
-                        } else {
-                            arenaPlayer.showPlayer(player);
-                        }
-                    });
+                    .forEach(arenaPlayer -> arenaPlayer.showPlayer(plugin, player));
         }
 
         final SpectateEndEvent event = new SpectateEndEvent(player, spectator);
@@ -317,8 +305,12 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
         }
 
         @EventHandler(ignoreCancelled = true)
-        public void on(final PlayerPickupItemEvent event) {
-            if (!isSpectating(event.getPlayer())) {
+        public void on(final EntityPickupItemEvent event) {
+            if (!(event.getEntity() instanceof Player player)) {
+                return;
+            }
+            
+            if (!isSpectating(player)) {
                 return;
             }
 
@@ -348,7 +340,7 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
         // Prevents spectators (in adventure mode) blocking players from placing blocks.
         @EventHandler
         public void on(final BlockCanBuildEvent event) {
-            if (!CompatUtil.hasGetPlayer() || config.isSpecUseSpectatorGamemode()) {
+            if (config.isSpecUseSpectatorGamemode()) {
                 return;
             }
 
