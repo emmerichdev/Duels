@@ -2,8 +2,6 @@ package com.meteordevelopments.duels.startup;
 
 import com.google.common.collect.Lists;
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.util.Loadable;
-import com.meteordevelopments.duels.util.Reloadable;
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
 import com.meteordevelopments.duels.betting.BettingManager;
 import com.meteordevelopments.duels.config.Config;
@@ -27,6 +25,7 @@ import com.meteordevelopments.duels.setting.SettingsManager;
 import com.meteordevelopments.duels.spectate.SpectateManagerImpl;
 import com.meteordevelopments.duels.teleport.Teleport;
 import com.meteordevelopments.duels.util.CC;
+import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.util.gui.GuiListener;
 import com.meteordevelopments.duels.validator.ValidatorManager;
 import org.bukkit.event.HandlerList;
@@ -36,7 +35,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
+
 
 public class LoadableManager {
     
@@ -52,19 +51,14 @@ public class LoadableManager {
 
     public boolean initializeLoadables() {
         long start = System.currentTimeMillis();
-        DuelsPlugin.sendMessage("&eInitializing components...");
+        if (plugin.getLang() != null) {
+            DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.startup.initializing-components"));
+        } else {
+            plugin.getLogger().info("Initializing components...");
+        }
         
-        // Initialize all loadables
-        addLoadable("config", () -> {
-            Config config = new Config(plugin);
-            plugin.setConfiguration(config);
-            return config;
-        });
-        addLoadable("lang", () -> {
-            Lang lang = new Lang(plugin);
-            plugin.setLang(lang);
-            return lang;
-        });
+        // Initialize remaining loadables (Config and Lang are already initialized)
+        // Skip config and lang as they are initialized earlier in the startup process
         addLoadable("user manager", () -> {
             UserManagerImpl userManager = new UserManagerImpl(plugin);
             plugin.setUserManager(userManager);
@@ -166,7 +160,11 @@ public class LoadableManager {
             HookManager hookManager = new HookManager(plugin);
             plugin.setHookManager(hookManager);
         } catch (Exception e) {
-            DuelsPlugin.sendMessage("&cFailed to initialize hook manager: " + e.getMessage());
+            if (plugin.getLang() != null) {
+                DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.errors.hook-manager-failed", "error", e.getMessage()));
+            } else {
+                plugin.getLogger().severe("Failed to initialize hook manager: " + e.getMessage());
+            }
             throw new RuntimeException("Failed to initialize hook manager", e);
         }
 
@@ -174,7 +172,12 @@ public class LoadableManager {
             return false;
         }
 
-        DuelsPlugin.sendMessage("&dSuccessfully initialized all components in &f[" + CC.getTimeDifferenceAndColor(start, System.currentTimeMillis()) + "&f]");
+        String timeString = CC.getTimeDifferenceAndColor(start, System.currentTimeMillis());
+        if (plugin.getLang() != null) {
+            DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.startup.components-success", "time", timeString));
+        } else {
+            plugin.getLogger().info("Components initialized successfully in " + timeString);
+        }
         return true;
     }
 
@@ -195,14 +198,18 @@ public class LoadableManager {
                     LOGGER.log(Level.SEVERE, "Error loading LogManager", ex);
                 }
 
-                DuelsPlugin.sendMessage("&c&lThere was an error while loading " + name + "! If you believe this is an issue from the plugin, please contact the developer.");
+                if (plugin.getLang() != null) {
+                    DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.errors.load-failure", "name", name));
+                } else {
+                    plugin.getLogger().severe("Failed to load " + name + ": " + ex.getMessage());
+                }
                 return false;
             }
         }
         return true;
     }
 
-    public boolean unloadAll() {
+    public void unloadAll() {
         for (final Loadable loadable : Lists.reverse(loadables)) {
             assert loadable != null;
             final String name = loadable.getClass().getSimpleName();
@@ -217,25 +224,13 @@ public class LoadableManager {
                 loadable.handleUnload();
                 plugin.getLogManager().debug(name + " has been unloaded. (took " + (System.currentTimeMillis() - now) + "ms)");
             } catch (Exception ex) {
-                DuelsPlugin.sendMessage("&c&lThere was an error while unloading " + name + "! If you believe this is an issue from the plugin, please contact the developer.");
-                return false;
+                if (plugin.getLang() != null) {
+                    DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.errors.unload-failure", "name", name));
+                } else {
+                    plugin.getLogger().severe("Failed to unload " + name + ": " + ex.getMessage());
+                }
+                // Log the error but continue with shutdown - don't halt the process
             }
-        }
-        return true;
-    }
-
-    public boolean reload(final Loadable loadable) {
-        boolean unloaded = false;
-        try {
-            loadable.handleUnload();
-            unloaded = true;
-            loadable.handleLoad();
-            return true;
-        } catch (Exception ex) {
-            DuelsPlugin.sendMessage("&c&lThere was an error while " + (unloaded ? "loading " : "unloading ")
-                    + loadable.getClass().getSimpleName()
-                    + "! If you believe this is an issue from the plugin, please contact the developer.");
-            return false;
         }
     }
 
@@ -244,13 +239,6 @@ public class LoadableManager {
                 .filter(loadable -> loadable.getClass().getSimpleName().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(null);
-    }
-
-    public List<String> getReloadableNames() {
-        return loadables.stream()
-                .filter(loadable -> loadable instanceof Reloadable)
-                .map(loadable -> loadable.getClass().getSimpleName())
-                .collect(Collectors.toList());
     }
 
     public void cleanupExtensionListeners() {
@@ -264,7 +252,11 @@ public class LoadableManager {
             Loadable loadable = supplier.get();
             loadables.add(loadable);
         } catch (Exception e) {
-            DuelsPlugin.sendMessage("&cFailed to initialize " + name + ": " + e.getMessage());
+            if (plugin.getLang() != null) {
+                DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.errors.initialization-failed", "name", name, "error", e.getMessage()));
+            } else {
+                plugin.getLogger().severe("Failed to initialize " + name + ": " + e.getMessage());
+            }
             throw new RuntimeException("Failed to initialize " + name, e);
         }
     }

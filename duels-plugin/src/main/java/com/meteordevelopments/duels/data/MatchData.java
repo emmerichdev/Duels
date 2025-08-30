@@ -1,7 +1,7 @@
 package com.meteordevelopments.duels.data;
 
-import lombok.Getter;
 import com.meteordevelopments.duels.api.user.MatchInfo;
+import lombok.Getter;
 
 public class MatchData implements MatchInfo {
 

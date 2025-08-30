@@ -8,11 +8,10 @@ import com.meteordevelopments.duels.api.spectate.Spectator;
 import com.meteordevelopments.duels.api.user.User;
 import com.meteordevelopments.duels.leaderboard.LeaderboardEntry;
 import com.meteordevelopments.duels.rank.Rank;
-import com.meteordevelopments.duels.util.StringUtil;
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.compat.Ping;
 import com.meteordevelopments.duels.util.hook.PluginHook;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,18 +27,18 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
 
     public class Placeholders extends PlaceholderExpansion {
         @Override
-        public String getIdentifier() {
+        public @NotNull String getIdentifier() {
             return "duels";
         }
 
         @Override
-        public String getAuthor() {
-            return "DUMBO";
+        public @NotNull String getAuthor() {
+            return "DUMBO, Emmerich";
         }
 
         @Override
-        public String getVersion() {
-            return "1.0";
+        public @NotNull String getVersion() {
+            return "5.0";
         }
 
         @Override
@@ -48,7 +47,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
         }
 
         @Override
-        public @Nullable String onPlaceholderRequest(Player player, @NotNull String identifier) {
+        public @Nullable String onPlaceholderRequest(@Nullable Player player, @NotNull String identifier) {
             if (player == null) {
                 return "Player is required";
             }
@@ -59,42 +58,27 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                     user = plugin.getUserManager().get(player);
 
                     if (user == null) {
-                        return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
                     }
                     return String.valueOf(user.getWins());
                 case "losses":
                     user = plugin.getUserManager().get(player);
                     if (user == null) {
-                        return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
                     }
                     return String.valueOf(user.getLosses());
                 case "can_request":
                     user = plugin.getUserManager().get(player);
                     if (user == null) {
-                        return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
                     }
                     return String.valueOf(user.canRequest());
-                //case "hits": {
-                //    Arena arena = plugin.getArenaManager().get(player);
-                //    // Only activate when winner is undeclared
-                //    if (arena == null) {
-                //        return "-1";
-                //    }
-                //    return String.valueOf(arena.getMatch().getHits(player));
-                //}
-                //case "hits_opponent": {
-                //    Arena arena = plugin.getArenaManager().get(player);
-                //    // Only activate when winner is undeclared
-                //    if (arena == null) {
-                //        return "-1";
-                //    }
-                //    return String.valueOf(arena.getMatch().getHits(arena.getOpponent(player)));
-                //}
+
                 case "wl_ratio":
                 case "wlr":
                     user = plugin.getUserManager().get(player);
                     if (user == null) {
-                        return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
                     }
                     int wins = user.getWins();
                     int losses = user.getLosses();
@@ -105,7 +89,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                 user = plugin.getUserManager().get(player);
 
                 if (user == null) {
-                    return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                    return CC.translate(plugin.getConfiguration().getUserNotFound());
                 }
 
                 identifier = identifier.replace("rating_", "");
@@ -115,7 +99,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                 }
 
                 final Kit kit = plugin.getKitManager().get(identifier);
-                return kit != null ? String.valueOf(user.getRating(kit)) : StringUtil.color(plugin.getConfiguration().getNoKit());
+                return kit != null ? String.valueOf(user.getRating(kit)) : CC.translate(plugin.getConfiguration().getNoKit());
             }
 
             // Total ELO placeholder
@@ -123,7 +107,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                 user = plugin.getUserManager().get(player);
 
                 if (user == null) {
-                    return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                    return CC.translate(plugin.getConfiguration().getUserNotFound());
                 }
 
                 return String.valueOf(user.getTotalElo());
@@ -134,13 +118,13 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                 user = plugin.getUserManager().get(player);
 
                 if (user == null) {
-                    return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                    return CC.translate(plugin.getConfiguration().getUserNotFound());
                 }
 
                 identifier = identifier.replace("elo_", "");
 
                 final Kit kit = plugin.getKitManager().get(identifier);
-                return kit != null ? String.valueOf(user.getRating(kit)) : StringUtil.color(plugin.getConfiguration().getNoKit());
+                return kit != null ? String.valueOf(user.getRating(kit)) : CC.translate(plugin.getConfiguration().getNoKit());
             }
 
             // ELO leaderboard placeholders: %duels_elo_leaderboard_<position>%
@@ -206,34 +190,15 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
             }
 
             if (identifier.startsWith("getplayersinqueue_")){
-                user = plugin.getUserManager().get(player);
-                if (user == null) {
-                    return StringUtil.color(plugin.getConfiguration().getUserNotFound());
-                }
-
-                identifier = identifier.replace("getplayersinqueue_", "");
-
-                final Kit kit = plugin.getKitManager().get(identifier);
-                if (kit == null) {
-                    return StringUtil.color(plugin.getConfiguration().getNoKit());
-                }
-
-                int queuedPlayers = plugin.getQueueManager().get(kit, 0).getQueuedPlayers().size();
-                return queuedPlayers > 0 ? String.valueOf(queuedPlayers) : "0";
+                String kitName = identifier.replace("getplayersinqueue_", "");
+                String queueResult = handleQueuePlaceholder(player, kitName, true);
+                if (queueResult != null) return queueResult;
             }
 
             if (identifier.startsWith("getplayersplayinginqueue_")){
-                user = plugin.getUserManager().get(player);
-                if (user == null) {
-                    return StringUtil.color(plugin.getConfiguration().getUserNotFound());
-                }
-                identifier = identifier.replace("getplayersplayinginqueue_", "");
-                final Kit kit = plugin.getKitManager().get(identifier);
-                if (kit == null) {
-                    return StringUtil.color(plugin.getConfiguration().getNoKit());
-                }
-                long playersInMatch = plugin.getQueueManager().get(kit, 0).getPlayersInMatch();
-                return Long.toString(playersInMatch);
+                String kitName = identifier.replace("getplayersplayinginqueue_", "");
+                String queueResult = handleQueuePlaceholder(player, kitName, false);
+                if (queueResult != null) return queueResult;
             }
 
             if (identifier.startsWith("match_")) {
@@ -244,21 +209,21 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                     final Spectator spectator = plugin.getSpectateManager().get(player);
 
                     if (spectator == null) {
-                        return StringUtil.color(plugin.getConfiguration().getNotInMatch());
+                        return CC.translate(plugin.getConfiguration().getNotInMatch());
                     }
 
                     arena = spectator.getArena();
                     player = spectator.getTarget();
 
                     if (player == null) {
-                        return StringUtil.color(plugin.getConfiguration().getNotInMatch());
+                        return CC.translate(plugin.getConfiguration().getNotInMatch());
                     }
                 }
 
                 final Match match = arena.getMatch();
 
                 if (match == null) {
-                    return StringUtil.color(plugin.getConfiguration().getNotInMatch());
+                    return CC.translate(plugin.getConfiguration().getNotInMatch());
                 }
 
                 if (identifier.equalsIgnoreCase("duration")) {
@@ -266,7 +231,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                 }
 
                 if (identifier.equalsIgnoreCase("kit")) {
-                    return match.getKit() != null ? match.getKit().getName() : StringUtil.color(plugin.getConfiguration().getNoKit());
+                    return match.getKit() != null ? match.getKit().getName() : CC.translate(plugin.getConfiguration().getNoKit());
                 }
 
                 if (identifier.equalsIgnoreCase("arena")) {
@@ -281,7 +246,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                     user = plugin.getUserManager().get(player);
 
                     if (user == null) {
-                        return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
                     }
 
                     return String.valueOf(match.getKit() != null ? user.getRating(match.getKit()) : user.getRating());
@@ -298,7 +263,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                     }
 
                     if (opponent == null) {
-                        return StringUtil.color(plugin.getConfiguration().getNoOpponent());
+                        return CC.translate(plugin.getConfiguration().getNoOpponent());
                     }
 
                     if (identifier.equalsIgnoreCase("opponent")) {
@@ -316,13 +281,38 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                     user = plugin.getUserManager().get(opponent);
 
                     if (user == null) {
-                        return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
                     }
 
                     return String.valueOf(match.getKit() != null ? user.getRating(match.getKit()) : user.getRating());
                 }
             }
             return null;
+        }
+
+        private String handleQueuePlaceholder(Player player, String kitName, boolean isQueuedPlayers) {
+            User user = plugin.getUserManager().get(player);
+            if (user == null) {
+                return CC.translate(plugin.getConfiguration().getUserNotFound());
+            }
+
+            final Kit kit = plugin.getKitManager().get(kitName);
+            if (kit == null) {
+                return CC.translate(plugin.getConfiguration().getNoKit());
+            }
+
+            var queue = plugin.getQueueManager().get(kit, 0);
+            if (queue == null) {
+                return "0";
+            }
+
+            if (isQueuedPlayers) {
+                int queuedPlayers = queue.getQueuedPlayers().size();
+                return queuedPlayers > 0 ? String.valueOf(queuedPlayers) : "0";
+            } else {
+                long playersInMatch = queue.getPlayersInMatch();
+                return Long.toString(playersInMatch);
+            }
         }
 
         private float wlr(int wins, int losses) {

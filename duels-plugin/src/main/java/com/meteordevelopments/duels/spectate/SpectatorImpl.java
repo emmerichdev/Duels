@@ -1,8 +1,8 @@
 package com.meteordevelopments.duels.spectate;
 
-import lombok.Getter;
 import com.meteordevelopments.duels.api.spectate.Spectator;
 import com.meteordevelopments.duels.arena.ArenaImpl;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;

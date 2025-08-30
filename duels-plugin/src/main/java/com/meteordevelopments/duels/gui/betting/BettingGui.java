@@ -7,7 +7,6 @@ import com.meteordevelopments.duels.gui.betting.buttons.DetailsButton;
 import com.meteordevelopments.duels.gui.betting.buttons.HeadButton;
 import com.meteordevelopments.duels.gui.betting.buttons.StateButton;
 import com.meteordevelopments.duels.setting.Settings;
-import com.meteordevelopments.duels.util.compat.CompatUtil;
 import com.meteordevelopments.duels.util.compat.Items;
 import com.meteordevelopments.duels.util.gui.AbstractGui;
 import com.meteordevelopments.duels.util.gui.Button;
@@ -272,15 +271,14 @@ public class BettingGui extends AbstractGui<DuelsPlugin> {
                 final int slot = SLOT_START + 9 * counter;
                 ItemStack item = inventory.getItem(slot);
 
-                if (CompatUtil.isPre1_13()) {
-                    assert item != null;
-                    item.setDurability((short) 5);
-                } else {
-                    final ItemStack greenPane = Items.GREEN_PANE.clone();
-                    assert item != null;
-                    greenPane.setItemMeta(item.getItemMeta());
-                    item = greenPane;
+                final ItemStack greenPane = Items.GREEN_PANE.clone();
+                if (item != null && item.getType() != Material.AIR) {
+                    final var meta = item.getItemMeta();
+                    if (meta != null) {
+                        greenPane.setItemMeta(meta);
+                    }
                 }
+                item = greenPane;
 
                 inventory.setItem(slot, item);
                 counter++;

@@ -1,11 +1,12 @@
 package com.meteordevelopments.duels.validator.validators.request.self;
 
-import java.util.Collection;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.party.Party;
 import com.meteordevelopments.duels.util.inventory.InventoryUtil;
 import com.meteordevelopments.duels.validator.BaseTriValidator;
 import org.bukkit.entity.Player;
+
+import java.util.Collection;
 
 public class SelfEmptyInventoryValidator extends BaseTriValidator<Player, Party, Collection<Player>> {
 

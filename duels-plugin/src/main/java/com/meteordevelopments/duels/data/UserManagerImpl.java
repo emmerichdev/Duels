@@ -1,6 +1,13 @@
 package com.meteordevelopments.duels.data;
 
 import com.google.common.collect.Lists;
+import com.meteordevelopments.duels.DuelsPlugin;
+import com.meteordevelopments.duels.api.event.user.UserCreateEvent;
+import com.meteordevelopments.duels.api.kit.Kit;
+import com.meteordevelopments.duels.api.user.User;
+import com.meteordevelopments.duels.api.user.UserManager;
+import com.meteordevelopments.duels.config.Config;
+import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.kit.KitImpl;
 import com.meteordevelopments.duels.match.DuelMatch;
 import com.meteordevelopments.duels.match.party.PartyDuelMatch;
@@ -8,14 +15,6 @@ import com.meteordevelopments.duels.party.Party;
 import com.meteordevelopments.duels.rank.Rank;
 import com.meteordevelopments.duels.util.*;
 import lombok.Getter;
-import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.Permissions;
-import com.meteordevelopments.duels.api.event.user.UserCreateEvent;
-import com.meteordevelopments.duels.api.kit.Kit;
-import com.meteordevelopments.duels.api.user.User;
-import com.meteordevelopments.duels.api.user.UserManager;
-import com.meteordevelopments.duels.config.Config;
-import com.meteordevelopments.duels.config.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,13 +25,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
 
-import java.io.*;
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.Locale;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class UserManagerImpl implements Loadable, Listener, UserManager {
 

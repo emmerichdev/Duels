@@ -1,8 +1,5 @@
 package com.meteordevelopments.duels.countdown.party;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.arena.ArenaImpl;
 import com.meteordevelopments.duels.countdown.DuelCountdown;
@@ -10,6 +7,9 @@ import com.meteordevelopments.duels.match.party.PartyDuelMatch;
 import com.meteordevelopments.duels.party.Party;
 import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.compat.Titles;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PartyDuelCountdown extends DuelCountdown {
 

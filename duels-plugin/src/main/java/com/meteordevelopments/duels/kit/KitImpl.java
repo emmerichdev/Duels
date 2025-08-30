@@ -1,8 +1,5 @@
 package com.meteordevelopments.duels.kit;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.api.event.kit.KitEquipEvent;
@@ -11,6 +8,9 @@ import com.meteordevelopments.duels.gui.BaseButton;
 import com.meteordevelopments.duels.setting.Settings;
 import com.meteordevelopments.duels.util.inventory.InventoryUtil;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

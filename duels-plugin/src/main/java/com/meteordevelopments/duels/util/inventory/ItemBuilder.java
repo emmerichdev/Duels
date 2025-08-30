@@ -1,9 +1,12 @@
 package com.meteordevelopments.duels.util.inventory;
 
 import com.meteordevelopments.duels.DuelsPlugin;
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.EnumUtil;
 import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.compat.Items;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -11,18 +14,18 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
-
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-
 import org.bukkit.potion.PotionType;
-import java.util.function.Consumer;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public record ItemBuilder(ItemStack result) {
 
@@ -71,11 +74,15 @@ public record ItemBuilder(ItemStack result) {
     }
 
     public ItemBuilder name(final String name) {
-        return editMeta(meta -> meta.setDisplayName(StringUtil.color(name)));
+        return editMeta(meta -> meta.displayName(
+            LegacyComponentSerializer.legacySection().deserialize(CC.translate(name))));
     }
 
     public ItemBuilder lore(final List<String> lore) {
-        return editMeta(meta -> meta.setLore(StringUtil.color(lore)));
+        return editMeta(meta -> meta.lore(lore.stream()
+            .map(CC::translate)
+            .map(line -> LegacyComponentSerializer.legacySection().deserialize(line))
+            .collect(Collectors.toList())));
     }
 
     public ItemBuilder lore(final String... lore) {
@@ -91,7 +98,7 @@ public record ItemBuilder(ItemStack result) {
         editMeta(meta -> {
             try {
                 // Use reflection for compatibility with pre-1.11 servers
-                java.lang.reflect.Method setUnbreakable = meta.getClass().getMethod("setUnbreakable", boolean.class);
+                Method setUnbreakable = meta.getClass().getMethod("setUnbreakable", boolean.class);
                 setUnbreakable.invoke(meta, true);
             } catch (Exception ignored) {
                 // Silently ignore on older servers that don't support unbreakable
@@ -103,20 +110,27 @@ public record ItemBuilder(ItemStack result) {
     public ItemBuilder head(final String owner) {
         editMeta(meta -> {
             if (owner != null && Items.equals(Items.HEAD, result) && meta instanceof SkullMeta skullMeta) {
-                skullMeta.setOwner(owner);
+                skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(owner));
             }
         });
         return this;
     }
 
-    public void leatherArmorColor(final String color) {
+    public ItemBuilder leatherArmorColor(final String color) {
         editMeta(meta -> {
-            final LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) meta;
+            if (!(meta instanceof LeatherArmorMeta leatherArmorMeta)) {
+                return;
+            }
 
             if (color != null) {
-                leatherArmorMeta.setColor(DyeColor.valueOf(color).getColor());
+                try {
+                    leatherArmorMeta.setColor(DyeColor.valueOf(color).getColor());
+                } catch (IllegalArgumentException ex) {
+                    // Invalid color name, silently ignore
+                }
             }
         });
+        return this;
     }
 
     public ItemBuilder potion(final PotionType type, final boolean extended, final boolean upgraded) {
@@ -125,7 +139,7 @@ public record ItemBuilder(ItemStack result) {
         }
         
         final ItemMeta itemMeta = result.getItemMeta();
-        if (itemMeta == null || !(itemMeta instanceof PotionMeta meta)) {
+        if (!(itemMeta instanceof PotionMeta meta)) {
             return this;
         }
 
@@ -154,7 +168,7 @@ public record ItemBuilder(ItemStack result) {
         return this;
     }
 
-    public void attribute(final String name, final int operation, final double amount, final String slotName) {
+    public ItemBuilder attribute(final String name, final int operation, final double amount, final String slotName) {
         editMeta(meta -> {
             final Attribute attribute = EnumUtil.getByName(attributeNameToEnum(name), Attribute.class);
 
@@ -176,9 +190,10 @@ public record ItemBuilder(ItemStack result) {
                 if (slot == null) {
                     return;
                 }
-                keyName += "_" + slot.getGroup().toString().toLowerCase();
+                // Use slot name instead of unstable getGroup() API
+                keyName += "_" + slot.name().toLowerCase();
                 NamespacedKey key = new NamespacedKey(DuelsPlugin.getInstance(), keyName);
-                modifier = new AttributeModifier(key, amount, AttributeModifier.Operation.values()[operation], slot.getGroup());
+                modifier = new AttributeModifier(key, amount, AttributeModifier.Operation.values()[operation]);
             } else {
                 NamespacedKey key = new NamespacedKey(DuelsPlugin.getInstance(), keyName);
                 modifier = new AttributeModifier(key, amount, AttributeModifier.Operation.values()[operation]);
@@ -186,6 +201,7 @@ public record ItemBuilder(ItemStack result) {
 
             meta.addAttributeModifier(attribute, modifier);
         });
+        return this;
     }
 
     private String attributeNameToEnum(String name) {

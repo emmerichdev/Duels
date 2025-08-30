@@ -1,7 +1,5 @@
 package com.meteordevelopments.duels.command.commands.party.subcommands;
 
-import java.util.ArrayList;
-import java.util.List;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.command.BaseCommand;
@@ -11,6 +9,9 @@ import com.meteordevelopments.duels.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ListCommand extends BaseCommand {
     

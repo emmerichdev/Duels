@@ -1,56 +1,58 @@
 package com.meteordevelopments.duels;
 
-import com.meteordevelopments.duels.startup.*;
-import com.meteordevelopments.duels.util.CC;
-import com.meteordevelopments.duels.party.PartyManagerImpl;
-import com.meteordevelopments.duels.validator.ValidatorManager;
-import com.meteordevelopments.duels.util.Log;
-import com.meteordevelopments.duels.util.Log.LogSource;
-import com.meteordevelopments.duels.util.json.JsonUtil;
-import com.meteordevelopments.duels.data.ItemData;
-import com.meteordevelopments.duels.data.ItemData.ItemDataDeserializer;
-
-import com.meteordevelopments.duels.util.Loadable;
-import com.meteordevelopments.duels.config.DatabaseConfig;
-import com.meteordevelopments.duels.mongo.MongoService;
-import com.meteordevelopments.duels.redis.RedisService;
-import com.meteordevelopments.duels.config.Config;
-import com.meteordevelopments.duels.config.Lang;
-import com.meteordevelopments.duels.data.UserManagerImpl;
-import com.meteordevelopments.duels.util.gui.GuiListener;
-import com.meteordevelopments.duels.kit.KitManagerImpl;
-import com.meteordevelopments.duels.setting.SettingsManager;
-import com.meteordevelopments.duels.player.PlayerInfoManager;
-import com.meteordevelopments.duels.spectate.SpectateManagerImpl;
-import com.meteordevelopments.duels.inventories.InventoryManager;
-import com.meteordevelopments.duels.duel.DuelManager;
-import com.meteordevelopments.duels.queue.QueueManager;
-import com.meteordevelopments.duels.queue.sign.QueueSignManagerImpl;
-import com.meteordevelopments.duels.request.RequestManager;
-import com.meteordevelopments.duels.hook.HookManager;
-import com.meteordevelopments.duels.teleport.Teleport;
-import com.meteordevelopments.duels.extension.ExtensionManager;
-import com.meteordevelopments.duels.leaderboard.manager.LeaderboardManager;
-import com.meteordevelopments.duels.rank.manager.RankManager;
-import com.meteordevelopments.duels.logging.LogManager;
-import lombok.Getter;
-import lombok.Setter;
 import com.meteordevelopments.duels.api.Duels;
 import com.meteordevelopments.duels.api.command.SubCommand;
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
 import com.meteordevelopments.duels.betting.BettingManager;
+import com.meteordevelopments.duels.config.Config;
+import com.meteordevelopments.duels.config.DatabaseConfig;
+import com.meteordevelopments.duels.config.Lang;
+import com.meteordevelopments.duels.data.ItemData;
+import com.meteordevelopments.duels.data.ItemData.ItemDataDeserializer;
+import com.meteordevelopments.duels.data.UserManagerImpl;
+import com.meteordevelopments.duels.duel.DuelManager;
+import com.meteordevelopments.duels.extension.ExtensionManager;
+import com.meteordevelopments.duels.hook.HookManager;
+import com.meteordevelopments.duels.inventories.InventoryManager;
+import com.meteordevelopments.duels.kit.KitManagerImpl;
+import com.meteordevelopments.duels.leaderboard.manager.LeaderboardManager;
+import com.meteordevelopments.duels.logging.LogManager;
+import com.meteordevelopments.duels.mongo.MongoService;
+import com.meteordevelopments.duels.party.PartyManagerImpl;
+import com.meteordevelopments.duels.player.PlayerInfoManager;
+import com.meteordevelopments.duels.queue.QueueManager;
+import com.meteordevelopments.duels.queue.sign.QueueSignManagerImpl;
+import com.meteordevelopments.duels.rank.manager.RankManager;
+import com.meteordevelopments.duels.redis.RedisService;
+import com.meteordevelopments.duels.request.RequestManager;
+import com.meteordevelopments.duels.setting.SettingsManager;
+import com.meteordevelopments.duels.spectate.SpectateManagerImpl;
+import com.meteordevelopments.duels.startup.CommandRegistrar;
+import com.meteordevelopments.duels.startup.ListenerManager;
+import com.meteordevelopments.duels.startup.LoadableManager;
+import com.meteordevelopments.duels.startup.StartupManager;
+import com.meteordevelopments.duels.teleport.Teleport;
+import com.meteordevelopments.duels.util.CC;
+import com.meteordevelopments.duels.util.Loadable;
+import com.meteordevelopments.duels.util.Log;
+import com.meteordevelopments.duels.util.Log.LogSource;
+import com.meteordevelopments.duels.util.gui.GuiListener;
+import com.meteordevelopments.duels.util.json.JsonUtil;
+import com.meteordevelopments.duels.validator.ValidatorManager;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import redis.clients.jedis.JedisPubSub;
 import space.arim.morepaperlib.MorePaperLib;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
-import redis.clients.jedis.JedisPubSub;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.*;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.logging.Level;
-
 import static com.meteordevelopments.duels.redis.RedisService.*;
 
 
@@ -61,9 +63,6 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     @Getter
     private static MorePaperLib morePaperLib;
 
-    
-    // Managers
-    private StartupManager startupManager;
     private LoadableManager loadableManager;
     private CommandRegistrar commandRegistrar;
     private ListenerManager listenerManager;
@@ -103,8 +102,20 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         Log.addSource(this);
         JsonUtil.registerDeserializer(ItemData.class, ItemDataDeserializer.class);
         
-        // Initialize managers
-        startupManager = new StartupManager(this);
+        // Initialize basic configurations first (Config and Lang are needed for startup messages)
+        if (!initializeBasicConfigurations()) {
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        
+        // Initialize LogManager early - MUST be done before LoadableManager and other startup components
+        if (!initializeLogManagerEarly()) {
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        
+        // Initialize managers (LogManager is now available for use)
+        StartupManager startupManager = new StartupManager(this);
         loadableManager = new LoadableManager(this);
         commandRegistrar = new CommandRegistrar(this);
         listenerManager = new ListenerManager(this);
@@ -115,7 +126,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
             return;
         }
         
-        // Initialize and load components
+        // Initialize and load remaining components
         if (!loadableManager.initializeLoadables()) {
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -198,21 +209,8 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     }
 
     @Override
-    public boolean reload() {
-        if (!(loadableManager.unloadAll() && loadableManager.loadAll())) {
-            getServer().getPluginManager().disablePlugin(this);
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public String getVersion() {
-        return getDescription().getVersion();
-    }
-
-    public boolean reload(final Loadable loadable) {
-        return loadableManager.reload(loadable);
+        return getPluginMeta().getVersion();
     }
 
     @Override
@@ -234,10 +232,8 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     }
 
     @Override
-    public void cancelTask(final ScheduledTask task) {
-        if (task != null) {
-            task.cancel();
-        }
+    public void cancelTask(final @NotNull ScheduledTask task) {
+        task.cancel();
     }
 
     @Override
@@ -289,11 +285,20 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     }
 
     public static String getPrefix() {
-        return CC.translate("&b&lDuels Optimised &7» ");
+        return CC.translateConsole("&b&lDuels &7» ");
     }
 
     public static void sendMessage(String message) {
-        Bukkit.getConsoleSender().sendMessage(getPrefix() + CC.translate(message));
+        final String prefix = getPrefix();
+        if (message == null || message.isEmpty()) {
+            Bukkit.getConsoleSender().sendMessage(prefix);
+            return;
+        }
+        if (message.indexOf('§') >= 0) {
+            Bukkit.getConsoleSender().sendMessage(prefix + message);
+        } else {
+            Bukkit.getConsoleSender().sendMessage(prefix + CC.translateConsole(message));
+        }
     }
 
     public void initializeLogManager() throws IOException {
@@ -302,16 +307,40 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         logManager.debug("onEnable start -> " + System.currentTimeMillis() + "\n");
     }
 
+    private boolean initializeLogManagerEarly() {
+        try {
+            initializeLogManager();
+            return true;
+        } catch (Exception ex) {
+            getLogger().severe("Failed to initialize LogManager: " + ex.getMessage());
+            return false;
+        }
+    }
+    
+    private boolean initializeBasicConfigurations() {
+        try {
+            // Initialize Config first
+            Config config = new Config(this);
+            config.handleLoad();
+            setConfiguration(config);
+            
+            // Initialize Lang after Config (Lang depends on Config)
+            Lang lang = new Lang(this);
+            lang.handleLoad();
+            setLang(lang);
+            
+            return true;
+        } catch (Exception ex) {
+            getLogger().log(java.util.logging.Level.SEVERE, "Failed to initialize basic configurations", ex);
+            sendMessage("&cFailed to load basic configurations. Please check your config.yml and lang.yml files.");
+            return false;
+        }
+    }
+
     // Convenience delegates used by commands
     public Loadable find(final String name) {
         return loadableManager != null ? loadableManager.find(name) : null;
     }
-
-    public java.util.List<String> getReloadables() {
-        return loadableManager != null ? loadableManager.getReloadableNames() : java.util.Collections.emptyList();
-    }
-
-    // Update system removed in this fork
 
     private void setupRedisSubscriptions() {
         try {

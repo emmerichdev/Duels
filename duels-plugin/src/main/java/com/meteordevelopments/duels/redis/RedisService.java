@@ -1,6 +1,7 @@
 package com.meteordevelopments.duels.redis;
 
 import com.meteordevelopments.duels.DuelsPlugin;
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.Log;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.DefaultJedisClientConfig;
@@ -8,6 +9,7 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.UnifiedJedis;
 import redis.clients.jedis.params.SetParams;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -47,7 +49,7 @@ public class RedisService {
             return t;
         });
 
-        DuelsPlugin.sendMessage("&aConnected to Redis at &f" + host + ":" + port + " &a(db=" + database + ")");
+        DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.database.redis-connected", "host", host, "port", String.valueOf(port), "database", String.valueOf(database))));
     }
 
     public void close() {
@@ -58,8 +60,6 @@ public class RedisService {
             subscriberExecutor.shutdownNow();
         }
     }
-
-    public UnifiedJedis client() { return client; }
 
     public void publish(final String channel, final String message) {
         try {
@@ -84,8 +84,6 @@ public class RedisService {
             }
         });
     }
-
-    private String getEnvOrDefault(final String key, final String def) { return def; }
 
     public boolean tryAcquireLock(final String key, final int ttlSeconds, final String value) {
         try {

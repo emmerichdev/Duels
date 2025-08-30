@@ -21,6 +21,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok:1.18.38'
 
 	implementation 'org.apache.commons:commons-lang3:3.18.0'
+	implementation 'net.kyori:adventure-text-serializer-ansi:4.17.0'
 	compileOnly 'com.mojang:authlib:3.13.56'
 	compileOnly 'me.clip:placeholderapi:2.11.6'
 	compileOnly 'com.github.timderspieler:DeluxeCombat-API:1.5.1'
@@ -48,6 +49,7 @@ shadowJar {
 		include(dependency('redis.clients:.*'))
 		include(dependency('org.apache.commons:commons-pool2:.*'))
 		include(dependency('org.apache.commons:commons-lang3:.*'))
+		include(dependency('net.kyori:adventure-text-serializer-ansi:.*'))
 	}
 
 	final String group = project.group.toString() + "." + parent.name.toLowerCase() + ".shaded."

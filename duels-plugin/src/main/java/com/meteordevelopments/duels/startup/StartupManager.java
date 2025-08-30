@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 public record StartupManager(DuelsPlugin plugin) {
 
-    private static final String SPIGOT_INSTALLATION_URL = "https://www.spigotmc.org/wiki/spigot-installation/";
     private static final Logger LOGGER = Logger.getLogger("[Duels]");
 
     public boolean startup() {
@@ -21,16 +20,9 @@ public record StartupManager(DuelsPlugin plugin) {
             return false;
         }
 
-        if (!loadLogManager()) {
-            return false;
-        }
-
-        if (!checkBukkitCompatibility()) {
-            return false;
-        }
-
         long end = System.currentTimeMillis();
-        DuelsPlugin.sendMessage("&2Successfully completed startup in " + CC.getTimeDifferenceAndColor(start, end) + "&a.");
+        String timeString = CC.getTimeDifferenceAndColor(start, end);
+        DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.startup.startup-complete", "time", timeString));
 
         return true;
     }
@@ -43,7 +35,7 @@ public record StartupManager(DuelsPlugin plugin) {
             plugin.setDatabaseConfig(databaseConfig);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Failed to load database configuration (DB.yml)", ex);
-            DuelsPlugin.sendMessage("&cFailed to load DB.yml. Disabling plugin.");
+            DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.database.db-config-failed"));
             plugin.setDatabaseConfig(null); // Clear any stale config
             return false;
         }
@@ -55,7 +47,8 @@ public record StartupManager(DuelsPlugin plugin) {
             plugin.setMongoService(mongoService);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Failed to connect to MongoDB", ex);
-            DuelsPlugin.sendMessage("&cFailed to connect to MongoDB. Disabling plugin.");
+            String errorMessage = ex.getMessage() != null ? ex.getMessage() : "Unknown error";
+            DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.database.mongodb-connect-failed", "error", errorMessage));
             // Clean up any partially initialized MongoDB resources
             try {
                 mongoService.close();
@@ -71,7 +64,7 @@ public record StartupManager(DuelsPlugin plugin) {
             redisService.connect();
             plugin.setRedisService(redisService);
         } catch (Exception ex) {
-            DuelsPlugin.sendMessage("&eRedis connection failed, continuing without cross-server sync cache.");
+            DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.database.redis-connect-failed"));
             LOGGER.log(Level.WARNING, "Redis connection failed; continuing without Redis.", ex);
             // Clean up any partially initialized Redis resources
             try {
@@ -83,34 +76,5 @@ public record StartupManager(DuelsPlugin plugin) {
         }
 
         return true;
-    }
-
-    private boolean loadLogManager() {
-        long start = System.currentTimeMillis();
-
-        DuelsPlugin.sendMessage("&eLoading log manager...");
-        try {
-            plugin.initializeLogManager();
-            DuelsPlugin.sendMessage("&dSuccessfully loaded Log Manager in &f[" + CC.getTimeDifferenceAndColor(start, System.currentTimeMillis()) + "&f]");
-            return true;
-        } catch (Exception ex) {
-            DuelsPlugin.sendMessage("&c&lCould not load LogManager. Please contact the developer.");
-            LOGGER.log(Level.SEVERE, "Could not load LogManager. Please contact the developer.", ex);
-            return false;
-        }
-    }
-
-    private boolean checkBukkitCompatibility() {
-        try {
-            Class.forName("org.bukkit.Bukkit");
-            return true;
-        } catch (ClassNotFoundException ex) {
-            DuelsPlugin.sendMessage("&c&l================= *** DUELS LOAD FAILURE *** =================");
-            DuelsPlugin.sendMessage("&c&lDuels requires a Bukkit-compatible server (Spigot, Paper, etc.)!");
-            DuelsPlugin.sendMessage("&c&lFor Spigot installation, follow this guide: " + SPIGOT_INSTALLATION_URL);
-            DuelsPlugin.sendMessage("&c&lOther compatible servers include Paper, Purpur, and other Bukkit forks.");
-            DuelsPlugin.sendMessage("&c&l================= *** DUELS LOAD FAILURE *** =================");
-            return false;
-        }
     }
 }

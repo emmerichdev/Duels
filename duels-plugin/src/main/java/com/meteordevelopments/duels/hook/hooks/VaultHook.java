@@ -1,9 +1,9 @@
 package com.meteordevelopments.duels.hook.hooks;
 
-import lombok.Getter;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.util.Log;
 import com.meteordevelopments.duels.util.hook.PluginHook;
+import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

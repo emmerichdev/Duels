@@ -1,12 +1,12 @@
 package com.meteordevelopments.duels.util.gui;
 
 import com.google.common.collect.Lists;
-import lombok.Getter;
-import lombok.Setter;
 import com.meteordevelopments.duels.util.compat.Inventories;
 import com.meteordevelopments.duels.util.compat.Items;
 import com.meteordevelopments.duels.util.inventory.InventoryBuilder;
 import com.meteordevelopments.duels.util.inventory.Slots;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class MultiPageGui<P extends JavaPlugin> extends AbstractGui<P> {
@@ -217,7 +218,9 @@ public class MultiPageGui<P extends JavaPlugin> extends AbstractGui<P> {
                 }
 
                 remove(node.inventory);
-                Lists.newArrayList(node.inventory.getViewers()).forEach(HumanEntity::closeInventory);
+                Lists.newArrayList(node.inventory.getViewers()).stream()
+                    .filter(Objects::nonNull)
+                    .forEach(HumanEntity::closeInventory);
             });
             next = null;
         }

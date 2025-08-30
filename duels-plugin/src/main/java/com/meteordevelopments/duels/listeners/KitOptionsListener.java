@@ -1,39 +1,36 @@
 package com.meteordevelopments.duels.listeners;
 
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.api.event.match.MatchEndEvent;
-import com.meteordevelopments.duels.api.event.match.MatchStartEvent;
 import com.meteordevelopments.duels.arena.ArenaImpl;
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
+import com.meteordevelopments.duels.config.Config;
 import com.meteordevelopments.duels.countdown.DuelCountdown;
 import com.meteordevelopments.duels.duel.DuelManager;
-import com.meteordevelopments.duels.match.DuelMatch;
-import com.meteordevelopments.duels.config.Config;
 import com.meteordevelopments.duels.kit.KitImpl.Characteristic;
+import com.meteordevelopments.duels.match.DuelMatch;
 import com.meteordevelopments.duels.util.PlayerUtil;
-import com.meteordevelopments.duels.util.compat.CompatUtil;
 import com.meteordevelopments.duels.util.compat.Items;
-import com.meteordevelopments.duels.util.metadata.MetadataUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Objects;
-
 public class KitOptionsListener implements Listener {
-
-    private static final String METADATA_KEY = "Duels-MaxNoDamageTicks";
 
     private final DuelsPlugin plugin;
     private final Config config;
@@ -47,7 +44,7 @@ public class KitOptionsListener implements Listener {
         this.duelManager = plugin.getDuelManager();
 
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        Bukkit.getPluginManager().registerEvents(CompatUtil.isPre1_14() ? new ComboPre1_14Listener() : new ComboPost1_14Listener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new ComboPost1_14Listener(), plugin);
     }
 
     private boolean isEnabled(final ArenaImpl arena, final Characteristic characteristic) {
@@ -105,7 +102,10 @@ public class KitOptionsListener implements Listener {
 
                     // Cancel the damage event for non-final rounds
                     event.setDamage(0);
-                    player.setHealth(player.getMaxHealth());
+                    final AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
+                    if (maxHealthAttribute != null) {
+                        player.setHealth(maxHealthAttribute.getValue());
+                    }
 
                     // Start next round
                     match.nextRound();
@@ -113,7 +113,10 @@ public class KitOptionsListener implements Listener {
                     // Reset both players' health and equipment
                     for (Player p : match.getAllPlayers()) {
                         PlayerUtil.reset(p);
-                        p.setHealth(p.getMaxHealth());
+                        final AttributeInstance playerMaxHealth = p.getAttribute(Attribute.MAX_HEALTH);
+                        if (playerMaxHealth != null) {
+                            p.setHealth(playerMaxHealth.getValue());
+                        }
                         p.setNoDamageTicks(40); // Give 2 seconds immunity to prevent damage carry-over
                         if (match.getKit() != null) {
                             match.getKit().equip(p);
@@ -194,100 +197,7 @@ public class KitOptionsListener implements Listener {
         event.setCancelled(true);
     }
 
-//    private void handleExplosion(List<Block> blocks, Cancellable event, Player player) {
-//        if (player == null) {
-//            return;
-//        }
-//
-//        ArenaImpl arena = arenaManager.get(player);
-//
-//        if (arena == null || arena.getMatch() == null) {
-//            return;
-//        }
-//
-//        for (Block block : blocks) {
-//            if (arena.getMatch().placedBlocks.contains(block)) {
-//                continue;
-//            }
-//
-//            if (isEnabled(arena, Characteristic.BREAK)) {
-//                if (!arena.getMatch().brokenBlocks.containsKey(block.getLocation())) {
-//                    arena.getMatch().brokenBlocks.put(block.getLocation(), block.getBlockData().clone());
-//                }
-//            } else {
-//                event.setCancelled(true);
-//            }
-//        }
-//    }
 
-    private Player findClosestPlayer(Location location) {
-        double radius = 10;
-        Player closestPlayer = null;
-        double closestDistance = radius;
-
-        for (Player player : Objects.requireNonNull(location.getWorld()).getPlayers()) {
-            double distance = player.getLocation().distance(location);
-            if (distance < closestDistance) {
-                closestPlayer = player;
-                closestDistance = distance;
-            }
-        }
-
-        return closestPlayer;
-    }
-
-/*    @EventHandler
-    public void onPlayerPlace(PlayerInteractEvent event) {
-        final Player player = event.getPlayer();
-        final ArenaImpl arena = arenaManager.get(player);
-
-        if (arena == null || arena.getMatch() == null) {
-            return;
-        }
-
-        if (isEnabled(arena, Characteristic.PLACE)) {
-            if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getItem() != null) {
-                ItemStack item = event.getItem();
-                Block clickedBlock = event.getClickedBlock();
-
-                if (clickedBlock == null) {
-                    return;
-                }
-
-                Location location = clickedBlock.getRelative(event.getBlockFace()).getLocation();
-                EntityType entityType = getEntityType(item.getType());
-
-                if (entityType != null) {
-                    Entity entity = location.getWorld().spawnEntity(location, entityType);
-                    arena.getMatch().placedEntities.add(entity);
-                }
-            }
-        }else {
-            event.setCancelled(true);
-        }
-    }
-
-    private EntityType getEntityType(Material material) {
-        switch (material) {
-            case END_CRYSTAL:
-                return EntityType.ENDER_CRYSTAL;
-            case MINECART:
-                return EntityType.MINECART;
-            case TNT_MINECART:
-                return EntityType.MINECART_TNT;
-            case ARMOR_STAND:
-                return EntityType.ARMOR_STAND;
-            case CHEST_MINECART:
-                return EntityType.MINECART_CHEST;
-            case HOPPER_MINECART:
-                return EntityType.MINECART_HOPPER;
-            case FURNACE_MINECART:
-                return EntityType.MINECART_FURNACE;
-            // Add more placeable entities as needed
-            default:
-                return null; // Unsupported type
-        }
-    }*/
 
     @EventHandler
     public void on(final PlayerMoveEvent event) {
@@ -345,14 +255,11 @@ public class KitOptionsListener implements Listener {
 
         final ItemStack bowl = config.isSoupRemoveEmptyBowl() ? null : new ItemStack(Material.BOWL);
 
-        if (CompatUtil.isPre1_10()) {
-            player.getInventory().setItem(player.getInventory().getHeldItemSlot(), bowl);
+
+        if (event.getHand() == EquipmentSlot.OFF_HAND) {
+            player.getInventory().setItemInOffHand(bowl);
         } else {
-            if (event.getHand() == EquipmentSlot.OFF_HAND) {
-                player.getInventory().setItemInOffHand(bowl);
-            } else {
-                player.getInventory().setItemInMainHand(bowl);
-            }
+            player.getInventory().setItemInMainHand(bowl);
         }
 
         final double regen = config.getSoupHeartsToRegen() * 2.0;
@@ -376,47 +283,7 @@ public class KitOptionsListener implements Listener {
         event.setCancelled(true);
     }
 
-    private class ComboPre1_14Listener implements Listener {
 
-        @EventHandler
-        public void on(final MatchStartEvent event) {
-            final ArenaImpl arena = arenaManager.get(event.getMatch().getArena().getName());
-
-            if (arena == null || !isEnabled(arena, Characteristic.COMBO)) {
-                return;
-            }
-
-            for (final Player player : event.getPlayers()) {
-                MetadataUtil.put(plugin, player, METADATA_KEY, player.getMaximumNoDamageTicks());
-                player.setMaximumNoDamageTicks(0);
-            }
-        }
-
-        @EventHandler
-        public void on(final MatchEndEvent event) {
-            final ArenaImpl arena = arenaManager.get(event.getMatch().getArena().getName());
-
-            if (arena == null || !isEnabled(arena, Characteristic.COMBO)) {
-                return;
-            }
-
-            final DuelMatch match = arena.getMatch();
-
-            if (match == null) {
-                return;
-            }
-
-            match.getAllPlayers().forEach(player -> {
-                final Object value = MetadataUtil.removeAndGet(plugin, player, METADATA_KEY);
-
-                if (value == null) {
-                    return;
-                }
-
-                player.setMaximumNoDamageTicks((Integer) value);
-            });
-        }
-    }
 
     private class ComboPost1_14Listener implements Listener {
 
@@ -432,7 +299,10 @@ public class KitOptionsListener implements Listener {
                 return;
             }
 
-            boolean isCritical = !player.isOnGround() &&
+            Location belowLocation = player.getLocation().add(0, -1, 0);
+            boolean isOnGround = belowLocation.getBlock().getType().isSolid();
+            
+            boolean isCritical = !isOnGround &&
                     !player.isSneaking() &&
                     player.getFallDistance() > 0;
             if (isCritical) {

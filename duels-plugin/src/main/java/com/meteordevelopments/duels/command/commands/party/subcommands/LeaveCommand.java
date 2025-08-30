@@ -1,11 +1,11 @@
 package com.meteordevelopments.duels.command.commands.party.subcommands;
 
-import com.meteordevelopments.duels.Permissions;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import com.meteordevelopments.duels.DuelsPlugin;
+import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.command.BaseCommand;
 import com.meteordevelopments.duels.party.Party;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class LeaveCommand extends BaseCommand {
 

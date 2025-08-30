@@ -1,12 +1,12 @@
 package com.meteordevelopments.duels.util.gui;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.StringUtil;
-import com.meteordevelopments.duels.util.compat.CompatUtil;
 import com.meteordevelopments.duels.util.compat.Items;
 import com.meteordevelopments.duels.util.compat.Skulls;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -39,11 +39,14 @@ public class Button<P extends JavaPlugin> {
     }
 
     protected void setDisplayName(final String name) {
-        editMeta(meta -> meta.setDisplayName(StringUtil.color(name)));
+        editMeta(meta -> meta.displayName(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(CC.translate(name))));
     }
 
     protected void setLore(final List<String> lore) {
-        editMeta(meta -> meta.setLore(StringUtil.color(lore)));
+        editMeta(meta -> meta.lore(lore.stream()
+            .map(CC::translate)
+            .map(line -> net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(line))
+            .collect(java.util.stream.Collectors.toList())));
     }
 
     protected void setLore(final String... lore) {
@@ -68,16 +71,10 @@ public class Button<P extends JavaPlugin> {
         editMeta(meta -> {
             if (glow) {
                 meta.addEnchant(Enchantment.UNBREAKING, 1, false);
-
-                if (CompatUtil.hasItemFlag()) {
-                    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                }
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             } else {
                 meta.removeEnchant(Enchantment.UNBREAKING);
-
-                if (CompatUtil.hasItemFlag()) {
-                    meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
-                }
+                meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
             }
         });
     }
