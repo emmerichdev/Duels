@@ -35,6 +35,18 @@ public class CC {
         return ANSI_SERIALIZER.serialize(component);
     }
     
+    public static String translateConsoleFromSection(String input) {
+        if (input == null) return "";
+        
+        // Convert section symbols back to ampersand for processing
+        String ampersandInput = input.replace('§', '&');
+        String processedInput = expandHexColors(ampersandInput);
+        
+        Component component = LEGACY_SERIALIZER.deserialize(processedInput);
+        
+        return ANSI_SERIALIZER.serialize(component);
+    }
+    
     private static String expandHexColors(String input) {
         Matcher matcher = HEX_PATTERN.matcher(input);
         StringBuilder result = new StringBuilder();

@@ -294,8 +294,9 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
             Bukkit.getConsoleSender().sendMessage(prefix);
             return;
         }
+        // Use appropriate console translation based on the format of the message
         if (message.indexOf('§') >= 0) {
-            Bukkit.getConsoleSender().sendMessage(prefix + message);
+            Bukkit.getConsoleSender().sendMessage(prefix + CC.translateConsoleFromSection(message));
         } else {
             Bukkit.getConsoleSender().sendMessage(prefix + CC.translateConsole(message));
         }
