@@ -1,11 +1,12 @@
 package com.meteordevelopments.duels.queue.sign;
 
-import com.meteordevelopments.duels.api.queue.sign.QueueSign;
-import com.meteordevelopments.duels.queue.Queue;
-import com.meteordevelopments.duels.util.StringUtil;
+import com.meteordevelopments.duels.util.CC;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import com.meteordevelopments.duels.api.queue.sign.QueueSign;
+import com.meteordevelopments.duels.queue.Queue;
+import com.meteordevelopments.duels.util.StringUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Location;
@@ -60,7 +61,7 @@ public class QueueSignImpl implements QueueSign {
     }
 
     private String replace(final String line, final int inQueue, final long inMatch) {
-        return StringUtil.color(line.replace("%in_queue%", String.valueOf(inQueue)).replace("%in_match%", String.valueOf(inMatch)));
+        return CC.translate(line.replace("%in_queue%", String.valueOf(inQueue)).replace("%in_match%", String.valueOf(inMatch)));
     }
 
     private Component createComponent(final String text) {

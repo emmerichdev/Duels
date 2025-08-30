@@ -21,14 +21,16 @@ public final class TextBuilder {
             return;
         }
 
-        component = LegacyComponentSerializer.legacyAmpersand().deserialize(base);
+        String translatedBase = CC.translate(base);
+        component = LegacyComponentSerializer.legacySection().deserialize(translatedBase);
         
-        if (clickValue != null) {
+        if (clickAction != null && clickValue != null) {
             component = component.clickEvent(createClickEvent(clickAction, clickValue));
         }
 
         if (hoverValue != null) {
-            component = component.hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacyAmpersand().deserialize(hoverValue)));
+            String translatedHover = CC.translate(hoverValue);
+            component = component.hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacySection().deserialize(translatedHover)));
         }
     }
 
@@ -48,16 +50,18 @@ public final class TextBuilder {
             return this;
         }
 
-        component = component.append(LegacyComponentSerializer.legacyAmpersand().deserialize(text));
+        String translatedText = CC.translate(text);
+        component = component.append(LegacyComponentSerializer.legacySection().deserialize(translatedText));
         return this;
     }
 
     public TextBuilder add(final String text, final ClickEvent.Action action, final String value) {
-        if (text == null || value == null) {
+        if (text == null || action == null || value == null) {
             return this;
         }
 
-        Component textComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(text)
+        String translatedText = CC.translate(text);
+        Component textComponent = LegacyComponentSerializer.legacySection().deserialize(translatedText)
                 .clickEvent(createClickEvent(action, value));
         component = component.append(textComponent);
         return this;
@@ -68,8 +72,10 @@ public final class TextBuilder {
             return this;
         }
 
-        Component textComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(text)
-                .hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacyAmpersand().deserialize(hoverValue)));
+        String translatedText = CC.translate(text);
+        String translatedHover = CC.translate(hoverValue);
+        Component textComponent = LegacyComponentSerializer.legacySection().deserialize(translatedText)
+                .hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacySection().deserialize(translatedHover)));
         component = component.append(textComponent);
         return this;
     }
@@ -82,14 +88,16 @@ public final class TextBuilder {
             return this;
         }
 
-        Component textComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(text);
+        String translatedText = CC.translate(text);
+        Component textComponent = LegacyComponentSerializer.legacySection().deserialize(translatedText);
         
-        if (clickValue != null) {
+        if (clickAction != null && clickValue != null) {
             textComponent = textComponent.clickEvent(createClickEvent(clickAction, clickValue));
         }
 
         if (hoverValue != null) {
-            textComponent = textComponent.hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacyAmpersand().deserialize(hoverValue)));
+            String translatedHover = CC.translate(hoverValue);
+            textComponent = textComponent.hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacySection().deserialize(translatedHover)));
         }
 
         component = component.append(textComponent);
@@ -97,7 +105,7 @@ public final class TextBuilder {
     }
 
     public void setClickEvent(final ClickEvent.Action action, final String value) {
-        if (value == null) {
+        if (action == null || value == null) {
             return;
         }
 
@@ -109,7 +117,8 @@ public final class TextBuilder {
             return this;
         }
 
-        component = component.hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacyAmpersand().deserialize(value)));
+        String translatedValue = CC.translate(value);
+        component = component.hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacySection().deserialize(translatedValue)));
         return this;
     }
 

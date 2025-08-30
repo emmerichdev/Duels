@@ -51,7 +51,7 @@ public class LoadableManager {
 
     public boolean initializeLoadables() {
         long start = System.currentTimeMillis();
-        DuelsPlugin.sendMessage("&eInitializing components...");
+        DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.startup.initializing-components"));
         
         // Initialize all loadables
         addLoadable("config", () -> {
@@ -165,7 +165,7 @@ public class LoadableManager {
             HookManager hookManager = new HookManager(plugin);
             plugin.setHookManager(hookManager);
         } catch (Exception e) {
-            DuelsPlugin.sendMessage("&cFailed to initialize hook manager: " + e.getMessage());
+            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.errors.hook-manager-failed", "error", e.getMessage())));
             throw new RuntimeException("Failed to initialize hook manager", e);
         }
 
@@ -173,7 +173,8 @@ public class LoadableManager {
             return false;
         }
 
-        DuelsPlugin.sendMessage("&dSuccessfully initialized all components in &f[" + CC.getTimeDifferenceAndColorConsole(start, System.currentTimeMillis()) + "&f]");
+        String timeString = CC.getTimeDifferenceAndColor(start, System.currentTimeMillis());
+        DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.startup.components-success", "time", timeString)));
         return true;
     }
 
@@ -194,7 +195,7 @@ public class LoadableManager {
                     LOGGER.log(Level.SEVERE, "Error loading LogManager", ex);
                 }
 
-                DuelsPlugin.sendMessage("&c&lThere was an error while loading " + name + "! If you believe this is an issue from the plugin, please contact the developer.");
+                DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.errors.load-failure", "name", name)));
                 return false;
             }
         }
@@ -216,7 +217,7 @@ public class LoadableManager {
                 loadable.handleUnload();
                 plugin.getLogManager().debug(name + " has been unloaded. (took " + (System.currentTimeMillis() - now) + "ms)");
             } catch (Exception ex) {
-                DuelsPlugin.sendMessage("&c&lThere was an error while unloading " + name + "! If you believe this is an issue from the plugin, please contact the developer.");
+                DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.errors.unload-failure", "name", name)));
                 // Log the error but continue with shutdown - don't halt the process
             }
         }
@@ -240,7 +241,7 @@ public class LoadableManager {
             Loadable loadable = supplier.get();
             loadables.add(loadable);
         } catch (Exception e) {
-            DuelsPlugin.sendMessage("&cFailed to initialize " + name + ": " + e.getMessage());
+            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.errors.initialization-failed", "name", name, "error", e.getMessage())));
             throw new RuntimeException("Failed to initialize " + name, e);
         }
     }

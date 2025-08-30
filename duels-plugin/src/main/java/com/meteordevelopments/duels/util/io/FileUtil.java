@@ -12,7 +12,9 @@ public final class FileUtil {
         if (!file.exists()) {
             if (create) {
                 if (!file.createNewFile()) {
-                    throw new IOException("Failed to create file: " + file.getAbsolutePath());
+                    if (!file.exists()) {
+                        throw new IOException("Failed to create file: " + file.getAbsolutePath());
+                    }
                 }
             }
             return false;

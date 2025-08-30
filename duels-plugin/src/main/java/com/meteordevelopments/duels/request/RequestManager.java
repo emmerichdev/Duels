@@ -12,6 +12,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -98,21 +99,21 @@ public class RequestManager implements Loadable, Listener {
         // Return early if any required text is null to prevent NPE
         if (infoText == null || acceptText == null || denyText == null) {
             // Fallback to a simple message if language keys are missing
-            target.sendMessage("Duel request from " + sender.getName() + ". Use /duel accept " + sender.getName() + " or /duel deny " + sender.getName());
+            lang.sendMessage(target, "FALLBACK.duel-request", "sender", sender.getName());
             return;
         }
         
-        Component infoComponent = Component.text(infoText)
-                .hoverEvent(HoverEvent.showText(Component.text(infoHoverText != null ? infoHoverText : "")));
+        Component infoComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(infoText)
+                .hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacyAmpersand().deserialize(infoHoverText != null ? infoHoverText : "")));
         
-        Component acceptComponent = Component.text(acceptText)
-                .clickEvent(ClickEvent.suggestCommand("/duel accept " + sender.getName()))
-                .hoverEvent(HoverEvent.showText(Component.text(acceptHoverText != null ? acceptHoverText : "Click to accept this request")))
+        Component acceptComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(acceptText)
+                .clickEvent(ClickEvent.runCommand("/duel accept " + sender.getName()))
+                .hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacyAmpersand().deserialize(acceptHoverText != null ? acceptHoverText : "Click to accept this request")))
                 .color(NamedTextColor.GREEN);
         
-        Component denyComponent = Component.text(denyText)
-                .clickEvent(ClickEvent.suggestCommand("/duel deny " + sender.getName()))
-                .hoverEvent(HoverEvent.showText(Component.text(denyHoverText != null ? denyHoverText : "Click to deny this request")))
+        Component denyComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(denyText)
+                .clickEvent(ClickEvent.runCommand("/duel deny " + sender.getName()))
+                .hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacyAmpersand().deserialize(denyHoverText != null ? denyHoverText : "Click to deny this request")))
                 .color(NamedTextColor.RED);
         
         Component fullMessage = infoComponent.append(acceptComponent).append(denyComponent);

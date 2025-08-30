@@ -49,8 +49,13 @@ public class AcceptCommand extends BaseCommand {
         if (request.isPartyDuel()) {
             final Player targetPartyLeader = request.getTargetParty().getOwner().getPlayer();
             final Player senderPartyLeader = request.getSenderParty().getOwner().getPlayer();
-            lang.sendMessage(Collections.singleton(senderPartyLeader), "COMMAND.duel.party-request.accept.receiver-party", "owner", player.getName(), "name", target.getName());
-            lang.sendMessage(targetPartyLeader, "COMMAND.duel.party-request.accept.sender-party", "owner", target.getName(), "name", player.getName());
+            
+            if (senderPartyLeader != null) {
+                lang.sendMessage(Collections.singleton(senderPartyLeader), "COMMAND.duel.party-request.accept.receiver-party", "owner", player.getName(), "name", target.getName());
+            }
+            if (targetPartyLeader != null) {
+                lang.sendMessage(targetPartyLeader, "COMMAND.duel.party-request.accept.sender-party", "owner", target.getName(), "name", player.getName());
+            }
         } else {
             lang.sendMessage(player, "COMMAND.duel.request.accept.receiver", "name", target.getName());
             lang.sendMessage(target, "COMMAND.duel.request.accept.sender", "name", player.getName());

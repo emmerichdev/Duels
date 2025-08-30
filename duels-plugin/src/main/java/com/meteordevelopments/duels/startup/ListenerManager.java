@@ -23,7 +23,7 @@ public class ListenerManager {
 
     public void registerPreListeners() {
         long start = System.currentTimeMillis();
-        DuelsPlugin.sendMessage("&eRegistering listeners...");
+        DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.startup.registering-listeners"));
         
         registerListener(new KitItemListener(plugin));
         registerListener(new DamageListener(plugin));
@@ -34,7 +34,8 @@ public class ListenerManager {
         registerListener(new KitOptionsListener(plugin));
         registerListener(new LingerPotionListener(plugin));
         
-        DuelsPlugin.sendMessage("&dSuccessfully registered listeners in &f[" + CC.getTimeDifferenceAndColorConsole(start, System.currentTimeMillis()) + "&f]");
+        String timeString = CC.getTimeDifferenceAndColor(start, System.currentTimeMillis());
+        DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.startup.listeners-success", "time", timeString)));
     }
 
     public void registerListener(Listener listener) {
@@ -45,11 +46,12 @@ public class ListenerManager {
 
     public void registerListenerWithTiming(Listener listener) {
         long start = System.currentTimeMillis();
-        DuelsPlugin.sendMessage("&eRegistering post listeners...");
+        DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.startup.registering-post-listeners"));
         
         registerListener(listener);
         
-        DuelsPlugin.sendMessage("&dSuccessfully registered listeners after plugin startup in [" + CC.getTimeDifferenceAndColorConsole(start, System.currentTimeMillis()) + "&f]");
+        String timeString = CC.getTimeDifferenceAndColor(start, System.currentTimeMillis());
+        DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.startup.post-listeners-success", "time", timeString)));
     }
 
     public void unregisterAllListeners() {

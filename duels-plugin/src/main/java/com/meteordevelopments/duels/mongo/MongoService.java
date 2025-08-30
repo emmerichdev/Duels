@@ -2,6 +2,7 @@ package com.meteordevelopments.duels.mongo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.meteordevelopments.duels.DuelsPlugin;
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.data.UserData;
 import com.meteordevelopments.duels.util.Log;
 import com.meteordevelopments.duels.util.json.JsonUtil;
@@ -35,7 +36,7 @@ public class MongoService {
 
         client = MongoClients.create(settings);
         database = client.getDatabase(dbName);
-        DuelsPlugin.sendMessage("&aConnected to MongoDB database '&f" + dbName + "&a'.");
+        DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.database.mongodb-connected", "database", dbName)));
     }
 
     public void close() {

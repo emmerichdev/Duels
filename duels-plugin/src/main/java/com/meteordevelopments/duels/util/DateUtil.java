@@ -95,11 +95,13 @@ public final class DateUtil {
     }
     
     private static TimeComponents calculateTimeComponents(long totalSeconds) {
-        long years = totalSeconds / 31556952;
-        long remaining = totalSeconds - (years * 31556952);
+        final long secondsPerMonth = 2592000;
+        final long totalMonths = totalSeconds / secondsPerMonth;
         
-        long months = remaining / 2592000;
-        remaining -= months * 2592000;
+        long years = totalMonths / 12;
+        long months = totalMonths % 12;
+        
+        long remaining = totalSeconds - (totalMonths * secondsPerMonth);
         
         long weeks = remaining / 604800;
         remaining -= weeks * 604800;

@@ -30,7 +30,8 @@ public record StartupManager(DuelsPlugin plugin) {
         }
 
         long end = System.currentTimeMillis();
-        DuelsPlugin.sendMessage("&2Successfully completed startup in " + CC.getTimeDifferenceAndColorConsole(start, end) + "&a.");
+        String timeString = CC.getTimeDifferenceAndColor(start, end);
+        DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.startup.startup-complete", "time", timeString)));
 
         return true;
     }
@@ -43,7 +44,7 @@ public record StartupManager(DuelsPlugin plugin) {
             plugin.setDatabaseConfig(databaseConfig);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Failed to load database configuration (DB.yml)", ex);
-            DuelsPlugin.sendMessage("&cFailed to load DB.yml. Disabling plugin.");
+            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.database.db-config-failed")));
             plugin.setDatabaseConfig(null); // Clear any stale config
             return false;
         }
@@ -55,7 +56,7 @@ public record StartupManager(DuelsPlugin plugin) {
             plugin.setMongoService(mongoService);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Failed to connect to MongoDB", ex);
-            DuelsPlugin.sendMessage("&cFailed to connect to MongoDB. Disabling plugin.");
+            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.database.mongodb-connect-failed")));
             // Clean up any partially initialized MongoDB resources
             try {
                 mongoService.close();
@@ -71,7 +72,7 @@ public record StartupManager(DuelsPlugin plugin) {
             redisService.connect();
             plugin.setRedisService(redisService);
         } catch (Exception ex) {
-            DuelsPlugin.sendMessage("&eRedis connection failed, continuing without cross-server sync cache.");
+            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.database.redis-connect-failed")));
             LOGGER.log(Level.WARNING, "Redis connection failed; continuing without Redis.", ex);
             // Clean up any partially initialized Redis resources
             try {
@@ -88,13 +89,14 @@ public record StartupManager(DuelsPlugin plugin) {
     private boolean loadLogManager() {
         long start = System.currentTimeMillis();
 
-        DuelsPlugin.sendMessage("&eLoading log manager...");
+        DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.startup.loading-log-manager"));
         try {
             plugin.initializeLogManager();
-            DuelsPlugin.sendMessage("&dSuccessfully loaded Log Manager in &f[" + CC.getTimeDifferenceAndColorConsole(start, System.currentTimeMillis()) + "&f]");
+            String timeString = CC.getTimeDifferenceAndColor(start, System.currentTimeMillis());
+            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.startup.log-manager-success", "time", timeString)));
             return true;
         } catch (Exception ex) {
-            DuelsPlugin.sendMessage("&c&lCould not load LogManager. Please contact the developer.");
+            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.errors.log-manager-failed")));
             LOGGER.log(Level.SEVERE, "Could not load LogManager. Please contact the developer.", ex);
             return false;
         }
@@ -105,11 +107,11 @@ public record StartupManager(DuelsPlugin plugin) {
             Class.forName("org.bukkit.Bukkit");
             return true;
         } catch (ClassNotFoundException ex) {
-            DuelsPlugin.sendMessage("&c&l================= *** DUELS LOAD FAILURE *** =================");
-            DuelsPlugin.sendMessage("&c&lDuels requires a Paper-compatible server!");
-            DuelsPlugin.sendMessage("&c&lFor Paper installation, follow this guide: " + PAPER_INSTALLATION_URL);
-            DuelsPlugin.sendMessage("&c&lOther compatible servers include Purpur and other Paper forks.");
-            DuelsPlugin.sendMessage("&c&l================= *** DUELS LOAD FAILURE *** =================");
+            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.compatibility.paper-required-header")));
+            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.compatibility.paper-required-message")));
+            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.compatibility.paper-installation-guide", "url", PAPER_INSTALLATION_URL)));
+            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.compatibility.paper-compatible-servers")));
+            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.compatibility.paper-required-footer")));
             return false;
         }
     }

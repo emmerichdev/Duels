@@ -1,6 +1,7 @@
 package com.meteordevelopments.duels.redis;
 
 import com.meteordevelopments.duels.DuelsPlugin;
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.Log;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.DefaultJedisClientConfig;
@@ -48,7 +49,7 @@ public class RedisService {
             return t;
         });
 
-        DuelsPlugin.sendMessage("&aConnected to Redis at &f" + host + ":" + port + " &a(db=" + database + ")");
+        DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.database.redis-connected", "host", host, "port", String.valueOf(port), "database", String.valueOf(database))));
     }
 
     public void close() {

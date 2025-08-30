@@ -19,10 +19,22 @@ public final class Inventories {
     }
 
     public static void setTitle(final Inventory inventory, final String title) {
+        if (CB_INVENTORY == null || CB_INVENTORY_TITLE == null) {
+            return;
+        }
+        
         try {
-            CB_INVENTORY_TITLE.set(CB_INVENTORY.get(inventory), title);
-        } catch (IllegalAccessException ex) {
-            Log.error("Failed to set inventory title", ex);
+            Object handle = CB_INVENTORY.get(inventory);
+            if (handle == null) {
+                return;
+            }
+            
+            // Verify handle is of expected type before setting
+            if (CB_INVENTORY_TITLE.getDeclaringClass().isInstance(handle)) {
+                CB_INVENTORY_TITLE.set(handle, title);
+            }
+        } catch (IllegalAccessException | IllegalArgumentException ex) {
+            Log.error("Failed to set inventory title: " + ex.getMessage(), ex);
         }
     }
 }

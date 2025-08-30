@@ -2,6 +2,7 @@ package com.meteordevelopments.duels.config;
 
 import com.google.common.collect.Sets;
 import com.meteordevelopments.duels.DuelsPlugin;
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.Log;
 import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.config.AbstractConfiguration;
@@ -12,6 +13,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Lang extends AbstractConfiguration<DuelsPlugin> {
@@ -63,7 +65,7 @@ public class Lang extends AbstractConfiguration<DuelsPlugin> {
                 final String placeholder = "{" + entry.getKey() + "}";
 
                 if (StringUtil.containsIgnoreCase(value, placeholder)) {
-                    value = value.replaceAll("(?i)" + Pattern.quote(placeholder), entry.getValue());
+                    value = value.replaceAll("(?i)" + Pattern.quote(placeholder), Matcher.quoteReplacement(entry.getValue()));
                 }
             }
 
@@ -95,7 +97,7 @@ public class Lang extends AbstractConfiguration<DuelsPlugin> {
 
     public String getMessage(final String key) {
         final String message = getRawMessage(key);
-        return message != null ? StringUtil.color(message) : null;
+        return message != null ? CC.translate(message) : null;
     }
 
     private String replace(String message, Object... replacers) {
@@ -133,13 +135,13 @@ public class Lang extends AbstractConfiguration<DuelsPlugin> {
             if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 replacedMessage = PlaceholderAPI.setPlaceholders(player, replacedMessage);
             }
-            replacedMessage = StringUtil.color(replacedMessage);
+            replacedMessage = CC.translate(replacedMessage);
             config.playSound(player, replacedMessage);
             player.sendMessage(replacedMessage);
 
         } else {
             // Console or other senders — no PlaceholderAPI parsing
-            replacedMessage = StringUtil.color(replacedMessage);
+            replacedMessage = CC.translateConsole(replacedMessage);
             receiver.sendMessage(replacedMessage);
         }
     }

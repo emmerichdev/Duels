@@ -4,7 +4,7 @@ version: @VERSION@
 softdepend: [DeluxeCombat, Essentials, PlaceholderAPI, Vault, WorldGuard]
 api-version: 1.21
 
-author: Realized, DUMBO. Emmerich
+author: Realized, DUMBO, Emmerich.
 website: https://github.com/emmerichdev/Duels
 description: A fork of https://github.com/dumbo-the-developer/Duels
 

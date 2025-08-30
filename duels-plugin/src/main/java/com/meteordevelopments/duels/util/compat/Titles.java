@@ -1,5 +1,6 @@
 package com.meteordevelopments.duels.util.compat;
 
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.StringUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -15,9 +16,9 @@ public final class Titles {
 
     public static void send(final Player player, final String title, final String subtitle, final int fadeIn, final int stay, final int fadeOut) {
         final Component titleComponent = title != null ? 
-            LegacyComponentSerializer.legacySection().deserialize(StringUtil.color(title)) : Component.empty();
+            LegacyComponentSerializer.legacySection().deserialize(CC.translate(title)) : Component.empty();
         final Component subtitleComponent = subtitle != null ? 
-            LegacyComponentSerializer.legacySection().deserialize(StringUtil.color(subtitle)) : Component.empty();
+            LegacyComponentSerializer.legacySection().deserialize(CC.translate(subtitle)) : Component.empty();
         
         final Title adventureTitle = Title.title(
             titleComponent,

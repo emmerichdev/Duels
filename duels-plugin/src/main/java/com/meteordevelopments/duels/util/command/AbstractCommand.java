@@ -2,6 +2,7 @@ package com.meteordevelopments.duels.util.command;
 
 import com.google.common.collect.Lists;
 import com.meteordevelopments.duels.api.command.SubCommand;
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.StringUtil;
 import lombok.Getter;
 import org.bukkit.command.Command;
@@ -200,7 +201,7 @@ public abstract class AbstractCommand<P extends JavaPlugin> implements TabComple
         private final MessageFormat defaultMessage;
 
         MessageType(final String defaultMessage) {
-            this.defaultMessage = new MessageFormat(StringUtil.color(defaultMessage));
+            this.defaultMessage = new MessageFormat(CC.translate(defaultMessage));
         }
     }
 }

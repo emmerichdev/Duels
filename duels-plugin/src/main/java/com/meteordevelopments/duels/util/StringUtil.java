@@ -63,15 +63,6 @@ public final class StringUtil {
         return "(" + location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ() + ")";
     }
 
-    public static String color(String input) {
-        return CC.translate(input);
-    }
-
-    public static List<String> color(final List<String> input) {
-        input.replaceAll(StringUtil::color);
-        return input;
-    }
-
     public static boolean isAlphanumeric(final String input) {
         return ALPHANUMERIC.matcher(input.replace(" ", "")).matches();
     }

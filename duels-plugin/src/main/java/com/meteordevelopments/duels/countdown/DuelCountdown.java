@@ -7,7 +7,7 @@ import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.data.UserData;
 import com.meteordevelopments.duels.data.UserManagerImpl;
 import com.meteordevelopments.duels.match.DuelMatch;
-import com.meteordevelopments.duels.util.StringUtil;
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.compat.Titles;
 import com.meteordevelopments.duels.util.function.Pair;
 import org.bukkit.entity.Player;
@@ -105,7 +105,7 @@ public class DuelCountdown extends BukkitRunnable {
         }
 
         final String rawMessage = messages.get(index);
-        final String message = StringUtil.color(rawMessage);
+        final String message = CC.translate(rawMessage);
         final String title = (titles.size() >= index + 1) ? titles.get(index) : null;
         sendMessage(rawMessage, message, title);
         index++;

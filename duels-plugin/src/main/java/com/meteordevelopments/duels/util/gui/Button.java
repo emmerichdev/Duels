@@ -1,5 +1,6 @@
 package com.meteordevelopments.duels.util.gui;
 
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.compat.Items;
 import com.meteordevelopments.duels.util.compat.Skulls;
@@ -38,11 +39,12 @@ public class Button<P extends JavaPlugin> {
     }
 
     protected void setDisplayName(final String name) {
-        editMeta(meta -> meta.displayName(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(StringUtil.color(name))));
+        editMeta(meta -> meta.displayName(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(CC.translate(name))));
     }
 
     protected void setLore(final List<String> lore) {
-        editMeta(meta -> meta.lore(StringUtil.color(lore).stream()
+        editMeta(meta -> meta.lore(lore.stream()
+            .map(CC::translate)
             .map(line -> net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(line))
             .collect(java.util.stream.Collectors.toList())));
     }

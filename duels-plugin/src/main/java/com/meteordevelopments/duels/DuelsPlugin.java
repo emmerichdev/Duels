@@ -48,13 +48,11 @@ import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.JedisPubSub;
 import space.arim.morepaperlib.MorePaperLib;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
-
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
-
 import static com.meteordevelopments.duels.redis.RedisService.*;
 
 

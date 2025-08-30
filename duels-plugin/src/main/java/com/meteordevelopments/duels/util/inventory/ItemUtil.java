@@ -4,9 +4,9 @@ import com.meteordevelopments.duels.util.Log;
 import org.bukkit.inventory.ItemStack;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
+import org.bukkit.util.io.BukkitObjectInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 
 public final class ItemUtil {
 
@@ -16,7 +16,7 @@ public final class ItemUtil {
     public static ItemStack itemFrom64(final String data) {
         try {
             final ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
-            try (final ObjectInputStream dataInput = new ObjectInputStream(inputStream)) {
+            try (final BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream)) {
                 return (ItemStack) dataInput.readObject();
             }
         } catch (ClassNotFoundException | IOException ex) {

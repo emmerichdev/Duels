@@ -3,7 +3,7 @@ package com.meteordevelopments.duels.command.commands.duel.subcommands;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.command.BaseCommand;
-import com.meteordevelopments.duels.util.StringUtil;
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.TextBuilder;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.CommandSender;
@@ -20,7 +20,8 @@ public class VersionCommand extends BaseCommand {
     protected void execute(final CommandSender sender, final String label, final String[] args) {
         final PluginDescriptionFile info = plugin.getDescription();
         final String authors = info.getAuthors().isEmpty() ? "unknown" : String.join(", ", info.getAuthors());
-        final TextBuilder textBuilder = TextBuilder.of(StringUtil.color("&b" + info.getFullName() + " by " + authors + " &l[Click]"));
+        final String versionText = lang.getMessage("COMMAND.version", "plugin_name", info.getFullName(), "authors", authors);
+        final TextBuilder textBuilder = TextBuilder.of(versionText);
         
         final String website = info.getWebsite();
         if (website != null && !website.trim().isEmpty()) {

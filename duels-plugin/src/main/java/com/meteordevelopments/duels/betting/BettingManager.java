@@ -1,6 +1,7 @@
 package com.meteordevelopments.duels.betting;
 
 import com.meteordevelopments.duels.DuelsPlugin;
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.gui.betting.BettingGui;
 import com.meteordevelopments.duels.hook.hooks.VaultHook;
 import com.meteordevelopments.duels.setting.Settings;
@@ -24,9 +25,9 @@ public class BettingManager implements Loadable, Listener {
         final VaultHook vaultHook = plugin.getHookManager().getHook(VaultHook.class);
 
         if (vaultHook == null) {
-            DuelsPlugin.sendMessage("&bVault was not found! Money betting feature will be automatically disabled.");
+            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.hooks.vault-not-found")));
         } else if (vaultHook.getEconomy() == null) {
-            DuelsPlugin.sendMessage("&bEconomy plugin supporting Vault was not found! Money betting feature will be automatically disabled.");
+            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.hooks.economy-not-found")));
         }
     }
 

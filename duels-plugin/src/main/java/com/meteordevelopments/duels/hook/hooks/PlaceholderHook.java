@@ -8,7 +8,7 @@ import com.meteordevelopments.duels.api.spectate.Spectator;
 import com.meteordevelopments.duels.api.user.User;
 import com.meteordevelopments.duels.leaderboard.LeaderboardEntry;
 import com.meteordevelopments.duels.rank.Rank;
-import com.meteordevelopments.duels.util.StringUtil;
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.compat.Ping;
 import com.meteordevelopments.duels.util.hook.PluginHook;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -58,19 +58,19 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                     user = plugin.getUserManager().get(player);
 
                     if (user == null) {
-                        return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
                     }
                     return String.valueOf(user.getWins());
                 case "losses":
                     user = plugin.getUserManager().get(player);
                     if (user == null) {
-                        return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
                     }
                     return String.valueOf(user.getLosses());
                 case "can_request":
                     user = plugin.getUserManager().get(player);
                     if (user == null) {
-                        return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
                     }
                     return String.valueOf(user.canRequest());
 
@@ -78,7 +78,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                 case "wlr":
                     user = plugin.getUserManager().get(player);
                     if (user == null) {
-                        return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
                     }
                     int wins = user.getWins();
                     int losses = user.getLosses();
@@ -89,7 +89,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                 user = plugin.getUserManager().get(player);
 
                 if (user == null) {
-                    return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                    return CC.translate(plugin.getConfiguration().getUserNotFound());
                 }
 
                 identifier = identifier.replace("rating_", "");
@@ -99,7 +99,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                 }
 
                 final Kit kit = plugin.getKitManager().get(identifier);
-                return kit != null ? String.valueOf(user.getRating(kit)) : StringUtil.color(plugin.getConfiguration().getNoKit());
+                return kit != null ? String.valueOf(user.getRating(kit)) : CC.translate(plugin.getConfiguration().getNoKit());
             }
 
             // Total ELO placeholder
@@ -107,7 +107,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                 user = plugin.getUserManager().get(player);
 
                 if (user == null) {
-                    return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                    return CC.translate(plugin.getConfiguration().getUserNotFound());
                 }
 
                 return String.valueOf(user.getTotalElo());
@@ -118,13 +118,13 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                 user = plugin.getUserManager().get(player);
 
                 if (user == null) {
-                    return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                    return CC.translate(plugin.getConfiguration().getUserNotFound());
                 }
 
                 identifier = identifier.replace("elo_", "");
 
                 final Kit kit = plugin.getKitManager().get(identifier);
-                return kit != null ? String.valueOf(user.getRating(kit)) : StringUtil.color(plugin.getConfiguration().getNoKit());
+                return kit != null ? String.valueOf(user.getRating(kit)) : CC.translate(plugin.getConfiguration().getNoKit());
             }
 
             // ELO leaderboard placeholders: %duels_elo_leaderboard_<position>%
@@ -209,21 +209,21 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                     final Spectator spectator = plugin.getSpectateManager().get(player);
 
                     if (spectator == null) {
-                        return StringUtil.color(plugin.getConfiguration().getNotInMatch());
+                        return CC.translate(plugin.getConfiguration().getNotInMatch());
                     }
 
                     arena = spectator.getArena();
                     player = spectator.getTarget();
 
                     if (player == null) {
-                        return StringUtil.color(plugin.getConfiguration().getNotInMatch());
+                        return CC.translate(plugin.getConfiguration().getNotInMatch());
                     }
                 }
 
                 final Match match = arena.getMatch();
 
                 if (match == null) {
-                    return StringUtil.color(plugin.getConfiguration().getNotInMatch());
+                    return CC.translate(plugin.getConfiguration().getNotInMatch());
                 }
 
                 if (identifier.equalsIgnoreCase("duration")) {
@@ -231,7 +231,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                 }
 
                 if (identifier.equalsIgnoreCase("kit")) {
-                    return match.getKit() != null ? match.getKit().getName() : StringUtil.color(plugin.getConfiguration().getNoKit());
+                    return match.getKit() != null ? match.getKit().getName() : CC.translate(plugin.getConfiguration().getNoKit());
                 }
 
                 if (identifier.equalsIgnoreCase("arena")) {
@@ -246,7 +246,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                     user = plugin.getUserManager().get(player);
 
                     if (user == null) {
-                        return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
                     }
 
                     return String.valueOf(match.getKit() != null ? user.getRating(match.getKit()) : user.getRating());
@@ -263,7 +263,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                     }
 
                     if (opponent == null) {
-                        return StringUtil.color(plugin.getConfiguration().getNoOpponent());
+                        return CC.translate(plugin.getConfiguration().getNoOpponent());
                     }
 
                     if (identifier.equalsIgnoreCase("opponent")) {
@@ -281,7 +281,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                     user = plugin.getUserManager().get(opponent);
 
                     if (user == null) {
-                        return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
                     }
 
                     return String.valueOf(match.getKit() != null ? user.getRating(match.getKit()) : user.getRating());
@@ -293,12 +293,12 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
         private String handleQueuePlaceholder(Player player, String kitName, boolean isQueuedPlayers) {
             User user = plugin.getUserManager().get(player);
             if (user == null) {
-                return StringUtil.color(plugin.getConfiguration().getUserNotFound());
+                return CC.translate(plugin.getConfiguration().getUserNotFound());
             }
 
             final Kit kit = plugin.getKitManager().get(kitName);
             if (kit == null) {
-                return StringUtil.color(plugin.getConfiguration().getNoKit());
+                return CC.translate(plugin.getConfiguration().getNoKit());
             }
 
             var queue = plugin.getQueueManager().get(kit, 0);

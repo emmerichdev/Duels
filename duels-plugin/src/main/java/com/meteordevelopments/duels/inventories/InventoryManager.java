@@ -5,8 +5,8 @@ import com.meteordevelopments.duels.config.Config;
 import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.gui.inventory.InventoryGui;
 import com.meteordevelopments.duels.match.DuelMatch;
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.Loadable;
-import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.TextBuilder;
 import com.meteordevelopments.duels.util.gui.GuiListener;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -83,10 +83,10 @@ public class InventoryManager implements Loadable {
 
         while (iterator.hasNext()) {
             final Player player = iterator.next();
-            builder.add(StringUtil.color(color + player.getName()), ClickEvent.Action.SUGGEST_COMMAND, "/duel _ " + player.getUniqueId());
+            builder.add(CC.translate(color + player.getName()), ClickEvent.Action.SUGGEST_COMMAND, "/duel _ " + player.getUniqueId());
 
             if (iterator.hasNext()) {
-                builder.add(StringUtil.color(color + ", "));
+                builder.add(CC.translate(color + ", "));
             }
         }
 

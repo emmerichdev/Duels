@@ -1,6 +1,7 @@
 package com.meteordevelopments.duels.util.inventory;
 
 import com.meteordevelopments.duels.DuelsPlugin;
+import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.EnumUtil;
 import com.meteordevelopments.duels.util.StringUtil;
 import com.meteordevelopments.duels.util.compat.Items;
@@ -74,11 +75,12 @@ public record ItemBuilder(ItemStack result) {
 
     public ItemBuilder name(final String name) {
         return editMeta(meta -> meta.displayName(
-            LegacyComponentSerializer.legacySection().deserialize(StringUtil.color(name))));
+            LegacyComponentSerializer.legacySection().deserialize(CC.translate(name))));
     }
 
     public ItemBuilder lore(final List<String> lore) {
-        return editMeta(meta -> meta.lore(StringUtil.color(lore).stream()
+        return editMeta(meta -> meta.lore(lore.stream()
+            .map(CC::translate)
             .map(line -> LegacyComponentSerializer.legacySection().deserialize(line))
             .collect(Collectors.toList())));
     }
@@ -116,10 +118,16 @@ public record ItemBuilder(ItemStack result) {
 
     public ItemBuilder leatherArmorColor(final String color) {
         editMeta(meta -> {
-            final LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) meta;
+            if (!(meta instanceof LeatherArmorMeta leatherArmorMeta)) {
+                return;
+            }
 
             if (color != null) {
-                leatherArmorMeta.setColor(DyeColor.valueOf(color).getColor());
+                try {
+                    leatherArmorMeta.setColor(DyeColor.valueOf(color).getColor());
+                } catch (IllegalArgumentException ex) {
+                    // Invalid color name, silently ignore
+                }
             }
         });
         return this;

@@ -36,7 +36,7 @@ public class CommandRegistrar {
     
     public void registerCommands() {
         long start = System.currentTimeMillis();
-        DuelsPlugin.sendMessage("&eRegistering commands...");
+        DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.startup.registering-commands"));
         
         registerCommand(new DuelCommand(plugin));
         registerCommand(new PartyCommand(plugin));
@@ -45,7 +45,8 @@ public class CommandRegistrar {
         registerCommand(new DuelsCommand(plugin));
         registerCommand(new RankCommand(plugin));
         
-        DuelsPlugin.sendMessage("&dSuccessfully registered commands [" + CC.getTimeDifferenceAndColorConsole(start, System.currentTimeMillis()) + "&f]");
+        String timeString = CC.getTimeDifferenceAndColor(start, System.currentTimeMillis());
+        DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.startup.commands-success", "time", timeString)));
         
         // Process queued subcommands from extensions
         processQueuedSubCommands();

@@ -272,8 +272,12 @@ public class BettingGui extends AbstractGui<DuelsPlugin> {
                 ItemStack item = inventory.getItem(slot);
 
                 final ItemStack greenPane = Items.GREEN_PANE.clone();
-                assert item != null;
-                greenPane.setItemMeta(item.getItemMeta());
+                if (item != null && item.getType() != Material.AIR) {
+                    final var meta = item.getItemMeta();
+                    if (meta != null) {
+                        greenPane.setItemMeta(meta);
+                    }
+                }
                 item = greenPane;
 
                 inventory.setItem(slot, item);
