@@ -77,6 +77,4 @@ public record StartupManager(DuelsPlugin plugin) {
 
         return true;
     }
-
-
 }

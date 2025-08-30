@@ -20,7 +20,7 @@ public class VersionCommand extends BaseCommand {
     protected void execute(final CommandSender sender, final String label, final String[] args) {
         final PluginDescriptionFile info = plugin.getDescription();
         final String authors = info.getAuthors().isEmpty() ? "unknown" : String.join(", ", info.getAuthors());
-        final String versionText = lang.getMessage("COMMAND.version", "plugin_name", info.getFullName(), "authors", authors);
+        final String versionText = lang.getMessage("COMMAND.version", "plugin_name", info.getFullName(), "authors", authors, "plugin_version", info.getVersion());
         final TextBuilder textBuilder = TextBuilder.of(versionText);
         
         final String website = info.getWebsite();

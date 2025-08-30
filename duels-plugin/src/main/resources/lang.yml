@@ -482,8 +482,8 @@ COMMAND:
       - '{LINE}'
 
   sub-command-usage: '{PREFIX} &f/%command% %usage% &e- &7%description%'
-  
-  version: '&b%plugin_name% by %authors% &l[Click]'
+
+  version: '&b%plugin_name% v%plugin_version% by %authors% &l[Click]'
 
 
 DUEL:
