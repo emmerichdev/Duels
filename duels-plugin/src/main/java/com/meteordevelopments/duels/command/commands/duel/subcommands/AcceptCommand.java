@@ -62,6 +62,6 @@ public class AcceptCommand extends BaseCommand {
         }
 
         // Start the actual duel match
-        duelManager.startMatch(target, player, request.getSettings(), null, null);
+        duelManager.startMatch(target, player, request.getSettings(), Collections.emptyMap(), null);
     }
 }

@@ -25,9 +25,9 @@ public class BettingManager implements Loadable, Listener {
         final VaultHook vaultHook = plugin.getHookManager().getHook(VaultHook.class);
 
         if (vaultHook == null) {
-            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.hooks.vault-not-found")));
+            DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.hooks.vault-not-found"));
         } else if (vaultHook.getEconomy() == null) {
-            DuelsPlugin.sendMessage(CC.translateConsole(plugin.getLang().getMessage("SYSTEM.hooks.economy-not-found")));
+            DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.hooks.economy-not-found"));
         }
     }
 

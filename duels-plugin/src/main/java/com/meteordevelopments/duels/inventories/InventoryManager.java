@@ -83,7 +83,7 @@ public class InventoryManager implements Loadable {
 
         while (iterator.hasNext()) {
             final Player player = iterator.next();
-            builder.add(CC.translate(color + player.getName()), ClickEvent.Action.SUGGEST_COMMAND, "/duel _ " + player.getUniqueId());
+            builder.add(CC.translate(color + player.getName()), ClickEvent.Action.RUN_COMMAND, "/duel _ " + player.getUniqueId());
 
             if (iterator.hasNext()) {
                 builder.add(CC.translate(color + ", "));

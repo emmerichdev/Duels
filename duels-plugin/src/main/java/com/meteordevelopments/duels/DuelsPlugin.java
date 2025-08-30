@@ -109,13 +109,19 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         commandRegistrar = new CommandRegistrar(this);
         listenerManager = new ListenerManager(this);
         
+        // Initialize basic configurations first (Config and Lang are needed for startup messages)
+        if (!initializeBasicConfigurations()) {
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        
         // Handle startup
         if (!startupManager.startup()) {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
         
-        // Initialize and load components
+        // Initialize and load remaining components
         if (!loadableManager.initializeLoadables()) {
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -274,7 +280,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     }
 
     public static String getPrefix() {
-        return CC.translateConsole("&b&lDuels Optimised &7» ");
+        return CC.translateConsole("&b&lDuels &7» ");
     }
 
     public static void sendMessage(String message) {
@@ -285,6 +291,26 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         logManager = new LogManager(this);
         Log.addSource(logManager);
         logManager.debug("onEnable start -> " + System.currentTimeMillis() + "\n");
+    }
+    
+    private boolean initializeBasicConfigurations() {
+        try {
+            // Initialize Config first
+            Config config = new Config(this);
+            config.handleLoad();
+            setConfiguration(config);
+            
+            // Initialize Lang after Config (Lang depends on Config)
+            Lang lang = new Lang(this);
+            lang.handleLoad();
+            setLang(lang);
+            
+            return true;
+        } catch (Exception ex) {
+            getLogger().log(java.util.logging.Level.SEVERE, "Failed to initialize basic configurations", ex);
+            sendMessage("&cFailed to load basic configurations. Please check your config.yml and lang.yml files.");
+            return false;
+        }
     }
 
     // Convenience delegates used by commands

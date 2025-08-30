@@ -32,7 +32,7 @@ public abstract class AbstractHookManager<P extends JavaPlugin> {
                 return;
             }
 
-            DuelsPlugin.sendMessage(CC.translateConsole(((DuelsPlugin)plugin).getLang().getMessage("SYSTEM.hooks.successful", "name", name)));
+            DuelsPlugin.sendMessage(((DuelsPlugin)plugin).getLang().getMessage("SYSTEM.hooks.successful", "name", name));
         } catch (Throwable throwable) {
             Throwable throwable1 = throwable;
             if (throwable1.getCause() != null) {

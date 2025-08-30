@@ -124,9 +124,9 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
                         );
                     }
                     if (locked) {
-                        final java.util.Set<String> names = arenas.stream().map(ArenaImpl::getName).collect(java.util.stream.Collectors.toSet());
+                        final Set<String> names = arenas.stream().map(ArenaImpl::getName).collect(Collectors.toSet());
                         // Find docs to prune first
-                        final java.util.List<String> toDelete = new java.util.ArrayList<>();
+                        final List<String> toDelete = new ArrayList<>();
                         try (MongoCursor<Document> cur = collection.find(new Document("_id", new Document("$nin", names))).projection(new Document("_id", 1)).iterator()) {
                             while (cur.hasNext()) {
                                 final Document d = cur.next();
