@@ -152,7 +152,7 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
     @Getter
     private List<String> queueBlacklistedCommands;
 
-    // Arena worlds
+    // Arena worlds (SWM now required, but keep for possible future toggles)
     @Getter
     private boolean useSlimeWorlds;
     @Getter

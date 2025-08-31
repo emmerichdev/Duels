@@ -138,13 +138,16 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         // World provider: prefer SWM hook if available
         try {
             final var slime = hookManager != null ? hookManager.getHook(com.meteordevelopments.duels.hook.hooks.SlimeWorldHook.class) : null;
-            if (configuration != null && configuration.isUseSlimeWorlds() && slime != null && slime.isAvailable()) {
-                setArenaWorldProvider(slime);
-            } else {
-                setArenaWorldProvider(new VanillaArenaWorldProvider());
+            if (slime == null || !slime.isAvailable()) {
+                getLogger().severe("SlimeWorldManager is required but not available. Disabling plugin.");
+                getServer().getPluginManager().disablePlugin(this);
+                return;
             }
-        } catch (Throwable ignored) {
-            setArenaWorldProvider(new VanillaArenaWorldProvider());
+            setArenaWorldProvider(slime);
+        } catch (Throwable ex) {
+            getLogger().severe("Failed to initialize SlimeWorldManager integration: " + ex.getMessage());
+            getServer().getPluginManager().disablePlugin(this);
+            return;
         }
 
         // Register commands and listeners

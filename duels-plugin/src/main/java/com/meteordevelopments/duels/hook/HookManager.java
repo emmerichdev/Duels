@@ -18,7 +18,7 @@ public class HookManager extends AbstractHookManager<DuelsPlugin> {
         register(PlaceholderHook.NAME, PlaceholderHook.class);
         register(VaultHook.NAME, VaultHook.class);
         register(WorldGuardHook.NAME, WorldGuardHook.class);
-        // SlimeWorldManager is optional. If present, this registers an ArenaWorldProvider implementation.
+        // SlimeWorldManager is required; register unconditionally (plugin.yml depend ensures presence)
         register(SlimeWorldHook.NAME, SlimeWorldHook.class);
     }
 }

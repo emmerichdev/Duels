@@ -99,7 +99,7 @@ supported-plugins:
 
 # Arena world management
 worlds:
-  # If true and SlimeWorldManager is installed, arenas will use SWM instance worlds
+  # SlimeWorldManager is required and will be used for arenas
   use-swm: true
 
 

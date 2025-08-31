@@ -1,6 +1,7 @@
 name: Duels
 main: com.meteordevelopments.duels.DuelsPlugin
 version: @VERSION@
+depend: [SlimeWorldManager]
 softdepend: [DeluxeCombat, Essentials, PlaceholderAPI, Vault, WorldGuard]
 api-version: 1.21
 
