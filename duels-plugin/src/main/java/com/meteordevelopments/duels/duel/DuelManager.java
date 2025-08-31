@@ -23,6 +23,7 @@ import com.meteordevelopments.duels.queue.QueueManager;
 import com.meteordevelopments.duels.setting.Settings;
 import com.meteordevelopments.duels.teleport.Teleport;
 import com.meteordevelopments.duels.util.Loadable;
+import com.meteordevelopments.duels.world.ArenaWorldProvider;
 import com.meteordevelopments.duels.util.Log;
 import com.meteordevelopments.duels.util.PlayerUtil;
 import com.meteordevelopments.duels.util.compat.Titles;
@@ -62,6 +63,7 @@ public class DuelManager implements Loadable {
 
     private QueueManager queueManager;
     private Teleport teleport;
+    private ArenaWorldProvider worldProvider;
     private VaultHook vault;
     private EssentialsHook essentials;
 
@@ -138,6 +140,7 @@ public class DuelManager implements Loadable {
     public void handleLoad() {
         this.queueManager = plugin.getQueueManager();
         this.teleport = plugin.getTeleport();
+        this.worldProvider = plugin.getArenaWorldProvider();
         this.vault = plugin.getHookManager().getHook(VaultHook.class);
         this.essentials = plugin.getHookManager().getHook(EssentialsHook.class);
 
@@ -349,8 +352,21 @@ public class DuelManager implements Loadable {
             final DuelMatch match;
             try {
                 match = arena.startMatch(kit, items, settings, source);
-                addPlayers(first, match, arena, kit, arena.getPosition(1));
-                addPlayers(second, match, arena, kit, arena.getPosition(2));
+                // Resolve per-match world, possibly SWM instance
+                final String templateWorldName = resolveTemplateWorldName(arena);
+                final String instanceId = java.util.UUID.randomUUID().toString().substring(0, 8);
+                org.bukkit.World instanceWorld = null;
+                if (worldProvider != null && templateWorldName != null) {
+                    instanceWorld = worldProvider.acquireWorld(templateWorldName, instanceId);
+                }
+                final org.bukkit.Location p1 = toInstance(arena.getPosition(1), instanceWorld);
+                final org.bukkit.Location p2 = toInstance(arena.getPosition(2), instanceWorld);
+                addPlayers(first, match, arena, kit, p1 != null ? p1 : arena.getPosition(1));
+                addPlayers(second, match, arena, kit, p2 != null ? p2 : arena.getPosition(2));
+                // Attach world to match for cleanup
+                if (instanceWorld != null) {
+                    match.setInstanceWorld(instanceWorld);
+                }
             } catch (Exception ex) {
                 refundItems(players, items);
                 if (bet > 0 && vault != null) {
@@ -431,6 +447,16 @@ public class DuelManager implements Loadable {
 
             arena.add(player);
         }
+    }
+
+    private @org.jetbrains.annotations.Nullable String resolveTemplateWorldName(final ArenaImpl arena) {
+        final org.bukkit.Location pos = arena.getPosition(1);
+        return pos != null && pos.getWorld() != null ? pos.getWorld().getName() : null;
+    }
+
+    private @org.jetbrains.annotations.Nullable org.bukkit.Location toInstance(final org.bukkit.Location template, final org.bukkit.World instanceWorld) {
+        if (template == null || instanceWorld == null || worldProvider == null) return null;
+        return worldProvider.toInstanceLocation(template, instanceWorld);
     }
 
     private class DuelListener implements Listener {

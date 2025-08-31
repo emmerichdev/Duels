@@ -8,6 +8,7 @@ import com.meteordevelopments.duels.party.PartyManagerImpl;
 import com.meteordevelopments.duels.queue.Queue;
 import lombok.Getter;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
@@ -78,6 +79,17 @@ public class DuelMatch implements Match {
     
     public void setFinished() {
         finished = true;
+    }
+
+    // Optional per-match instance world (e.g., SWM instance)
+    private World instanceWorld;
+
+    public void setInstanceWorld(final World world) {
+        this.instanceWorld = world;
+    }
+
+    public World getInstanceWorld() {
+        return instanceWorld;
     }
 
     public void addPlayer(final Player player) {

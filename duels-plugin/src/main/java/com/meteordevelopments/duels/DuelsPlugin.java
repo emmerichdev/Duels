@@ -32,6 +32,8 @@ import com.meteordevelopments.duels.startup.ListenerManager;
 import com.meteordevelopments.duels.startup.LoadableManager;
 import com.meteordevelopments.duels.startup.StartupManager;
 import com.meteordevelopments.duels.teleport.Teleport;
+import com.meteordevelopments.duels.world.ArenaWorldProvider;
+import com.meteordevelopments.duels.world.VanillaArenaWorldProvider;
 import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.util.Log;
@@ -85,6 +87,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     @Getter @Setter private RequestManager requestManager;
     @Getter @Setter private HookManager hookManager;
     @Getter @Setter private Teleport teleport;
+    @Getter @Setter private ArenaWorldProvider arenaWorldProvider;
     @Getter @Setter private ExtensionManager extensionManager;
     @Getter @Setter private PartyManagerImpl partyManager;
     @Getter @Setter private ValidatorManager validatorManager;
@@ -132,6 +135,18 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
             return;
         }
         
+        // World provider: prefer SWM hook if available
+        try {
+            final var slime = hookManager != null ? hookManager.getHook(com.meteordevelopments.duels.hook.hooks.SlimeWorldHook.class) : null;
+            if (configuration != null && configuration.isUseSlimeWorlds() && slime != null && slime.isAvailable()) {
+                setArenaWorldProvider(slime);
+            } else {
+                setArenaWorldProvider(new VanillaArenaWorldProvider());
+            }
+        } catch (Throwable ignored) {
+            setArenaWorldProvider(new VanillaArenaWorldProvider());
+        }
+
         // Register commands and listeners
         commandRegistrar.registerCommands();
         listenerManager.registerPreListeners();

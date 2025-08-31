@@ -151,6 +151,10 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
     private List<String> blacklistedCommands;
     @Getter
     private List<String> queueBlacklistedCommands;
+
+    // Arena worlds
+    @Getter
+    private boolean useSlimeWorlds;
     @Getter
     private boolean ratingEnabled;
     @Getter
@@ -367,6 +371,9 @@ public class Config extends AbstractConfiguration<DuelsPlugin> {
         blacklistedCommands = configuration.getStringList("duel.blacklisted-commands");
 
         queueBlacklistedCommands = configuration.getStringList("queue.blacklisted-commands");
+
+        // Arena worlds
+        useSlimeWorlds = configuration.getBoolean("worlds.use-swm", true);
 
         ratingEnabled = configuration.getBoolean("rating.enabled", true);
         kFactor = Math.max(configuration.getInt("rating.k-factor", 32), 1);

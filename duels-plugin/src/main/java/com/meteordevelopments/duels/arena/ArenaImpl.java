@@ -153,6 +153,7 @@ public class ArenaImpl extends BaseButton implements Arena {
     }
 
     public void endMatch(final UUID winner, final UUID loser, final Reason reason) {
+        final org.bukkit.World instanceWorldForCleanup = this.match != null ? this.match.getInstanceWorld() : null;
         spectateManager.stopSpectating(this);
 
         final MatchEndEvent event = new MatchEndEvent(match, winner, loser, reason);
@@ -214,6 +215,13 @@ public class ArenaImpl extends BaseButton implements Arena {
         }
 
         refreshGui(true);
+
+        // Release per-match world instance, if any (after GUI refresh)
+        try {
+            if (instanceWorldForCleanup != null) {
+                plugin.getArenaWorldProvider().releaseWorld(instanceWorldForCleanup);
+            }
+        } catch (Throwable ignored) {}
     }
 
     public void startCountdown() {

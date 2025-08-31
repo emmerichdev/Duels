@@ -97,6 +97,11 @@ supported-plugins:
         # default: 'openlosses'
         open-command: 'openlosses'
 
+# Arena world management
+worlds:
+  # If true and SlimeWorldManager is installed, arenas will use SWM instance worlds
+  use-swm: true
+
 
 request:
   # If set to 'true', players will need to have a cleared inventory in order to send or accept a duel request.
