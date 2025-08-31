@@ -19,15 +19,16 @@ public class SlimeWorldHook extends PluginHook<DuelsPlugin> implements ArenaWorl
 
 	private final boolean available;
 	// Use reflection to avoid hard dependency when not present at runtime
-	private final Object aspApi; // AdvancedSlimePaperAPI
+	private final Object aspApi; // AdvancedSlimePaper API entrypoint
 
 	public SlimeWorldHook(final DuelsPlugin plugin) {
 		super(plugin, NAME);
 		Object api = null;
 		boolean ok;
 		try {
-			// Try both old/new class names
+			// Try ASP 4.x first, then older ASWM APIs
 			Class<?> apiClass = tryClass(
+					"com.infernalsuite.asp.api.AdvancedSlimePaperAPI",
 					"com.infernalsuite.aswm.api.AdvancedSlimePaperAPI",
 					"com.infernalsuite.aswm.api.SlimePaperAPI"
 			);
@@ -54,13 +55,19 @@ public class SlimeWorldHook extends PluginHook<DuelsPlugin> implements ArenaWorl
 		if (!available) return null;
 		try {
 			// Resolve loader via services; prefer in-memory or default
-			Class<?> loaderClass = Class.forName("com.infernalsuite.aswm.api.loaders.SlimeLoader");
+			Class<?> loaderClass = tryClass(
+					"com.infernalsuite.asp.api.loaders.SlimeLoader",
+					"com.infernalsuite.aswm.api.loaders.SlimeLoader"
+			);
 			Object loader = Bukkit.getServicesManager().load(loaderClass);
 			if (loader == null) {
 				return null;
 			}
 
-			Class<?> propertyMapClass = Class.forName("com.infernalsuite.aswm.api.world.properties.SlimePropertyMap");
+			Class<?> propertyMapClass = tryClass(
+					"com.infernalsuite.asp.api.world.properties.SlimePropertyMap",
+					"com.infernalsuite.aswm.api.world.properties.SlimePropertyMap"
+			);
 			Object props = propertyMapClass.getConstructor().newInstance();
 
 			// readWorld(loader, name, readOnly, properties)
@@ -70,7 +77,7 @@ public class SlimeWorldHook extends PluginHook<DuelsPlugin> implements ArenaWorl
 
 			// loadWorld(slimeWorld, copy)
 			Object worldInstance = aspApi.getClass()
-					.getMethod("loadWorld", Class.forName("com.infernalsuite.aswm.api.world.SlimeWorld"), boolean.class)
+					.getMethod("loadWorld", tryClass("com.infernalsuite.asp.api.world.SlimeWorld", "com.infernalsuite.aswm.api.world.SlimeWorld"), boolean.class)
 					.invoke(aspApi, slimeWorld, true);
 			World bukkitWorld = (World) worldInstance.getClass().getMethod("getBukkitWorld").invoke(worldInstance);
 			return bukkitWorld;
