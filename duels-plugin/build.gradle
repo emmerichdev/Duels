@@ -11,6 +11,12 @@ processResources {
 		include '**/*.yml'
 		filter(ReplaceTokens, tokens: [VERSION: project.version])
 	}
+	
+	// Ensure Paper plugin descriptor is processed
+	from(sourceSets.main.resources.srcDirs) {
+		include 'paper-plugin.yml'
+		filter(ReplaceTokens, tokens: [VERSION: project.version])
+	}
 }
 
 dependencies {

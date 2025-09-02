@@ -1,35 +1,25 @@
 name: Duels
 main: com.meteordevelopments.duels.DuelsPlugin
 version: @VERSION@
-depend: [ASPaperPlugin]
-softdepend: [DeluxeCombat, Essentials, PlaceholderAPI, Vault, WorldGuard]
 api-version: 1.21
+folia-supported: true
 
 author: Realized, DUMBO, Emmerich.
 website: https://github.com/emmerichdev/Duels
 description: A fork of https://github.com/dumbo-the-developer/Duels
 
-commands:
-  duel:
-    description: Send, accept, or deny a duel request.
-    aliases: [ 1v1 ]
-  party:
-    description: Create, join, and duel parties.
-    aliases: [ p, duelparty, dp ]
-  queue:
-    description: Join or leave a queue.
-    aliases: [ q ]
-  spectate:
-    description: Spectate a duel.
-    aliases: [ spec ]
-  duels:
-    description: Administrative command of Duels.
-    aliases: [ ds ]
-  rank:
-    description: View your current rank information.
-  testarena:
-    description: Test an arena.
-    aliases: [ test ]
+dependencies:
+  server:
+    ASPaperPlugin:
+      load: BEFORE
+      required: true
+      join-classpath: true
+  optional:
+    - DeluxeCombat
+    - Essentials
+    - PlaceholderAPI
+    - Vault
+    - WorldGuard
 
 permissions:
   duels.*:
@@ -56,5 +46,3 @@ permissions:
     default: true
   duels.rank:
     default: true
-
-folia-supported: true
