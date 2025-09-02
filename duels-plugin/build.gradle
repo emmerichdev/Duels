@@ -1,3 +1,5 @@
+apply plugin: 'com.gradleup.shadow'
+
 import org.apache.tools.ant.filters.ReplaceTokens
 
 clean.doFirst {
@@ -9,12 +11,6 @@ processResources {
 
 	from(sourceSets.main.resources.srcDirs) {
 		include '**/*.yml'
-		filter(ReplaceTokens, tokens: [VERSION: project.version])
-	}
-	
-	// Ensure Paper plugin descriptor is processed
-	from(sourceSets.main.resources.srcDirs) {
-		include 'paper-plugin.yml'
 		filter(ReplaceTokens, tokens: [VERSION: project.version])
 	}
 }

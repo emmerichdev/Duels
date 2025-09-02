@@ -1,7 +1,7 @@
 name: Duels
 main: com.meteordevelopments.duels.DuelsPlugin
 version: @VERSION@
-api-version: 1.21
+api-version: 1.21.4
 folia-supported: true
 
 author: Realized, DUMBO, Emmerich.
@@ -11,15 +11,17 @@ description: A fork of https://github.com/dumbo-the-developer/Duels
 dependencies:
   server:
     ASPaperPlugin:
-      load: BEFORE
       required: true
-      join-classpath: true
-  optional:
-    - DeluxeCombat
-    - Essentials
-    - PlaceholderAPI
-    - Vault
-    - WorldGuard
+    DeluxeCombat:
+      required: false
+    Essentials:
+      required: false
+    PlaceholderAPI:
+      required: false
+    Vault:
+      required: false
+    WorldGuard:
+      required: false
 
 permissions:
   duels.*:
