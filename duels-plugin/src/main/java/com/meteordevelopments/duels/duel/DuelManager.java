@@ -404,7 +404,6 @@ public class DuelManager implements Loadable {
 
             player.closeInventory();
             playerManager.create(player, match.isOwnInventory() && config.isOwnInventoryDropInventoryItems());
-            teleport.tryTeleport(player, location);
 
             if (kit != null) {
                 PlayerUtil.reset(player);

@@ -1,6 +1,7 @@
 package com.meteordevelopments.duels.countdown;
 
 import com.meteordevelopments.duels.DuelsPlugin;
+import com.meteordevelopments.duels.api.event.match.MatchEndEvent;
 import com.meteordevelopments.duels.arena.ArenaImpl;
 import com.meteordevelopments.duels.config.Config;
 import com.meteordevelopments.duels.config.Lang;
@@ -13,6 +14,7 @@ import com.meteordevelopments.duels.util.function.Pair;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
+import org.bukkit.Location;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -49,6 +51,29 @@ public class DuelCountdown extends BukkitRunnable {
 
     public DuelCountdown(final DuelsPlugin plugin, final ArenaImpl arena, final DuelMatch match) {
         this(plugin, arena, match, plugin.getConfiguration().getCdDuelMessages(), plugin.getConfiguration().getCdDuelTitles());
+        
+        // Teleport players to the arena spawn points within the slime world
+        final Location pos1 = arena.getPosition(1);
+        final Location pos2 = arena.getPosition(2);
+
+        if (pos1 == null || pos2 == null) {
+            plugin.getLogger().severe("Arena " + arena.getName() + " is missing one or both spawn positions.");
+            arena.endMatch(null, null, MatchEndEvent.Reason.OTHER);
+            return;
+        }
+
+        final Location spawn1 = pos1.clone();
+        spawn1.setWorld(arena.getWorld());
+        
+        final Location spawn2 = pos2.clone();
+        spawn2.setWorld(arena.getWorld());
+
+        List<Player> players = new java.util.ArrayList<>(match.getAllPlayers());
+        if (players.size() >= 2) {
+            players.get(0).teleport(spawn1);
+            players.get(1).teleport(spawn2);
+        }
+
         match.getAllPlayers().forEach(player -> {
             final Player opponent = arena.getOpponent(player);
             if (opponent == null) {

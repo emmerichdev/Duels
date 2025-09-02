@@ -24,6 +24,7 @@ import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
@@ -47,6 +48,8 @@ public class ArenaImpl extends BaseButton implements Arena {
     private boolean removed;
     @Setter
     private DuelCountdown countdown;
+    @Getter
+    private World world;
 
     public ArenaImpl(final DuelsPlugin plugin, final String name, final boolean disabled) {
         super(plugin, ItemBuilder
@@ -158,6 +161,11 @@ public class ArenaImpl extends BaseButton implements Arena {
         final MatchEndEvent event = new MatchEndEvent(match, winner, loser, reason);
         Bukkit.getPluginManager().callEvent(event);
 
+        if (world != null) {
+            plugin.getSlimeManager().unloadMatchWorld(world);
+            world = null;
+        }
+
         final Queue source = match.getSource();
         match.setFinished();
 
@@ -217,8 +225,16 @@ public class ArenaImpl extends BaseButton implements Arena {
     }
 
     public void startCountdown() {
-        this.countdown = match instanceof PartyDuelMatch ? new PartyDuelCountdown(plugin, this, (PartyDuelMatch) match) : new DuelCountdown(plugin, this, match);
-        countdown.startCountdown(0L, 20L);
+        plugin.getSlimeManager().createMatchWorld(name).thenAccept(newWorld -> plugin.doSync(() -> {
+            if (newWorld == null) {
+                endMatch(null, null, Reason.OTHER);
+                return;
+            }
+
+            this.world = newWorld;
+            this.countdown = match instanceof PartyDuelMatch ? new PartyDuelCountdown(plugin, this, (PartyDuelMatch) match) : new DuelCountdown(plugin, this, match);
+            countdown.startCountdown(0L, 20L);
+        }));
     }
 
     boolean isCounting() {

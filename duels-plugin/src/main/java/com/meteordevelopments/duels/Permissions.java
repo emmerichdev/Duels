@@ -10,6 +10,7 @@ public final class Permissions {
     public static final String SPECTATE = "duels.spectate";
     public static final String SPEC_ANON = SPECTATE + ".anonymously";
     public static final String ADMIN = "duels.admin";
+    public static final String ADMIN_TESTARENA = ADMIN + ".testarena";
     public static final String TP_BYPASS = "duels.teleport.bypass";
     public static final String KIT = "duels.kits.%s";
     public static final String KIT_ALL = "duels.kits.*";

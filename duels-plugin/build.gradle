@@ -32,6 +32,9 @@ dependencies {
 	implementation 'org.mongodb:mongodb-driver-sync:5.1.2'
 	implementation 'redis.clients:jedis:5.1.5'
 	implementation 'org.apache.commons:commons-pool2:2.12.0'
+
+	compileOnly 'com.infernalsuite.asp:api:4.0.0-SNAPSHOT'
+	implementation 'com.infernalsuite.asp:file-loader:4.0.0-SNAPSHOT'
 }
 
 shadowJar {
@@ -50,6 +53,7 @@ shadowJar {
 		include(dependency('org.apache.commons:commons-pool2:.*'))
 		include(dependency('org.apache.commons:commons-lang3:.*'))
 		include(dependency('net.kyori:adventure-text-serializer-ansi:.*'))
+		include(dependency('com.infernalsuite.asp:file-loader:.*'))
 	}
 
 	final String group = project.group.toString() + "." + parent.name.toLowerCase() + ".shaded."
@@ -60,6 +64,7 @@ shadowJar {
 	relocate 'redis.clients', group + 'redis'
 	relocate 'org.apache.commons.pool2', group + 'commons.pool2'
 	relocate 'org.apache.commons.lang3', group + 'commons.lang3'
+	relocate 'com.infernalsuite.asp.loader.file', group + 'asp.loader.file'
 }
 
 // To build Duels plugin jar, run './gradlew clean build'.

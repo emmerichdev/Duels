@@ -5,6 +5,7 @@ import com.meteordevelopments.duels.api.event.arena.ArenaSetPositionEvent;
 import com.meteordevelopments.duels.api.event.arena.ArenaStateChangeEvent;
 import com.meteordevelopments.duels.api.match.Match;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,10 @@ public interface Arena {
 
 
     boolean setDisabled(final boolean disabled);
+
+
+    @Nullable
+    World getWorld();
 
 
     @Nullable

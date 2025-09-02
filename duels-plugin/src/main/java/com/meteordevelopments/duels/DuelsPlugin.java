@@ -27,6 +27,7 @@ import com.meteordevelopments.duels.redis.RedisService;
 import com.meteordevelopments.duels.request.RequestManager;
 import com.meteordevelopments.duels.setting.SettingsManager;
 import com.meteordevelopments.duels.spectate.SpectateManagerImpl;
+import com.meteordevelopments.duels.slm.SlimeManager;
 import com.meteordevelopments.duels.startup.CommandRegistrar;
 import com.meteordevelopments.duels.startup.ListenerManager;
 import com.meteordevelopments.duels.startup.LoadableManager;
@@ -93,6 +94,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     @Getter @Setter private MongoService mongoService;
     @Getter @Setter private RedisService redisService;
     @Getter @Setter private DatabaseConfig databaseConfig;
+    @Getter @Setter private SlimeManager slimeManager;
     private JedisPubSub redisSubscriber;
 
     @Override
@@ -119,6 +121,9 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         loadableManager = new LoadableManager(this);
         commandRegistrar = new CommandRegistrar(this);
         listenerManager = new ListenerManager(this);
+        
+        slimeManager = new SlimeManager(this);
+        slimeManager.init();
         
         // Handle startup
         if (!startupManager.startup()) {

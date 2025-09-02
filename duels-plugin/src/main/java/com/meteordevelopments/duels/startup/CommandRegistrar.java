@@ -2,6 +2,7 @@ package com.meteordevelopments.duels.startup;
 
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.api.command.SubCommand;
+import com.meteordevelopments.duels.command.TestArenaCommand;
 import com.meteordevelopments.duels.command.commands.RankCommand;
 import com.meteordevelopments.duels.command.commands.SpectateCommand;
 import com.meteordevelopments.duels.command.commands.duel.DuelCommand;
@@ -36,6 +37,7 @@ public class CommandRegistrar {
         registerCommand(new SpectateCommand(plugin));
         registerCommand(new DuelsCommand(plugin));
         registerCommand(new RankCommand(plugin));
+        registerCommand(new TestArenaCommand(plugin));
         
         String timeString = CC.getTimeDifferenceAndColor(start, System.currentTimeMillis());
         DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.startup.commands-success", "time", timeString));

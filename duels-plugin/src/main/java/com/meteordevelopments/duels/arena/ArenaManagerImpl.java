@@ -35,6 +35,7 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -202,6 +203,12 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
 
     public boolean create(final CommandSender source, final String name) {
         if (get(name) != null) {
+            return false;
+        }
+
+        File arenaFile = new File(plugin.getDataFolder(), "slime_arenas/" + name + ".slime");
+        if (!arenaFile.exists()) {
+            lang.sendMessage(source, "&cAn arena template with the name '" + name + ".slime' does not exist in the 'plugins/Duels/slime_arenas/' directory.");
             return false;
         }
 

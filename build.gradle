@@ -97,6 +97,11 @@ subprojects {
         }
 
         maven {
+            name = 'infernalsuite-snapshots'
+            url = 'https://repo.infernalsuite.com/repository/maven-snapshots/'
+        }
+
+        maven {
             name = "jitpack"
             url = "https://jitpack.io"
         }
