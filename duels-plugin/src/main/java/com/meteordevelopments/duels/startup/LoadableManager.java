@@ -6,8 +6,6 @@ import com.meteordevelopments.duels.arena.ArenaManagerImpl;
 import com.meteordevelopments.duels.betting.BettingManager;
 import com.meteordevelopments.duels.data.UserManagerImpl;
 import com.meteordevelopments.duels.duel.DuelManager;
-import com.meteordevelopments.duels.extension.ExtensionClassLoader;
-import com.meteordevelopments.duels.extension.ExtensionManager;
 import com.meteordevelopments.duels.hook.HookManager;
 import com.meteordevelopments.duels.inventories.InventoryManager;
 import com.meteordevelopments.duels.kit.KitManagerImpl;
@@ -26,7 +24,6 @@ import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.util.gui.GuiListener;
 import com.meteordevelopments.duels.validator.ValidatorManager;
-import org.bukkit.event.HandlerList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -147,11 +144,6 @@ public class LoadableManager {
             plugin.setTeleport(teleport);
             return teleport;
         });
-        addLoadable("extension manager", () -> {
-            ExtensionManager extensionManager = new ExtensionManager(plugin);
-            plugin.setExtensionManager(extensionManager);
-            return extensionManager;
-        });
         
         // Hook manager is not a Loadable, so handle it separately
         try {
@@ -239,12 +231,7 @@ public class LoadableManager {
                 .orElse(null);
     }
 
-    public void cleanupExtensionListeners() {
-        HandlerList.getRegisteredListeners(plugin).stream()
-                .filter(listener -> listener.getListener().getClass().getClassLoader() instanceof ExtensionClassLoader)
-                .forEach(listener -> HandlerList.unregisterAll(listener.getListener()));
-    }
-    
+
     private void addLoadable(String name, Supplier<Loadable> supplier) {
         try {
             Loadable loadable = supplier.get();

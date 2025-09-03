@@ -22,10 +22,10 @@ import com.meteordevelopments.duels.queue.Queue;
 import com.meteordevelopments.duels.queue.QueueManager;
 import com.meteordevelopments.duels.setting.Settings;
 import com.meteordevelopments.duels.teleport.Teleport;
+import com.meteordevelopments.duels.util.AdventureUtil;
 import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.util.Log;
 import com.meteordevelopments.duels.util.PlayerUtil;
-import com.meteordevelopments.duels.util.compat.Titles;
 import com.meteordevelopments.duels.util.inventory.InventoryUtil;
 import com.meteordevelopments.duels.util.validator.ValidatorUtil;
 import org.bukkit.*;
@@ -258,7 +258,7 @@ public class DuelManager implements Loadable {
             final String title = lang.getMessage("DUEL.reward.money.title", "name", opponentName, "money", amount);
 
             if (title != null) {
-                Titles.send(winner, title, null, 0, 20, 50);
+                AdventureUtil.sendTitle(winner, title, null, 0, 20, 50);
             }
         }
 

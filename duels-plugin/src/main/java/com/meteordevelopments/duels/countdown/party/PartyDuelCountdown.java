@@ -5,8 +5,8 @@ import com.meteordevelopments.duels.arena.ArenaImpl;
 import com.meteordevelopments.duels.countdown.DuelCountdown;
 import com.meteordevelopments.duels.match.party.PartyDuelMatch;
 import com.meteordevelopments.duels.party.Party;
+import com.meteordevelopments.duels.util.AdventureUtil;
 import com.meteordevelopments.duels.util.StringUtil;
-import com.meteordevelopments.duels.util.compat.Titles;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class PartyDuelCountdown extends DuelCountdown {
             );
 
             if (title != null) {
-                Titles.send(player, title, null, 0, 20, 50);
+                AdventureUtil.sendTitle(player, title, null, 0, 20, 50);
             }
         });
     }

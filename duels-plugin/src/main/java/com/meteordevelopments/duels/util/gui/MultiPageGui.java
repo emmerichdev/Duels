@@ -1,9 +1,7 @@
 package com.meteordevelopments.duels.util.gui;
 
 import com.google.common.collect.Lists;
-import com.meteordevelopments.duels.util.compat.Inventories;
-import com.meteordevelopments.duels.util.compat.Items;
-import com.meteordevelopments.duels.util.inventory.InventoryBuilder;
+import com.meteordevelopments.duels.util.inventory.InventoryUtil;
 import com.meteordevelopments.duels.util.inventory.Slots;
 import lombok.Getter;
 import lombok.Setter;

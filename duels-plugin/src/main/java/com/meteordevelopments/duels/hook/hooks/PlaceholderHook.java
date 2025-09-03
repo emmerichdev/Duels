@@ -9,7 +9,7 @@ import com.meteordevelopments.duels.api.user.User;
 import com.meteordevelopments.duels.leaderboard.LeaderboardEntry;
 import com.meteordevelopments.duels.rank.Rank;
 import com.meteordevelopments.duels.util.CC;
-import com.meteordevelopments.duels.util.compat.Ping;
+
 import com.meteordevelopments.duels.util.hook.PluginHook;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -275,7 +275,7 @@ public class PlaceholderHook extends PluginHook<DuelsPlugin> {
                     }
 
                     if (identifier.endsWith("_ping")) {
-                        return String.valueOf(Ping.getPing(opponent));
+                        return String.valueOf(opponent.getPing());
                     }
 
                     user = plugin.getUserManager().get(opponent);

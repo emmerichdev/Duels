@@ -1,53 +1,45 @@
-package com.meteordevelopments.duels.command.commands;
+package com.meteordevelopments.duels.commands;
 
+import co.aikar.commands.annotation.*;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.Permissions;
-import com.meteordevelopments.duels.api.spectate.SpectateManager.Result;
+import com.meteordevelopments.duels.api.spectate.SpectateManager;
 import com.meteordevelopments.duels.arena.ArenaImpl;
-import com.meteordevelopments.duels.command.BaseCommand;
 import com.meteordevelopments.duels.match.DuelMatch;
 import com.meteordevelopments.duels.spectate.SpectatorImpl;
 import com.meteordevelopments.duels.util.inventory.InventoryUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@CommandAlias("spectate|spec")
+@CommandPermission("duels.spectate")
 public class SpectateCommand extends BaseCommand {
 
-    public SpectateCommand(final DuelsPlugin plugin) {
-        super(plugin, "spectate", Permissions.SPECTATE, true);
+    public SpectateCommand(DuelsPlugin plugin) {
+        super(plugin);
     }
 
-    @Override
-    protected void execute(final CommandSender sender, final String label, final String[] args) {
-        final Player player = (Player) sender;
+    @Default
+    @CommandCompletion("@players")
+    public void onSpectate(Player player, @Optional Player target) {
         final SpectatorImpl spectator = spectateManager.get(player);
 
-        // If player is already spectating, using /spectate will put them out of spectator mode.
         if (spectator != null) {
             spectateManager.stopSpectating(player);
             lang.sendMessage(player, "COMMAND.spectate.stop-spectate", "name", spectator.getTargetName());
             return;
         }
 
-        if (args.length == 0) {
-            lang.sendMessage(sender, "COMMAND.spectate.usage", "command", label);
+        if (target == null) {
+            lang.sendMessage(player, "COMMAND.spectate.usage", "command", "spectate");
             return;
         }
 
         if (config.isSpecRequiresClearedInventory() && InventoryUtil.hasItem(player)) {
-            lang.sendMessage(sender, "ERROR.duel.inventory-not-empty");
+            lang.sendMessage(player, "ERROR.duel.inventory-not-empty");
             return;
         }
 
-        final Player target = Bukkit.getPlayerExact(args[0]);
-
-        if (target == null) {
-            lang.sendMessage(sender, "ERROR.player.not-found", "name", args[0]);
-            return;
-        }
-
-        final Result result = spectateManager.startSpectating(player, target);
+        final SpectateManager.Result result = spectateManager.startSpectating(player, target);
 
         switch (result) {
             case EVENT_CANCELLED:
@@ -66,7 +58,6 @@ public class SpectateCommand extends BaseCommand {
             case SUCCESS:
                 final ArenaImpl arena = arenaManager.get(target);
 
-                // Meaningless checks to halt IDE warnings as target is guaranteed to be in a match if result is SUCCESS.
                 if (arena == null || arena.getMatch() == null) {
                     return;
                 }

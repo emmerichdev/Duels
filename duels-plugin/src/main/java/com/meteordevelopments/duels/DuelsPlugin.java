@@ -1,9 +1,21 @@
 package com.meteordevelopments.duels;
 
+import co.aikar.commands.InvalidCommandArgument;
+import co.aikar.commands.PaperCommandManager;
 import com.meteordevelopments.duels.api.Duels;
 import com.meteordevelopments.duels.api.command.SubCommand;
+import com.meteordevelopments.duels.arena.ArenaImpl;
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
 import com.meteordevelopments.duels.betting.BettingManager;
+import com.meteordevelopments.duels.data.UserData;
+import com.meteordevelopments.duels.kit.KitImpl;
+import com.meteordevelopments.duels.commands.DuelCommand;
+import com.meteordevelopments.duels.commands.DuelsCommand;
+import com.meteordevelopments.duels.commands.PartyCommand;
+import com.meteordevelopments.duels.commands.QueueCommand;
+import com.meteordevelopments.duels.commands.RankCommand;
+import com.meteordevelopments.duels.commands.SpectateCommand;
+import com.meteordevelopments.duels.commands.TestArenaCommand;
 import com.meteordevelopments.duels.config.Config;
 import com.meteordevelopments.duels.config.DatabaseConfig;
 import com.meteordevelopments.duels.config.Lang;
@@ -11,7 +23,6 @@ import com.meteordevelopments.duels.data.ItemData;
 import com.meteordevelopments.duels.data.ItemData.ItemDataDeserializer;
 import com.meteordevelopments.duels.data.UserManagerImpl;
 import com.meteordevelopments.duels.duel.DuelManager;
-import com.meteordevelopments.duels.extension.ExtensionManager;
 import com.meteordevelopments.duels.hook.HookManager;
 import com.meteordevelopments.duels.inventories.InventoryManager;
 import com.meteordevelopments.duels.kit.KitManagerImpl;
@@ -28,7 +39,6 @@ import com.meteordevelopments.duels.request.RequestManager;
 import com.meteordevelopments.duels.setting.SettingsManager;
 import com.meteordevelopments.duels.spectate.SpectateManagerImpl;
 import com.meteordevelopments.duels.slm.SlimeManager;
-import com.meteordevelopments.duels.startup.CommandRegistrar;
 import com.meteordevelopments.duels.startup.ListenerManager;
 import com.meteordevelopments.duels.startup.LoadableManager;
 import com.meteordevelopments.duels.startup.StartupManager;
@@ -44,10 +54,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
-import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import io.papermc.paper.plugin.bootstrap.BootstrapContext;
-import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
-import io.papermc.paper.plugin.bootstrap.PluginProviderContext;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.JedisPubSub;
@@ -69,8 +75,8 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     private static MorePaperLib morePaperLib;
 
     private LoadableManager loadableManager;
-    private CommandRegistrar commandRegistrar;
     private ListenerManager listenerManager;
+    private PaperCommandManager commandManager;
     // Plugin components
     @Getter @Setter private LogManager logManager;
     @Getter @Setter private Config configuration;
@@ -90,7 +96,6 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     @Getter @Setter private RequestManager requestManager;
     @Getter @Setter private HookManager hookManager;
     @Getter @Setter private Teleport teleport;
-    @Getter @Setter private ExtensionManager extensionManager;
     @Getter @Setter private PartyManagerImpl partyManager;
     @Getter @Setter private ValidatorManager validatorManager;
     @Getter @Setter private LeaderboardManager leaderboardManager;
@@ -123,7 +128,6 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         // Initialize managers (LogManager is now available for use)
         StartupManager startupManager = new StartupManager(this);
         loadableManager = new LoadableManager(this);
-        commandRegistrar = new CommandRegistrar(this);
         listenerManager = new ListenerManager(this);
         
         slimeManager = new SlimeManager(this);
@@ -142,7 +146,52 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         }
         
         // Register commands and listeners
-        commandRegistrar.registerCommands();
+        commandManager = new PaperCommandManager(this);
+        commandManager.enableUnstableAPI("brigadier");
+
+        commandManager.getCommandContexts().registerContext(ArenaImpl.class, c -> {
+            String name = c.popFirstArg();
+            ArenaImpl arena = arenaManager.get(name);
+            if (arena == null) {
+                throw new InvalidCommandArgument("Arena '" + name + "' not found.");
+            }
+            return arena;
+        });
+
+        commandManager.getCommandCompletions().registerAsyncCompletion("@arenas", c -> {
+            return arenaManager.getNames();
+        });
+
+        commandManager.getCommandContexts().registerContext(KitImpl.class, c -> {
+            String name = c.popFirstArg();
+            KitImpl kit = kitManager.get(name);
+            if (kit == null) {
+                throw new InvalidCommandArgument("Kit '" + name + "' not found.");
+            }
+            return kit;
+        });
+
+        commandManager.getCommandCompletions().registerAsyncCompletion("@kits", c -> {
+            return kitManager.getNames(false);
+        });
+
+        commandManager.getCommandContexts().registerContext(UserData.class, c -> {
+            String name = c.popFirstArg();
+            UserData user = userManager.get(name);
+            if (user == null) {
+                throw new InvalidCommandArgument("User '" + name + "' not found.");
+            }
+            return user;
+        });
+
+        commandManager.registerCommand(new DuelsCommand(this));
+        commandManager.registerCommand(new DuelCommand(this));
+        commandManager.registerCommand(new PartyCommand(this));
+        commandManager.registerCommand(new QueueCommand(this));
+        commandManager.registerCommand(new SpectateCommand(this));
+        commandManager.registerCommand(new RankCommand(this));
+        commandManager.registerCommand(new TestArenaCommand(this));
+
         listenerManager.registerPreListeners();
         
         // Setup Redis subscriptions after managers are loaded
@@ -165,17 +214,11 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         // Unload components
         if (loadableManager != null) {
             loadableManager.unloadAll();
-            loadableManager.cleanupExtensionListeners();
         }
         
         // Unregister listeners
         if (listenerManager != null) {
             listenerManager.unregisterAllListeners();
-        }
-        
-        // Clear commands
-        if (commandRegistrar != null) {
-            commandRegistrar.clearCommands();
         }
         
         if (logManager != null) {
@@ -209,7 +252,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
 
     @Override
     public boolean registerSubCommand(@NotNull final String command, @NotNull final SubCommand subCommand) {
-        return commandRegistrar.registerSubCommand(command, subCommand);
+        return false;
     }
 
     @Override
@@ -415,3 +458,4 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         return port > 0 ? String.valueOf(port) : "default";
     }
 }
+

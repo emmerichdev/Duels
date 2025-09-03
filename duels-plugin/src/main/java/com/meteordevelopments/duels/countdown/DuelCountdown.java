@@ -8,8 +8,8 @@ import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.data.UserData;
 import com.meteordevelopments.duels.data.UserManagerImpl;
 import com.meteordevelopments.duels.match.DuelMatch;
+import com.meteordevelopments.duels.util.AdventureUtil;
 import com.meteordevelopments.duels.util.CC;
-import com.meteordevelopments.duels.util.compat.Titles;
 import com.meteordevelopments.duels.util.function.Pair;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -110,7 +110,7 @@ public class DuelCountdown extends BukkitRunnable {
             }
 
             if (title != null) {
-                Titles.send(player, title, null, 0, 20, 50);
+                AdventureUtil.sendTitle(player, title, null, 0, 20, 50);
             }
         });
     }

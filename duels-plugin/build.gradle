@@ -37,6 +37,16 @@ dependencies {
 
 	compileOnly 'com.infernalsuite.asp:api:4.0.0-SNAPSHOT'
 	implementation 'com.infernalsuite.asp:file-loader:4.0.0-SNAPSHOT'
+	implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.aikar.co/content/groups/aikar/' }
+    maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    maven { url 'https://repo.codemc.org/repository/maven-public/'}
+    maven { url 'https://libraries.minecraft.net' }
+    maven { url 'https://jitpack.io' }
 }
 
 shadowJar {
@@ -56,6 +66,7 @@ shadowJar {
 		include(dependency('org.apache.commons:commons-lang3:.*'))
 		include(dependency('net.kyori:adventure-text-serializer-ansi:.*'))
 		include(dependency('com.infernalsuite.asp:file-loader:.*'))
+		include(dependency('co.aikar:acf-paper:.*'))
 	}
 
 	final String group = project.group.toString() + "." + parent.name.toLowerCase() + ".shaded."
@@ -67,6 +78,8 @@ shadowJar {
 	relocate 'org.apache.commons.pool2', group + 'commons.pool2'
 	relocate 'org.apache.commons.lang3', group + 'commons.lang3'
 	relocate 'com.infernalsuite.asp.loader.file', group + 'asp.loader.file'
+	relocate 'co.aikar.commands', group + 'acf'
+	relocate 'co.aikar.locales', group + 'acflocales'
 }
 
 // To build Duels plugin jar, run './gradlew clean build'.

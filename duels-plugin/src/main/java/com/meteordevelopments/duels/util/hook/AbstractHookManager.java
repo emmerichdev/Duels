@@ -1,7 +1,6 @@
 package com.meteordevelopments.duels.util.hook;
 
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.util.CC;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;

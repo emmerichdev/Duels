@@ -2,7 +2,7 @@ package com.meteordevelopments.duels.util.gui;
 
 import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.compat.Items;
-import com.meteordevelopments.duels.util.compat.Skulls;
+
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
 import lombok.Getter;
 import lombok.Setter;
@@ -54,7 +54,7 @@ public class Button<P extends JavaPlugin> {
 
     protected void setOwner(final Player player) {
         if (Items.equals(displayed, Items.HEAD)) {
-            editMeta(meta -> Skulls.setProfile((SkullMeta) meta, player));
+            editMeta(meta -> ((SkullMeta) meta).setOwningPlayer(player));
         }
     }
 

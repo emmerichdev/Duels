@@ -1,4 +1,4 @@
-package com.meteordevelopments.duels.command;
+package com.meteordevelopments.duels.commands;
 
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
@@ -17,15 +17,9 @@ import com.meteordevelopments.duels.queue.sign.QueueSignManagerImpl;
 import com.meteordevelopments.duels.request.RequestManager;
 import com.meteordevelopments.duels.setting.SettingsManager;
 import com.meteordevelopments.duels.spectate.SpectateManagerImpl;
-import com.meteordevelopments.duels.util.command.AbstractCommand;
 import com.meteordevelopments.duels.validator.ValidatorManager;
-import org.bukkit.command.CommandSender;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
-public abstract class BaseCommand extends AbstractCommand<DuelsPlugin> {
+public class BaseCommand extends co.aikar.commands.BaseCommand {
 
     protected final DuelsPlugin plugin;
     protected final Config config;
@@ -46,9 +40,7 @@ public abstract class BaseCommand extends AbstractCommand<DuelsPlugin> {
     protected final PartyManagerImpl partyManager;
     protected final ValidatorManager validatorManager;
 
-    protected BaseCommand(final DuelsPlugin plugin, final String name, final String usage, final String description, final String permission, final int length,
-                          final boolean playerOnly, final String... aliases) {
-        super(plugin, name, usage, description, permission, length, playerOnly, aliases);
+    public BaseCommand(DuelsPlugin plugin) {
         this.plugin = plugin;
         this.config = plugin.getConfiguration();
         this.lang = plugin.getLang();
@@ -67,39 +59,5 @@ public abstract class BaseCommand extends AbstractCommand<DuelsPlugin> {
         this.requestManager = plugin.getRequestManager();
         this.hookManager = plugin.getHookManager();
         this.validatorManager = plugin.getValidatorManager();
-    }
-
-    protected BaseCommand(final DuelsPlugin plugin, final String name, final String usage, final String description, final int length, final boolean playerOnly,
-                          final String... aliases) {
-        this(plugin, name, usage, description, null, length, playerOnly, aliases);
-    }
-
-    protected BaseCommand(final DuelsPlugin plugin, final String name, final String permission, final boolean playerOnly) {
-        this(plugin, name, null, null, permission, -1, playerOnly);
-    }
-
-    @Override
-    protected void handleMessage(final CommandSender sender, final MessageType type, final String... args) {
-        switch (type) {
-            case PLAYER_ONLY:
-                super.handleMessage(sender, type, args);
-                break;
-            case NO_PERMISSION:
-                lang.sendMessage(sender, "ERROR.no-permission", "permission", args[0]);
-                break;
-            case SUB_COMMAND_INVALID:
-                lang.sendMessage(sender, "ERROR.command.invalid-sub-command", "command", args[0], "argument", args[1]);
-                break;
-            case SUB_COMMAND_USAGE:
-                lang.sendMessage(sender, "COMMAND.sub-command-usage", "command", args[0], "usage", args[1], "description", args[2]);
-                break;
-        }
-    }
-
-    protected List<String> handleTabCompletion(final String argument, final Collection<String> collection) {
-        return collection.stream()
-                .filter(value -> value.toLowerCase().startsWith(argument.toLowerCase()))
-                .map(value -> value.replace(" ", "-"))
-                .collect(Collectors.toList());
     }
 }
