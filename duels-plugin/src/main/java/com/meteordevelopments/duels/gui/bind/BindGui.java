@@ -20,7 +20,7 @@ public class BindGui extends MultiPageGui<DuelsPlugin> {
 
         final Config config = plugin.getConfiguration();
         final Lang lang = plugin.getLang();
-        setSpaceFiller(CommonItems.from(config.getArenaSelectorFillerType(), config.getArenaSelectorFillerData()));
+        setSpaceFiller(CommonItems.from(config.getArenaSelectorFillerType()));
         setPrevButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.arena-selector.buttons.previous-page.name")).build());
         setNextButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.arena-selector.buttons.next-page.name")).build());
         setEmptyIndicator(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.arena-selector.buttons.empty.name")).build());

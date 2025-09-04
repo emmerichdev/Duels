@@ -2,7 +2,7 @@ package com.meteordevelopments.duels.queue.sign;
 
 import com.google.common.collect.Lists;
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.Permissions;
+
 import com.meteordevelopments.duels.api.event.queue.sign.QueueSignCreateEvent;
 import com.meteordevelopments.duels.api.event.queue.sign.QueueSignRemoveEvent;
 import com.meteordevelopments.duels.api.queue.sign.QueueSign;
@@ -223,8 +223,8 @@ public class QueueSignManagerImpl implements Loadable, QueueSignManager, Listene
 
         final Player player = event.getPlayer();
 
-        if (!player.hasPermission(Permissions.ADMIN)) {
-            lang.sendMessage(player, "ERROR.no-permission", "permission", Permissions.ADMIN);
+        if (!player.hasPermission("duels.admin")) {
+            lang.sendMessage(player, "ERROR.no-permission", "permission", "duels.admin");
             return;
         }
 

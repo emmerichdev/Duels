@@ -1,7 +1,7 @@
 package com.meteordevelopments.duels.gui.settings.buttons;
 
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.Permissions;
+
 import com.meteordevelopments.duels.gui.BaseButton;
 import com.meteordevelopments.duels.setting.Settings;
 import com.meteordevelopments.duels.util.CommonItems;
@@ -16,7 +16,7 @@ public class ArenaSelectButton extends BaseButton {
 
     @Override
     public void update(final Player player) {
-        if (config.isArenaSelectingUsePermission() && !player.hasPermission(Permissions.ARENA_SELECTING) && !player.hasPermission(Permissions.SETTING_ALL)) {
+        if (config.isArenaSelectingUsePermission() && !player.hasPermission("duels.use.arena-select") && !player.hasPermission("duels.use.*\n")) {
             setLore(lang.getMessage("GUI.settings.buttons.arena-selector.lore-no-permission").split("\n"));
             return;
         }
@@ -29,8 +29,8 @@ public class ArenaSelectButton extends BaseButton {
 
     @Override
     public void onClick(final Player player) {
-        if (config.isArenaSelectingUsePermission() && !player.hasPermission(Permissions.ARENA_SELECTING) && !player.hasPermission(Permissions.SETTING_ALL)) {
-            lang.sendMessage(player, "ERROR.no-permission", "permission", Permissions.ARENA_SELECTING);
+        if (config.isArenaSelectingUsePermission() && !player.hasPermission("duels.use.arena-select") && !player.hasPermission("duels.use.*\n")) {
+            lang.sendMessage(player, "ERROR.no-permission", "permission", "duels.use.arena-select");
             return;
         }
 

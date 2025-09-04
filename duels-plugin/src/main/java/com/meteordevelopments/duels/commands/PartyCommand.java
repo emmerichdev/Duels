@@ -2,7 +2,7 @@ package com.meteordevelopments.duels.commands;
 
 import co.aikar.commands.annotation.*;
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.Permissions;
+
 import com.meteordevelopments.duels.data.UserData;
 import com.meteordevelopments.duels.party.Party;
 import com.meteordevelopments.duels.party.PartyInvite;
@@ -124,8 +124,8 @@ public class PartyCommand extends BaseCommand {
         final Party party;
 
         if (target != null) {
-            if (!player.hasPermission(Permissions.PARTY_LIST_OTHERS)) {
-                lang.sendMessage(player, "ERROR.no-permission", "permission", Permissions.PARTY_LIST_OTHERS);
+            if (!player.hasPermission("duels.party.list.others")) {
+                lang.sendMessage(player, "ERROR.no-permission", "permission", "duels.party.list.others");
                 return;
             }
 

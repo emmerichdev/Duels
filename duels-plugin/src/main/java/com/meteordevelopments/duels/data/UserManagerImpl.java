@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 public class UserManagerImpl implements Loadable, Listener, UserManager {
 
     private static final Calendar GREGORIAN_CALENDAR = new GregorianCalendar();
-    private static final String ADMIN_UPDATE_MESSAGE = "&9[Duels] &bDuels &fv%s &7is now available for download! Download at: &c%s";
 
     private final DuelsPlugin plugin;
     private final Config config;
@@ -87,7 +86,7 @@ public class UserManagerImpl implements Loadable, Listener, UserManager {
                         user.refreshMatches();
                         user.calculateTotalElo();
                         final String userName = user.getName();
-                        if (userName != null && !userName.trim().isEmpty()) {
+                        if (!userName.trim().isEmpty()) {
                             final String normalizedName = userName.strip().toLowerCase(Locale.ROOT);
                             final UUID existingUuid = names.put(normalizedName, uuid);
                             if (existingUuid != null && !existingUuid.equals(uuid)) {
@@ -221,7 +220,7 @@ public class UserManagerImpl implements Loadable, Listener, UserManager {
                 user.calculateTotalElo();
                 users.put(uuid, user);
                 final String userName = user.getName();
-                if (userName != null && !userName.trim().isEmpty()) {
+                if (!userName.trim().isEmpty()) {
                     // Remove any previous mapping for this UUID to avoid stale entries
                     names.entrySet().removeIf(entry -> entry.getValue().equals(uuid));
                     names.put(userName.strip().toLowerCase(Locale.ROOT), uuid);

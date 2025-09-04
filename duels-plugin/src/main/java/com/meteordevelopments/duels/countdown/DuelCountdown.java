@@ -10,7 +10,7 @@ import com.meteordevelopments.duels.data.UserManagerImpl;
 import com.meteordevelopments.duels.match.DuelMatch;
 import com.meteordevelopments.duels.util.AdventureUtil;
 import com.meteordevelopments.duels.util.CC;
-import com.meteordevelopments.duels.util.function.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
@@ -86,7 +86,7 @@ public class DuelCountdown extends BukkitRunnable {
                 return;
             }
 
-            info.put(player.getUniqueId(), new Pair<>(opponent.getName(), user.getRatingUnsafe(match.getKit())));
+            info.put(player.getUniqueId(), Pair.of(opponent.getName(), user.getRatingUnsafe(match.getKit())));
         });
     }
 
@@ -100,8 +100,8 @@ public class DuelCountdown extends BukkitRunnable {
 
             if (info != null) {
                 player.sendMessage(message
-                    .replace("%opponent%", info.getKey())
-                    .replace("%opponent_rating%", String.valueOf(info.getValue()))
+                    .replace("%opponent%", info.getLeft())
+                    .replace("%opponent_rating%", String.valueOf(info.getRight()))
                     .replace("%kit%", kitName)
                     .replace("%arena%", arena.getName())
                 );

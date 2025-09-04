@@ -1,5 +1,6 @@
 package com.meteordevelopments.duels;
 
+import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.PaperCommandManager;
 import com.meteordevelopments.duels.api.Duels;
@@ -7,24 +8,20 @@ import com.meteordevelopments.duels.api.command.SubCommand;
 import com.meteordevelopments.duels.arena.ArenaImpl;
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
 import com.meteordevelopments.duels.betting.BettingManager;
-import com.meteordevelopments.duels.data.UserData;
-import com.meteordevelopments.duels.kit.KitImpl;
-import com.meteordevelopments.duels.commands.DuelCommand;
-import com.meteordevelopments.duels.commands.DuelsCommand;
-import com.meteordevelopments.duels.commands.PartyCommand;
-import com.meteordevelopments.duels.commands.QueueCommand;
-import com.meteordevelopments.duels.commands.RankCommand;
-import com.meteordevelopments.duels.commands.SpectateCommand;
-import com.meteordevelopments.duels.commands.TestArenaCommand;
+import com.meteordevelopments.duels.commands.*;
 import com.meteordevelopments.duels.config.Config;
 import com.meteordevelopments.duels.config.DatabaseConfig;
 import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.data.ItemData;
 import com.meteordevelopments.duels.data.ItemData.ItemDataDeserializer;
+import com.meteordevelopments.duels.data.UserData;
 import com.meteordevelopments.duels.data.UserManagerImpl;
 import com.meteordevelopments.duels.duel.DuelManager;
 import com.meteordevelopments.duels.hook.HookManager;
+import com.meteordevelopments.duels.hook.hooks.DeluxeCombatHook;
+import com.meteordevelopments.duels.hook.hooks.worldguard.WorldGuardHook;
 import com.meteordevelopments.duels.inventories.InventoryManager;
+import com.meteordevelopments.duels.kit.KitImpl;
 import com.meteordevelopments.duels.kit.KitManagerImpl;
 import com.meteordevelopments.duels.leaderboard.manager.LeaderboardManager;
 import com.meteordevelopments.duels.logging.LogManager;
@@ -37,8 +34,8 @@ import com.meteordevelopments.duels.rank.manager.RankManager;
 import com.meteordevelopments.duels.redis.RedisService;
 import com.meteordevelopments.duels.request.RequestManager;
 import com.meteordevelopments.duels.setting.SettingsManager;
-import com.meteordevelopments.duels.spectate.SpectateManagerImpl;
 import com.meteordevelopments.duels.slm.SlimeManager;
+import com.meteordevelopments.duels.spectate.SpectateManagerImpl;
 import com.meteordevelopments.duels.startup.ListenerManager;
 import com.meteordevelopments.duels.startup.LoadableManager;
 import com.meteordevelopments.duels.startup.StartupManager;
@@ -47,12 +44,14 @@ import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.util.Log;
 import com.meteordevelopments.duels.util.Log.LogSource;
-import com.meteordevelopments.duels.util.json.JsonUtil;
 import com.meteordevelopments.duels.util.gui.GuiListener;
-import com.meteordevelopments.duels.validator.ValidatorManager;
+import com.meteordevelopments.duels.util.inventory.InventoryUtil;
+import com.meteordevelopments.duels.util.json.JsonUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -64,6 +63,7 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
+
 import static com.meteordevelopments.duels.redis.RedisService.*;
 
 
@@ -97,7 +97,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     @Getter @Setter private HookManager hookManager;
     @Getter @Setter private Teleport teleport;
     @Getter @Setter private PartyManagerImpl partyManager;
-    @Getter @Setter private ValidatorManager validatorManager;
+    
     @Getter @Setter private LeaderboardManager leaderboardManager;
     @Getter @Setter private RankManager rankManager;
     @Getter @Setter private MongoService mongoService;
@@ -180,6 +180,8 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
             return user;
         });
 
+        registerCommandConditions();
+
         commandManager.registerCommand(new DuelsCommand(this));
         commandManager.registerCommand(new DuelCommand(this));
         commandManager.registerCommand(new PartyCommand(this));
@@ -187,6 +189,10 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         commandManager.registerCommand(new SpectateCommand(this));
         commandManager.registerCommand(new RankCommand(this));
         commandManager.registerCommand(new TestArenaCommand(this));
+        commandManager.registerCommand(new ArenaCommand(this));
+        commandManager.registerCommand(new KitCommand(this));
+        commandManager.registerCommand(new QueueAdminCommand(this));
+        commandManager.registerCommand(new StatsCommand(this));
 
         listenerManager.registerPreListeners();
         
@@ -391,6 +397,65 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         return loadableManager != null ? loadableManager.find(name) : null;
     }
 
+    private void registerCommandConditions() {
+        commandManager.getCommandConditions().addCondition(Player.class, "not_in_creative", (context, execContext, player) -> {
+            if (player.getGameMode() == GameMode.CREATIVE && getConfiguration().isPreventCreativeMode()) {
+                throw new ConditionFailedException(getLang().getMessage("ERROR.duel.in-creative-mode"));
+            }
+        });
+
+        commandManager.getCommandConditions().addCondition(Player.class, "inventory_empty", (context, execContext, player) -> {
+            if (getConfiguration().isRequiresClearedInventory() && InventoryUtil.hasItem(player)) {
+                throw new ConditionFailedException(getLang().getMessage("ERROR.duel.inventory-not-empty"));
+            }
+        });
+
+        commandManager.getCommandConditions().addCondition(Player.class, "not_in_blacklisted_world", (context, execContext, player) -> {
+            if (!getConfiguration().getBlacklistedWorlds().isEmpty() && getConfiguration().getBlacklistedWorlds().contains(player.getWorld().getName())) {
+                throw new ConditionFailedException(getLang().getMessage("ERROR.duel.in-blacklisted-world"));
+            }
+        });
+
+        commandManager.getCommandConditions().addCondition(Player.class, "not_combat_tagged", (context, execContext, player) -> {
+            DeluxeCombatHook deluxeCombat = getHookManager().getHook(DeluxeCombatHook.class);
+            if (deluxeCombat != null && getConfiguration().isDcPreventDuel() && deluxeCombat.isTagged(player)) {
+                throw new ConditionFailedException(getLang().getMessage("ERROR.duel.is-tagged"));
+            }
+        });
+
+        commandManager.getCommandConditions().addCondition(Player.class, "in_duel_zone", (context, execContext, player) -> {
+            WorldGuardHook worldGuard = getHookManager().getHook(WorldGuardHook.class);
+            if (getConfiguration().isDuelzoneEnabled() && worldGuard != null && worldGuard.findDuelZone(player) == null) {
+                throw new ConditionFailedException(getLang().getMessage("ERROR.duel.not-in-duelzone", "regions", getConfiguration().getDuelzones()));
+            }
+        });
+
+        commandManager.getCommandConditions().addCondition(Player.class, "not_in_match", (context, execContext, player) -> {
+            if (getArenaManager().isInMatch(player)) {
+                throw new ConditionFailedException(getLang().getMessage("ERROR.duel.already-in-match.sender"));
+            }
+        });
+
+        commandManager.getCommandConditions().addCondition(Player.class, "not_spectating", (context, execContext, player) -> {
+            if (getSpectateManager().isSpectating(player)) {
+                throw new ConditionFailedException(getLang().getMessage("ERROR.duel.already-spectating.sender"));
+            }
+        });
+
+        commandManager.getCommandConditions().addCondition(Player.class, "can_receive_requests", (context, execContext, player) -> {
+            UserData user = getUserManager().get(player);
+            if (user != null && !user.canRequest() && !execContext.getIssuer().getPlayer().hasPermission("duels.admin")) {
+                throw new ConditionFailedException(getLang().getMessage("ERROR.duel.requests-disabled", "name", player.getName()));
+            }
+        });
+
+        commandManager.getCommandConditions().addCondition(Player.class, "target_not_self", (context, execContext, player) -> {
+            if (player.equals(execContext.getIssuer().getPlayer())) {
+                throw new ConditionFailedException(getLang().getMessage("ERROR.duel.is-self"));
+            }
+        });
+    }
+
     private void setupRedisSubscriptions() {
         try {
             // Ensure we don't stack multiple subscribers across reloads
@@ -454,4 +519,3 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         return port > 0 ? String.valueOf(port) : "default";
     }
 }
-

@@ -23,7 +23,6 @@ import com.meteordevelopments.duels.teleport.Teleport;
 import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.util.gui.GuiListener;
-import com.meteordevelopments.duels.validator.ValidatorManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,11 +122,6 @@ public class LoadableManager {
             RequestManager requestManager = new RequestManager(plugin);
             plugin.setRequestManager(requestManager);
             return requestManager;
-        });
-        addLoadable("validator manager", () -> {
-            ValidatorManager validatorManager = new ValidatorManager(plugin);
-            plugin.setValidatorManager(validatorManager);
-            return validatorManager;
         });
         addLoadable("leaderboard manager", () -> {
             LeaderboardManager leaderboardManager = new LeaderboardManager(plugin);

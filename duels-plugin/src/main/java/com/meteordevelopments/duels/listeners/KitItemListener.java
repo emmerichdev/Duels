@@ -1,7 +1,7 @@
 package com.meteordevelopments.duels.listeners;
 
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.Permissions;
+
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
 import com.meteordevelopments.duels.util.Log;
 import com.meteordevelopments.duels.util.ItemIdentifiers;
@@ -44,7 +44,7 @@ public class KitItemListener implements Listener {
     }
 
     private boolean isExcluded(final Player player) {
-        return player.isOp() || player.hasPermission(Permissions.ADMIN) || arenaManager.isInMatch(player);
+        return player.isOp() || player.hasPermission("duels.admin") || arenaManager.isInMatch(player);
     }
 
     private boolean isNotKitItem(final ItemStack item) {

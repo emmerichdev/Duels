@@ -103,7 +103,7 @@ public class QueueManager implements Loadable, DQueueManager, Listener {
     @Override
     public void handleLoad() throws IOException {
         this.gui = new MultiPageGui<>(plugin, lang.getMessage("GUI.queues.title"), config.getQueuesRows(), queues);
-        gui.setSpaceFiller(CommonItems.from(config.getQueuesFillerType(), config.getQueuesFillerData()));
+        gui.setSpaceFiller(CommonItems.from(config.getQueuesFillerType()));
         gui.setPrevButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.queues.buttons.previous-page.name")).build());
         gui.setNextButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.queues.buttons.next-page.name")).build());
         gui.setEmptyIndicator(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.queues.buttons.empty.name")).build());

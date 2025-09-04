@@ -2,7 +2,7 @@ package com.meteordevelopments.duels.commands;
 
 import co.aikar.commands.annotation.*;
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.Permissions;
+
 import com.meteordevelopments.duels.api.event.request.RequestAcceptEvent;
 import com.meteordevelopments.duels.api.event.request.RequestDenyEvent;
 import com.meteordevelopments.duels.api.user.UserManager;
@@ -17,13 +17,10 @@ import com.meteordevelopments.duels.setting.Settings;
 import com.meteordevelopments.duels.util.DateUtil;
 import com.meteordevelopments.duels.util.TextBuilder;
 import com.meteordevelopments.duels.util.UUIDUtil;
-import com.meteordevelopments.duels.util.function.Pair;
-import com.meteordevelopments.duels.util.validator.ValidatorUtil;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginDescriptionFile;
+import io.papermc.paper.plugin.configuration.PluginMeta;
 
 import java.util.Calendar;
 import java.util.Collection;
@@ -33,7 +30,7 @@ import java.util.List;
 import java.util.UUID;
 
 @CommandAlias("duel")
-@CommandPermission(Permissions.DUEL)
+@CommandPermission("duels.duel")
 public class DuelCommand extends BaseCommand {
 
     private final WorldGuardHook worldGuard;
@@ -47,7 +44,13 @@ public class DuelCommand extends BaseCommand {
 
     @Default
     @CommandCompletion("@players")
-    public void onDuel(Player player, Player target, @Optional Integer bet, @Optional Boolean itemBetting, @Optional String kitName) {
+    public void onDuel(
+        @Conditions("not_in_creative|inventory_empty|not_in_blacklisted_world|not_combat_tagged|in_duel_zone|not_in_match|not_spectating") Player player,
+        @Conditions("can_receive_requests|not_in_match|not_spectating|target_not_self") Player target,
+        @Optional Integer bet,
+        @Optional Boolean itemBetting,
+        @Optional String kitName
+    ) {
         if (userManager.get(player) == null) {
             lang.sendMessage(player, "ERROR.data.load-failure");
             return;
@@ -56,18 +59,46 @@ public class DuelCommand extends BaseCommand {
         final Party party = partyManager.get(player);
         final Collection<Player> players = party == null ? Collections.singleton(player) : party.getOnlineMembers();
 
-        if (!ValidatorUtil.validate(validatorManager.getDuelSelfValidators(), player, party, players)) {
-            return;
-        }
-
         final Party targetParty = partyManager.get(target);
         final Collection<Player> targetPlayers = targetParty == null ? Collections.singleton(target) : targetParty.getOnlineMembers();
-        if (!ValidatorUtil.validate(validatorManager.getDuelTargetValidators(), new Pair<>(player, target), targetParty, targetPlayers)) {
+
+        if (targetParty == null) {
+            if (party != null) {
+                lang.sendMessage(player, "ERROR.party.not-in-party.target", "name", target.getName());
+                return;
+            }
+        } else {
+            if (party == null) {
+                lang.sendMessage(player, "ERROR.party.not-in-party.sender", "name", player.getName());
+                return;
+            }
+            if (party.equals(targetParty)) {
+                lang.sendMessage(player, "ERROR.party.in-same-party", "name", target.getName());
+                return;
+            }
+            if (config.isPartySameSizeOnly() && party.size() != targetParty.size()) {
+                lang.sendMessage(player, "ERROR.party.is-not-same-size");
+                return;
+            }
+            if (targetPlayers.size() != targetParty.size()) {
+                lang.sendMessage(player, "ERROR.party.is-not-online.target", "name", target.getName());
+                return;
+            }
+        }
+        if (targetParty != null) {
+            if (!party.isOwner(player)) {
+                lang.sendMessage(player, "ERROR.party.is-not-owner");
+                return;
+            }
+        }
+
+        if (requestManager.has(player, target)) {
+            lang.sendMessage(player, targetParty != null ? "ERROR.party-duel.already-has-request" : "ERROR.duel.already-has-request", "name", target.getName());
             return;
         }
 
+
         final Settings settings = settingManager.getSafely(player);
-        // Reset bet to prevent accidents
         settings.setBet(0);
         settings.setTarget(target);
         settings.setSenderParty(party);
@@ -87,8 +118,8 @@ public class DuelCommand extends BaseCommand {
             }
 
             if (bet > 0 && config.isMoneyBettingEnabled()) {
-                if (config.isMoneyBettingUsePermission() && !player.hasPermission(Permissions.MONEY_BETTING) && !player.hasPermission(Permissions.SETTING_ALL)) {
-                    lang.sendMessage(player, "ERROR.no-permission", "permission", Permissions.MONEY_BETTING);
+                if (config.isMoneyBettingUsePermission() && !player.hasPermission("duels.moneybetting") && !player.hasPermission("duels.setting.all")) {
+                    lang.sendMessage(player, "ERROR.no-permission", "permission", "duels.use.money-betting");
                     return;
                 }
 
@@ -112,8 +143,8 @@ public class DuelCommand extends BaseCommand {
                 return;
             }
 
-            if (config.isItemBettingUsePermission() && !player.hasPermission(Permissions.ITEM_BETTING) && !player.hasPermission(Permissions.SETTING_ALL)) {
-                lang.sendMessage(player, "ERROR.no-permission", "permission", Permissions.ITEM_BETTING);
+            if (config.isItemBettingUsePermission() && !player.hasPermission("duels.itembetting") && !player.hasPermission("duels.setting.all")) {
+                lang.sendMessage(player, "ERROR.no-permission", "permission", "duels.use.item-betting");
                 return;
             }
 
@@ -127,8 +158,8 @@ public class DuelCommand extends BaseCommand {
                     return;
                 }
 
-                if (config.isOwnInventoryUsePermission() && !player.hasPermission(Permissions.OWN_INVENTORY) && !player.hasPermission(Permissions.SETTING_ALL)) {
-                    lang.sendMessage(player, "ERROR.no-permission", "permission", Permissions.OWN_INVENTORY);
+                if (config.isOwnInventoryUsePermission() && !player.hasPermission("duels.owninventory") && !player.hasPermission("duels.setting.all")) {
+                    lang.sendMessage(player, "ERROR.no-permission", "permission", "duels.use.own-inventory");
                     return;
                 }
 
@@ -136,7 +167,8 @@ public class DuelCommand extends BaseCommand {
             } else if (!config.isKitSelectingEnabled()) {
                 lang.sendMessage(player, "ERROR.setting.disabled-option", "option", lang.getMessage("GENERAL.kit-selector"));
                 return;
-            } else {
+            }
+            else {
                 final KitImpl kit = kitManager.get(kitName);
 
                 if (kit == null) {
@@ -144,9 +176,9 @@ public class DuelCommand extends BaseCommand {
                     return;
                 }
 
-                final String permission = String.format(Permissions.KIT, kitName.replace(" ", "-").toLowerCase());
+                final String permission = String.format("duels.kits.%s", kitName.replace(" ", "-").toLowerCase());
 
-                if (kit.isUsePermission() && !player.hasPermission(Permissions.KIT_ALL) && !player.hasPermission(permission)) {
+                if (kit.isUsePermission() && !player.hasPermission("duels.kits.*") && !player.hasPermission(permission)) {
                     lang.sendMessage(player, "ERROR.no-permission", "permission", permission);
                     return;
                 }
@@ -158,22 +190,35 @@ public class DuelCommand extends BaseCommand {
 
 
         if (sendRequest) {
-            // If all settings were selected via command, send request without opening settings GUI.
             requestManager.send(player, target, settings);
         } else if (config.isOwnInventoryEnabled()) {
-            // If own inventory is enabled, prompt request settings GUI.
             settings.openGui(player);
         } else {
-            // Maintain old behavior: If own inventory is disabled, prompt kit selector first instead of request settings GUI.
             kitManager.getGui().open(player);
         }
     }
 
     @Subcommand("accept")
     @CommandCompletion("@players")
-    public void onAccept(Player player, Player target) {
-        if (!ValidatorUtil.validate(validatorManager.getDuelAcceptTargetValidators(), new Pair<>(player, target), partyManager.get(target), Collections.emptyList())) {
-            return;
+    public void onAccept(
+        @Conditions("not_in_match|not_spectating") Player player,
+        @Conditions("not_in_match|not_spectating|target_not_self") Player target
+    ) {
+        final Party targetParty = partyManager.get(target);
+        final Party senderParty = partyManager.get(player);
+        if (targetParty != null) {
+            if (senderParty == null) {
+                lang.sendMessage(player, "ERROR.party.not-in-party.sender", "name", player.getName());
+                return;
+            }
+            if (senderParty.equals(targetParty)) {
+                lang.sendMessage(player, "ERROR.party.in-same-party", "name", target.getName());
+                return;
+            }
+            if (!targetParty.isOwner(target)) {
+                lang.sendMessage(player, "ERROR.party.is-not-owner.target", "name", target.getName());
+                return;
+            }
         }
 
         final RequestImpl request = requestManager.remove(target, player);
@@ -205,18 +250,19 @@ public class DuelCommand extends BaseCommand {
             lang.sendMessage(target, "COMMAND.duel.request.accept.sender", "name", player.getName());
         }
 
-        // Start the actual duel match
         duelManager.startMatch(target, player, request.getSettings(), Collections.emptyMap(), null);
     }
 
     @Subcommand("deny")
     @CommandCompletion("@players")
     public void onDeny(Player player, Player target) {
-        if (!ValidatorUtil.validate(validatorManager.getDuelDenyTargetValidators(), new Pair<>(player, target), partyManager.get(target), Collections.emptyList())) {
+        final RequestImpl request = requestManager.remove(target, player);
+
+        if (request == null) {
+            lang.sendMessage(player, "ERROR.duel.no-request", "name", target.getName());
             return;
         }
 
-        final RequestImpl request = requestManager.remove(target, player);
         final RequestDenyEvent event = new RequestDenyEvent(player, target, request);
         Bukkit.getPluginManager().callEvent(event);
 
@@ -235,8 +281,8 @@ public class DuelCommand extends BaseCommand {
     @CommandCompletion("@players")
     public void onStats(Player player, @Optional Player target) {
         if (target != null) {
-            if (!player.hasPermission(Permissions.STATS_OTHERS)) {
-                lang.sendMessage(player, "ERROR.no-permission", "permission", Permissions.STATS_OTHERS);
+            if (!player.hasPermission("duels.stats.others")) {
+                lang.sendMessage(player, "ERROR.no-permission", "permission", "duels.stats.others");
                 return;
             }
             displayStats(player, target.getName());
@@ -376,9 +422,9 @@ public class DuelCommand extends BaseCommand {
 
     @Subcommand("version|v")
     public void onVersion(Player player) {
-        final PluginDescriptionFile info = plugin.getDescription();
+        final PluginMeta info = plugin.getPluginMeta();
         final String authors = info.getAuthors().isEmpty() ? "unknown" : String.join(", ", info.getAuthors());
-        final String versionText = lang.getMessage("COMMAND.version", "plugin_name", info.getFullName(), "authors", authors, "plugin_version", info.getVersion());
+        final String versionText = lang.getMessage("COMMAND.version", "plugin_name", info.getName(), "authors", authors, "plugin_version", info.getVersion());
         final TextBuilder textBuilder = TextBuilder.of(versionText);
 
         final String website = info.getWebsite();

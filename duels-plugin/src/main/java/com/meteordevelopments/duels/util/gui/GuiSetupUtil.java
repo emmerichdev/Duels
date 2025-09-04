@@ -17,7 +17,7 @@ public final class GuiSetupUtil {
             String fillerType, short fillerData,
             String prevPageKey, String nextPageKey, String emptyKey) {
         
-        gui.setSpaceFiller(CommonItems.from(fillerType, fillerData));
+        gui.setSpaceFiller(CommonItems.from(fillerType));
         gui.setPrevButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage(prevPageKey)).build());
         gui.setNextButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage(nextPageKey)).build());
         gui.setEmptyIndicator(ItemBuilder.of(Material.PAPER).name(lang.getMessage(emptyKey)).build());

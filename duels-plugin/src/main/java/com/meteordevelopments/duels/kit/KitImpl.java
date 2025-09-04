@@ -1,7 +1,7 @@
 package com.meteordevelopments.duels.kit;
 
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.Permissions;
+
 import com.meteordevelopments.duels.api.event.kit.KitEquipEvent;
 import com.meteordevelopments.duels.api.kit.Kit;
 import com.meteordevelopments.duels.gui.BaseButton;
@@ -108,9 +108,9 @@ public class KitImpl extends BaseButton implements Kit {
 
     @Override
     public void onClick(final Player player) {
-        final String permission = String.format(Permissions.KIT, name.replace(" ", "-").toLowerCase());
+        final String permission = String.format("duels.kits.%s", name.replace(" ", "-").toLowerCase());
 
-        if (usePermission && !player.hasPermission(Permissions.KIT_ALL) && !player.hasPermission(permission)) {
+        if (usePermission && !player.hasPermission("duels.kits.*") && !player.hasPermission(permission)) {
             lang.sendMessage(player, "ERROR.no-permission", "permission", permission);
             return;
         }

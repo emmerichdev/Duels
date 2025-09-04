@@ -1,7 +1,7 @@
 package com.meteordevelopments.duels.gui.settings.buttons;
 
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.Permissions;
+
 import com.meteordevelopments.duels.gui.BaseButton;
 import com.meteordevelopments.duels.setting.Settings;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
@@ -16,7 +16,7 @@ public class OwnInventoryButton extends BaseButton {
 
     @Override
     public void update(final Player player) {
-        if (config.isOwnInventoryUsePermission() && !player.hasPermission(Permissions.OWN_INVENTORY) && !player.hasPermission(Permissions.SETTING_ALL)) {
+        if (config.isOwnInventoryUsePermission() && !player.hasPermission("duels.use.own-inventory") && !player.hasPermission("duels.use.*")) {
             setLore(lang.getMessage("GUI.settings.buttons.use-own-inventory.lore-no-permission").split("\n"));
             return;
         }
@@ -29,8 +29,8 @@ public class OwnInventoryButton extends BaseButton {
 
     @Override
     public void onClick(final Player player) {
-        if (config.isOwnInventoryUsePermission() && !player.hasPermission(Permissions.OWN_INVENTORY) && !player.hasPermission(Permissions.SETTING_ALL)) {
-            lang.sendMessage(player, "ERROR.no-permission", "permission", Permissions.OWN_INVENTORY);
+        if (config.isOwnInventoryUsePermission() && !player.hasPermission("duels.use.own-inventory") && !player.hasPermission("duels.use.*")) {
+            lang.sendMessage(player, "ERROR.no-permission", "permission", "duels.use.own-inventory");
             return;
         }
 

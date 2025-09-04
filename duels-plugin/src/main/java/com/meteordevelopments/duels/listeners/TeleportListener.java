@@ -1,7 +1,7 @@
 package com.meteordevelopments.duels.listeners;
 
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.Permissions;
+
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
 import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.spectate.SpectateManagerImpl;
@@ -40,7 +40,7 @@ public class TeleportListener implements Listener {
     public void on(final PlayerTeleportEvent event) {
         final Player player = event.getPlayer();
 
-        if (player.isOp() || player.isDead() || player.hasPermission(Permissions.ADMIN) || player.hasPermission(Permissions.TP_BYPASS) ||
+        if (player.isOp() || player.isDead() || player.hasPermission("duels.admin") || player.hasPermission("duels.teleport.bypass") ||
                 player.hasMetadata(Teleport.METADATA_KEY) || arenaManager.isInMatch(player) || spectateManager.isSpectating(player)) {
             return;
         }

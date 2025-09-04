@@ -2,7 +2,6 @@ package com.meteordevelopments.duels.commands;
 
 import co.aikar.commands.annotation.*;
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.kit.KitImpl;
 import com.meteordevelopments.duels.queue.Queue;
 import org.bukkit.entity.Player;

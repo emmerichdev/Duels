@@ -55,7 +55,7 @@ public final class CommonItems {
 
 
 
-    public static ItemStack from(final String type, final short data) {
+    public static ItemStack from(final String type) {
         // Legacy method - returns basic item without legacy data support
         Material material = Material.getMaterial(type);
         if (material == null) {

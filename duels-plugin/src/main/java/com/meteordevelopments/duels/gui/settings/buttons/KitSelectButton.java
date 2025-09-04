@@ -1,13 +1,10 @@
 package com.meteordevelopments.duels.gui.settings.buttons;
 
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.Permissions;
+
 import com.meteordevelopments.duels.gui.BaseButton;
 import com.meteordevelopments.duels.setting.Settings;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -19,7 +16,7 @@ public class KitSelectButton extends BaseButton {
 
     @Override
     public void update(final Player player) {
-        if (config.isKitSelectingUsePermission() && !player.hasPermission(Permissions.KIT_SELECTING) && !player.hasPermission(Permissions.SETTING_ALL)) {
+        if (config.isKitSelectingUsePermission() && !player.hasPermission("duels.use.kit-select") && !player.hasPermission("duels.use.*")) {
             setLore(lang.getMessage("GUI.settings.buttons.kit-selector.lore-no-permission").split("\n"));
             return;
         }
@@ -32,9 +29,9 @@ public class KitSelectButton extends BaseButton {
 
     @Override
     public void onClick(final Player player) {
-        if (config.isKitSelectingUsePermission() && !player.hasPermission(Permissions.KIT_SELECTING) && !player.hasPermission(Permissions.SETTING_ALL)) {
+        if (config.isKitSelectingUsePermission() && !player.hasPermission("duels.use.kit-select") && !player.hasPermission("duels.use.*")) {
             playErrorSound(player);
-            lang.sendMessage(player, "ERROR.no-permission", "permission", Permissions.KIT_SELECTING);
+            lang.sendMessage(player, "ERROR.no-permission", "permission", "duels.use.kit-select");
             return;
         }
 

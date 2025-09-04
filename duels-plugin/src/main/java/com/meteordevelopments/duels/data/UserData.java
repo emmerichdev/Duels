@@ -53,7 +53,7 @@ public class UserData implements User {
     public void setWins(final int wins) {
         this.wins = wins;
 
-        if (!isOnline()) {
+        if (isOffline()) {
             trySave();
         }
     }
@@ -62,7 +62,7 @@ public class UserData implements User {
     public void setLosses(final int losses) {
         this.losses = losses;
 
-        if (!isOnline()) {
+        if (isOffline()) {
             trySave();
         }
     }
@@ -76,7 +76,7 @@ public class UserData implements User {
     public void setRequests(final boolean requests) {
         this.requests = requests;
 
-        if (!isOnline()) {
+        if (isOffline()) {
             trySave();
         }
     }
@@ -122,7 +122,7 @@ public class UserData implements User {
         rating.clear();
         totalElo = 0;
 
-        if (!isOnline()) {
+        if (isOffline()) {
             trySave();
         }
     }
@@ -134,7 +134,7 @@ public class UserData implements User {
     public void setPartyRequests(final boolean partyRequests) {
         this.partyRequests = partyRequests;
 
-        if (!isOnline()) {
+        if (isOffline()) {
             trySave();
         }
     }
@@ -153,19 +153,11 @@ public class UserData implements User {
         // Update total ELO when individual kit rating changes
         calculateTotalElo();
 
-        if (!isOnline()) {
+        if (isOffline()) {
             trySave();
         }
     }
-    
-    public void setTotalElo(final int totalElo) {
-        this.totalElo = totalElo;
-        
-        if (!isOnline()) {
-            trySave();
-        }
-    }
-    
+
     public void calculateTotalElo() {
         if (this.rating == null || this.rating.isEmpty()) {
             this.totalElo = 0;
@@ -179,8 +171,8 @@ public class UserData implements User {
         this.totalElo = total;
     }
 
-    private boolean isOnline() {
-        return Bukkit.getPlayer(uuid) != null;
+    private boolean isOffline() {
+        return Bukkit.getPlayer(uuid) == null;
     }
 
     public void addWin() {

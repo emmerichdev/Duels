@@ -2,7 +2,6 @@ package com.meteordevelopments.duels.commands;
 
 import co.aikar.commands.annotation.*;
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.api.spectate.SpectateManager;
 import com.meteordevelopments.duels.arena.ArenaImpl;
 import com.meteordevelopments.duels.match.DuelMatch;

@@ -27,7 +27,7 @@ import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.util.Log;
 import com.meteordevelopments.duels.util.PlayerUtil;
 import com.meteordevelopments.duels.util.inventory.InventoryUtil;
-import com.meteordevelopments.duels.util.validator.ValidatorUtil;
+
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -298,7 +298,7 @@ public class DuelManager implements Loadable {
         players.addAll(first);
         players.addAll(second);
 
-        if (!ValidatorUtil.validate(plugin.getValidatorManager().getMatchValidators(), players, settings)) {
+        if (players.stream().anyMatch(player -> !player.isOnline())) {
             refundItems(players, items);
             return;
         }

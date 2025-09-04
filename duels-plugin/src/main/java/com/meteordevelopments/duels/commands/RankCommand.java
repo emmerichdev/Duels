@@ -4,7 +4,6 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.rank.Rank;
 import org.bukkit.entity.Player;
 

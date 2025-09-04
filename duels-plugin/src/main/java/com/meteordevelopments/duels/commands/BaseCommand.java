@@ -17,7 +17,6 @@ import com.meteordevelopments.duels.queue.sign.QueueSignManagerImpl;
 import com.meteordevelopments.duels.request.RequestManager;
 import com.meteordevelopments.duels.setting.SettingsManager;
 import com.meteordevelopments.duels.spectate.SpectateManagerImpl;
-import com.meteordevelopments.duels.validator.ValidatorManager;
 
 public class BaseCommand extends co.aikar.commands.BaseCommand {
 
@@ -38,7 +37,6 @@ public class BaseCommand extends co.aikar.commands.BaseCommand {
     protected final RequestManager requestManager;
     protected final HookManager hookManager;
     protected final PartyManagerImpl partyManager;
-    protected final ValidatorManager validatorManager;
 
     public BaseCommand(DuelsPlugin plugin) {
         this.plugin = plugin;
@@ -58,6 +56,5 @@ public class BaseCommand extends co.aikar.commands.BaseCommand {
         this.duelManager = plugin.getDuelManager();
         this.requestManager = plugin.getRequestManager();
         this.hookManager = plugin.getHookManager();
-        this.validatorManager = plugin.getValidatorManager();
     }
 }

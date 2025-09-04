@@ -4,7 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.meteordevelopments.duels.DuelsPlugin;
-import com.meteordevelopments.duels.Permissions;
+
 import com.meteordevelopments.duels.api.arena.Arena;
 import com.meteordevelopments.duels.api.event.spectate.SpectateEndEvent;
 import com.meteordevelopments.duels.api.event.spectate.SpectateStartEvent;
@@ -163,7 +163,7 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
             }
 
             // Broadcast to the arena that player has begun spectating if player does not have the SPEC_ANON permission.
-            if (!player.hasPermission(Permissions.SPEC_ANON)) {
+            if (!player.hasPermission("duels.spectate.anonymously")) {
                 final DuelMatch arenaMatch = arena.getMatch();
                 if (arenaMatch != null) {
                     arenaMatch.getAllPlayers().forEach(matchPlayer -> lang.sendMessage(matchPlayer, "SPECTATE.arena-broadcast", "name", player.getName()));
