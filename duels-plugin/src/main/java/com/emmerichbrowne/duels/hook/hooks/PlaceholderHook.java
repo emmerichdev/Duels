@@ -1,0 +1,351 @@
+package com.emmerichbrowne.duels.hook.hooks;
+
+import com.emmerichbrowne.duels.DuelsPlugin;
+import com.emmerichbrowne.duels.api.arena.Arena;
+import com.emmerichbrowne.duels.api.kit.Kit;
+import com.emmerichbrowne.duels.api.match.Match;
+import com.emmerichbrowne.duels.api.spectate.Spectator;
+import com.emmerichbrowne.duels.api.user.User;
+import com.emmerichbrowne.duels.leaderboard.LeaderboardEntry;
+import com.emmerichbrowne.duels.rank.Rank;
+import com.emmerichbrowne.duels.util.CC;
+
+import com.emmerichbrowne.duels.util.hook.PluginHook;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public class PlaceholderHook extends PluginHook<DuelsPlugin> {
+
+    public static final String NAME = "PlaceholderAPI";
+
+    public PlaceholderHook(final DuelsPlugin plugin) {
+        super(plugin, NAME);
+        new Placeholders().register();
+    }
+
+    public class Placeholders extends PlaceholderExpansion {
+        @Override
+        public @NotNull String getIdentifier() {
+            return "duels";
+        }
+
+        @Override
+        public @NotNull String getAuthor() {
+            return "DUMBO, Emmerich";
+        }
+
+        @Override
+        public @NotNull String getVersion() {
+            return "5.0";
+        }
+
+        @Override
+        public boolean persist() {
+            return true;
+        }
+
+        @Override
+        public @Nullable String onPlaceholderRequest(@Nullable Player player, @NotNull String identifier) {
+            if (player == null) {
+                return "Player is required";
+            }
+
+            User user;
+            switch (identifier) {
+                case "wins":
+                    user = plugin.getUserManager().get(player);
+
+                    if (user == null) {
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
+                    }
+                    return String.valueOf(user.getWins());
+                case "losses":
+                    user = plugin.getUserManager().get(player);
+                    if (user == null) {
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
+                    }
+                    return String.valueOf(user.getLosses());
+                case "can_request":
+                    user = plugin.getUserManager().get(player);
+                    if (user == null) {
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
+                    }
+                    return String.valueOf(user.canRequest());
+
+                case "wl_ratio":
+                case "wlr":
+                    user = plugin.getUserManager().get(player);
+                    if (user == null) {
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
+                    }
+                    int wins = user.getWins();
+                    int losses = user.getLosses();
+                    return String.valueOf(wlr(wins, losses));
+            }
+
+            if (identifier.startsWith("rating_")) {
+                user = plugin.getUserManager().get(player);
+
+                if (user == null) {
+                    return CC.translate(plugin.getConfiguration().getUserNotFound());
+                }
+
+                identifier = identifier.replace("rating_", "");
+
+                if (identifier.equals("-")) {
+                    return String.valueOf(user.getRating());
+                }
+
+                final Kit kit = plugin.getKitManager().get(identifier);
+                return kit != null ? String.valueOf(user.getRating(kit)) : CC.translate(plugin.getConfiguration().getNoKit());
+            }
+
+            // Total ELO placeholder
+            if (identifier.equals("total_elo")) {
+                user = plugin.getUserManager().get(player);
+
+                if (user == null) {
+                    return CC.translate(plugin.getConfiguration().getUserNotFound());
+                }
+
+                return String.valueOf(user.getTotalElo());
+            }
+
+            // ELO by kit placeholders: %duels_elo_<kitname>%
+            if (identifier.startsWith("elo_")) {
+                user = plugin.getUserManager().get(player);
+
+                if (user == null) {
+                    return CC.translate(plugin.getConfiguration().getUserNotFound());
+                }
+
+                identifier = identifier.replace("elo_", "");
+
+                final Kit kit = plugin.getKitManager().get(identifier);
+                return kit != null ? String.valueOf(user.getRating(kit)) : CC.translate(plugin.getConfiguration().getNoKit());
+            }
+
+            // ELO leaderboard placeholders: %duels_elo_leaderboard_<position>%
+            if (identifier.startsWith("elo_leaderboard_")) {
+                String positionStr = identifier.replace("elo_leaderboard_", "");
+                try {
+                    int position = Integer.parseInt(positionStr);
+                    if (position < 1 || position > 10) {
+                        return "Invalid position";
+                    }
+                    
+                    LeaderboardEntry entry = plugin.getLeaderboardManager().getTotalEloEntry(position);
+                    return entry != null ? entry.playerName() : "N/A";
+                } catch (NumberFormatException e) {
+                    return "Invalid position";
+                }
+            }
+
+            // Rank placeholders
+            switch (identifier) {
+                case "rank_name" -> {
+                    if (!plugin.getRankManager().isEnabled()) {
+                        return "Rank system disabled";
+                    }
+
+                    Rank rank = plugin.getRankManager().getPlayerRank(player);
+                    return rank != null ? rank.getColoredName() : "Unknown";
+                }
+                case "rank_desc" -> {
+                    if (!plugin.getRankManager().isEnabled()) {
+                        return "Rank system disabled";
+                    }
+
+                    Rank rank = plugin.getRankManager().getPlayerRank(player);
+                    return rank != null ? rank.getDescription() : "No description";
+                }
+                case "rank_color" -> {
+                    if (!plugin.getRankManager().isEnabled()) {
+                        return "&7";
+                    }
+
+                    Rank rank = plugin.getRankManager().getPlayerRank(player);
+                    return rank != null ? rank.getColor() : "&7";
+                }
+                case "rank_progress" -> {
+                    if (!plugin.getRankManager().isEnabled()) {
+                        return "0";
+                    }
+
+                    Rank rank = plugin.getRankManager().getPlayerRank(player);
+                    if (rank == null) {
+                        return "0";
+                    }
+
+                    user = plugin.getUserManager().get(player);
+                    if (user == null) {
+                        return "0";
+                    }
+
+                    double progress = rank.getProgress(user.getTotalElo());
+                    return String.format("%.1f", progress);
+                }
+            }
+
+            if (identifier.startsWith("getplayersinqueue_")){
+                String kitName = identifier.replace("getplayersinqueue_", "");
+                String queueResult = handleQueuePlaceholder(player, kitName, true);
+                if (queueResult != null) return queueResult;
+            }
+
+            if (identifier.startsWith("getplayersplayinginqueue_")){
+                String kitName = identifier.replace("getplayersplayinginqueue_", "");
+                String queueResult = handleQueuePlaceholder(player, kitName, false);
+                if (queueResult != null) return queueResult;
+            }
+
+            if (identifier.startsWith("match_")) {
+                identifier = identifier.replace("match_", "");
+                Arena arena = plugin.getArenaManager().get(player);
+
+                if (arena == null) {
+                    final Spectator spectator = plugin.getSpectateManager().get(player);
+
+                    if (spectator == null) {
+                        return CC.translate(plugin.getConfiguration().getNotInMatch());
+                    }
+
+                    arena = spectator.getArena();
+                    player = spectator.getTarget();
+
+                    if (player == null) {
+                        return CC.translate(plugin.getConfiguration().getNotInMatch());
+                    }
+                }
+
+                final Match match = arena.getMatch();
+
+                if (match == null) {
+                    return CC.translate(plugin.getConfiguration().getNotInMatch());
+                }
+
+                if (identifier.equalsIgnoreCase("duration")) {
+                    return formatDuration(System.currentTimeMillis() - match.getStart(), plugin.getConfiguration().getDurationFormat());
+                }
+
+                if (identifier.equalsIgnoreCase("kit")) {
+                    return match.getKit() != null ? match.getKit().getName() : CC.translate(plugin.getConfiguration().getNoKit());
+                }
+
+                if (identifier.equalsIgnoreCase("arena")) {
+                    return match.getArena().getName();
+                }
+
+                if (identifier.equalsIgnoreCase("bet")) {
+                    return String.valueOf(match.getBet());
+                }
+
+                if (identifier.equalsIgnoreCase("rating")) {
+                    user = plugin.getUserManager().get(player);
+
+                    if (user == null) {
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
+                    }
+
+                    return String.valueOf(match.getKit() != null ? user.getRating(match.getKit()) : user.getRating());
+                }
+
+                if (identifier.startsWith("opponent")) {
+                    Player opponent = null;
+
+                    for (final Player matchPlayer : match.getPlayers()) {
+                        if (!matchPlayer.equals(player)) {
+                            opponent = matchPlayer;
+                            break;
+                        }
+                    }
+
+                    if (opponent == null) {
+                        return CC.translate(plugin.getConfiguration().getNoOpponent());
+                    }
+
+                    if (identifier.equalsIgnoreCase("opponent")) {
+                        return opponent.getName();
+                    }
+
+                    if (identifier.endsWith("_health")) {
+                        return String.valueOf(Math.ceil(opponent.getHealth()) * 0.5);
+                    }
+
+                    if (identifier.endsWith("_ping")) {
+                        return String.valueOf(opponent.getPing());
+                    }
+
+                    user = plugin.getUserManager().get(opponent);
+
+                    if (user == null) {
+                        return CC.translate(plugin.getConfiguration().getUserNotFound());
+                    }
+
+                    return String.valueOf(match.getKit() != null ? user.getRating(match.getKit()) : user.getRating());
+                }
+            }
+            return null;
+        }
+
+        private String handleQueuePlaceholder(Player player, String kitName, boolean isQueuedPlayers) {
+            User user = plugin.getUserManager().get(player);
+            if (user == null) {
+                return CC.translate(plugin.getConfiguration().getUserNotFound());
+            }
+
+            final Kit kit = plugin.getKitManager().get(kitName);
+            if (kit == null) {
+                return CC.translate(plugin.getConfiguration().getNoKit());
+            }
+
+            var queue = plugin.getQueueManager().get(kit, 0);
+            if (queue == null) {
+                return "0";
+            }
+
+            if (isQueuedPlayers) {
+                int queuedPlayers = queue.getQueuedPlayers().size();
+                return queuedPlayers > 0 ? String.valueOf(queuedPlayers) : "0";
+            } else {
+                long playersInMatch = queue.getPlayersInMatch();
+                return Long.toString(playersInMatch);
+            }
+        }
+
+        private float wlr(int wins, int losses) {
+            if (wins == 0) {
+                return losses == 0 ? 0.0F : (float)(-losses);
+            } else if (losses == 0) {
+                return (float)wins;
+            } else {
+                return (float)(wins / losses);
+            }
+        }
+
+        private String formatDuration(long durationMillis, String pattern) {
+            long totalSeconds = durationMillis / 1000;
+            long hours = totalSeconds / 3600;
+            long minutes = (totalSeconds % 3600) / 60;
+            long seconds = totalSeconds % 60;
+
+            // Default pattern if null or empty
+            if (pattern == null || pattern.trim().isEmpty()) {
+                pattern = "H:mm:ss";
+            }
+
+            // Replace pattern tokens with actual values (literal replacements, longer tokens first)
+            String result = pattern;
+            result = result.replace("HH", String.format("%02d", hours));
+            result = result.replace("H", String.valueOf(hours));
+            result = result.replace("mm", String.format("%02d", minutes));
+            result = result.replace("m", String.valueOf(minutes));
+            result = result.replace("ss", String.format("%02d", seconds));
+            result = result.replace("s", String.valueOf(seconds));
+
+            return result;
+        }
+    }
+}

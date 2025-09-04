@@ -1,0 +1,38 @@
+package com.emmerichbrowne.duels.util;
+
+import com.emmerichbrowne.duels.DuelsPlugin;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+
+public final class ItemIdentifiers {
+
+    private static final String DUELS_ITEM_IDENTIFIER = "DuelsKitContent";
+
+    private ItemIdentifiers() {
+    }
+
+    public static ItemStack addIdentifier(final ItemStack item) {
+        final NamespacedKey key = new NamespacedKey(DuelsPlugin.getInstance(), DUELS_ITEM_IDENTIFIER);
+        final ItemMeta meta = item.getItemMeta();
+
+        meta.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public static boolean hasIdentifier(final ItemStack item) {
+        final NamespacedKey key = new NamespacedKey(DuelsPlugin.getInstance(), DUELS_ITEM_IDENTIFIER);
+        final ItemMeta meta = item.getItemMeta();
+        return meta.getPersistentDataContainer().has(key, PersistentDataType.BYTE);
+    }
+
+    public static ItemStack removeIdentifier(final ItemStack item) {
+        final NamespacedKey key = new NamespacedKey(DuelsPlugin.getInstance(), DUELS_ITEM_IDENTIFIER);
+        final ItemMeta meta = item.getItemMeta();
+        meta.getPersistentDataContainer().remove(key);
+        item.setItemMeta(meta);
+        return item;
+    }
+}

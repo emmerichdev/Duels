@@ -1,12 +1,12 @@
 name: Duels
-main: com.meteordevelopments.duels.DuelsPlugin
+main: com.emmerichbrowne.duels.DuelsPlugin
 version: @VERSION@
 api-version: 1.21.4
 folia-supported: true
 
 author: Realized, DUMBO, Emmerich.
 website: https://github.com/emmerichdev/Duels
-description: A fork of https://github.com/dumbo-the-developer/Duels
+description: The duels plugin for Minatra
 
 dependencies:
   server:

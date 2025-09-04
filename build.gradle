@@ -9,7 +9,7 @@ buildscript {
 }
 
 allprojects {
-    group = 'com.meteordevelopments'
+    group = 'com.emmerichbrowne'
     version = '5.0'
 }
 

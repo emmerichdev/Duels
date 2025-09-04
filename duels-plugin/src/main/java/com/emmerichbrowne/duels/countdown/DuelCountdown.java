@@ -1,0 +1,150 @@
+package com.emmerichbrowne.duels.countdown;
+
+import com.emmerichbrowne.duels.DuelsPlugin;
+import com.emmerichbrowne.duels.api.event.match.MatchEndEvent;
+import com.emmerichbrowne.duels.arena.ArenaImpl;
+import com.emmerichbrowne.duels.config.Config;
+import com.emmerichbrowne.duels.config.Lang;
+import com.emmerichbrowne.duels.data.UserData;
+import com.emmerichbrowne.duels.data.UserManagerImpl;
+import com.emmerichbrowne.duels.match.DuelMatch;
+import com.emmerichbrowne.duels.util.AdventureUtil;
+import com.emmerichbrowne.duels.util.CC;
+import org.apache.commons.lang3.tuple.Pair;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import space.arim.morepaperlib.scheduling.ScheduledTask;
+import org.bukkit.Location;
+
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
+
+public class DuelCountdown extends BukkitRunnable {
+
+    protected final Config config;
+    protected final Lang lang;
+    protected final UserManagerImpl userManager;
+    protected final ArenaImpl arena;
+    protected final DuelMatch match;
+    
+    private final List<String> messages;
+    private final List<String> titles;
+
+    private final Map<UUID, Pair<String, Integer>> info = new HashMap<>();
+    private int index = 0;
+
+    private final AtomicReference<ScheduledTask> scheduledTask = new AtomicReference<>();
+
+    protected DuelCountdown(final DuelsPlugin plugin, final ArenaImpl arena, final DuelMatch match, final List<String> messages, final List<String> titles) {
+        this.config = plugin.getConfiguration();
+        this.lang = plugin.getLang();
+        this.userManager = plugin.getUserManager();
+        this.arena = arena;
+        this.match = match;
+        this.titles = titles;
+        this.messages = messages;
+    }
+
+    public DuelCountdown(final DuelsPlugin plugin, final ArenaImpl arena, final DuelMatch match) {
+        this(plugin, arena, match, plugin.getConfiguration().getCdDuelMessages(), plugin.getConfiguration().getCdDuelTitles());
+        
+        // Teleport players to the arena spawn points within the slime world
+        final Location pos1 = arena.getPosition(1);
+        final Location pos2 = arena.getPosition(2);
+
+        if (pos1 == null || pos2 == null) {
+            plugin.getLogger().severe("Arena " + arena.getName() + " is missing one or both spawn positions.");
+            arena.endMatch(null, null, MatchEndEvent.Reason.OTHER);
+            return;
+        }
+
+        final Location spawn1 = pos1.clone();
+        spawn1.setWorld(arena.getWorld());
+        
+        final Location spawn2 = pos2.clone();
+        spawn2.setWorld(arena.getWorld());
+
+        List<Player> players = new java.util.ArrayList<>(match.getAllPlayers());
+        if (players.size() >= 2) {
+            players.get(0).teleport(spawn1);
+            players.get(1).teleport(spawn2);
+        }
+
+        match.getAllPlayers().forEach(player -> {
+            final Player opponent = arena.getOpponent(player);
+            if (opponent == null) {
+                plugin.getLogger().warning("Opponent is null for player " + player.getName() + " in duel countdown");
+                return;
+            }
+            final UserData user = userManager.get(opponent);
+
+            if (user == null) {
+                return;
+            }
+
+            info.put(player.getUniqueId(), Pair.of(opponent.getName(), user.getRatingUnsafe(match.getKit())));
+        });
+    }
+
+    protected void sendMessage(final String rawMessage, final String message, final String title) {
+        final String kitName = match.getKit() != null ? match.getKit().getName() : lang.getMessage("GENERAL.none");
+
+        arena.getPlayers().forEach(player -> {
+            config.playSound(player, rawMessage);
+
+            final Pair<String, Integer> info = this.info.get(player.getUniqueId());
+
+            if (info != null) {
+                player.sendMessage(message
+                    .replace("%opponent%", info.getLeft())
+                    .replace("%opponent_rating%", String.valueOf(info.getRight()))
+                    .replace("%kit%", kitName)
+                    .replace("%arena%", arena.getName())
+                );
+            } else {
+                player.sendMessage(message);
+            }
+
+            if (title != null) {
+                AdventureUtil.sendTitle(player, title, null, 0, 20, 50);
+            }
+        });
+    }
+
+    @Override
+    public void run() {
+        if (!arena.isUsed() || index >= messages.size()) {
+            arena.setCountdown(null);
+
+            // Cancel the MorePaperLib task
+            ScheduledTask task = scheduledTask.get();
+            if (task != null) {
+                task.cancel();
+            }
+
+            return;
+        }
+
+        final String rawMessage = messages.get(index);
+        final String message = CC.translate(rawMessage);
+        final String title = (titles.size() >= index + 1) ? titles.get(index) : null;
+        sendMessage(rawMessage, message, title);
+        index++;
+    }
+
+    public void startCountdown(long delay, long period) {
+        ScheduledTask task = DuelsPlugin.getMorePaperLib()
+                .scheduling()
+                .asyncScheduler()
+                .runAtFixedRate(
+                        this,
+                        Duration.ofMillis(delay * 50),
+                        Duration.ofMillis(period * 50)
+                );
+        scheduledTask.set(task); // Store the task reference
+    }
+}
