@@ -4,14 +4,14 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.gui.BaseButton;
 import com.meteordevelopments.duels.setting.Settings;
-import com.meteordevelopments.duels.util.compat.Items;
+import com.meteordevelopments.duels.util.CommonItems;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
 import org.bukkit.entity.Player;
 
 public class ArenaSelectButton extends BaseButton {
 
     public ArenaSelectButton(final DuelsPlugin plugin) {
-        super(plugin, ItemBuilder.of(Items.EMPTY_MAP).name(plugin.getLang().getMessage("GUI.settings.buttons.arena-selector.name")).build());
+        super(plugin, ItemBuilder.of(CommonItems.EMPTY_MAP).name(plugin.getLang().getMessage("GUI.settings.buttons.arena-selector.name")).build());
     }
 
     @Override

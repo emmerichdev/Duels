@@ -5,7 +5,7 @@ import com.meteordevelopments.duels.config.Config;
 import com.meteordevelopments.duels.config.Lang;
 import com.meteordevelopments.duels.gui.bind.buttons.BindButton;
 import com.meteordevelopments.duels.kit.KitImpl;
-import com.meteordevelopments.duels.util.compat.Items;
+import com.meteordevelopments.duels.util.CommonItems;
 import com.meteordevelopments.duels.util.gui.MultiPageGui;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
 import org.bukkit.Material;
@@ -20,7 +20,7 @@ public class BindGui extends MultiPageGui<DuelsPlugin> {
 
         final Config config = plugin.getConfiguration();
         final Lang lang = plugin.getLang();
-        setSpaceFiller(Items.from(config.getArenaSelectorFillerType(), config.getArenaSelectorFillerData()));
+        setSpaceFiller(CommonItems.from(config.getArenaSelectorFillerType(), config.getArenaSelectorFillerData()));
         setPrevButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.arena-selector.buttons.previous-page.name")).build());
         setNextButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.arena-selector.buttons.next-page.name")).build());
         setEmptyIndicator(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.arena-selector.buttons.empty.name")).build());

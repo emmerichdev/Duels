@@ -16,7 +16,7 @@ import com.meteordevelopments.duels.party.Party;
 import com.meteordevelopments.duels.queue.Queue;
 import com.meteordevelopments.duels.setting.Settings;
 import com.meteordevelopments.duels.spectate.SpectatorImpl;
-import com.meteordevelopments.duels.util.compat.Items;
+import com.meteordevelopments.duels.util.CommonItems;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -53,7 +53,7 @@ public class ArenaImpl extends BaseButton implements Arena {
 
     public ArenaImpl(final DuelsPlugin plugin, final String name, final boolean disabled) {
         super(plugin, ItemBuilder
-                .of(Items.EMPTY_MAP)
+                .of(CommonItems.EMPTY_MAP)
                 .name(plugin.getLang().getMessage("GUI.arena-selector.buttons.arena.name", "name", name))
                 .lore(plugin.getLang().getMessage("GUI.arena-selector.buttons.arena.lore-unavailable").split("\n"))
                 .build()

@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.meteordevelopments.duels.util.EnumUtil;
-import com.meteordevelopments.duels.util.collection.StreamUtil;
-import com.meteordevelopments.duels.util.compat.Identifiers;
+import com.meteordevelopments.duels.util.ItemIdentifiers;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
 import com.meteordevelopments.duels.util.inventory.ItemUtil;
 import com.meteordevelopments.duels.util.json.DefaultBasedDeserializer;
@@ -24,7 +23,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Spliterators;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class ItemData {
 
@@ -34,7 +35,7 @@ public class ItemData {
     }
 
     private ItemData(ItemStack item) {
-        item = Identifiers.removeIdentifier(item);
+        item = ItemIdentifiers.removeIdentifier(item);
         final String dumped = YamlUtil.bukkitYamlDump(item);
         this.item = YamlUtil.yamlLoad(dumped);
     }
@@ -52,7 +53,7 @@ public class ItemData {
             final Object itemFlags = metaAsMap.get("ItemFlags");
 
             if (itemFlags instanceof Iterable) {
-                metaAsMap.put("ItemFlags", StreamUtil.asStream((Iterable<?>) itemFlags).map(Object::toString).collect(Collectors.toSet()));
+                metaAsMap.put("ItemFlags", StreamSupport.stream(((Iterable<?>) itemFlags).spliterator(), false).map(Object::toString).collect(Collectors.toSet()));
             }
         }
     }
@@ -64,7 +65,7 @@ public class ItemData {
 
         final String dumped = YamlUtil.yamlDump(item);
         ItemStack item = YamlUtil.bukkitYamlLoadAs(dumped, ItemStack.class);
-        return kitItem ? Identifiers.addIdentifier(item) : item;
+        return kitItem ? ItemIdentifiers.addIdentifier(item) : item;
     }
 
     public ItemStack toItemStack() {
@@ -121,13 +122,13 @@ public class ItemData {
                 }
 
                 if (node.has("lore")) {
-                    builder.lore(StreamUtil.asStream(node.get("lore")).map(JsonNode::textValue).collect(Collectors.toList()));
+                    builder.lore(StreamSupport.stream(node.get("lore").spliterator(), false).map(JsonNode::textValue).collect(Collectors.toList()));
                 }
 
                 if (node.has("enchantments")) {
                     final JsonNode enchantments = node.get("enchantments");
 
-                    StreamUtil.asStream(enchantments.fieldNames()).forEach(entry -> {
+                    StreamSupport.stream(Spliterators.spliteratorUnknownSize(enchantments.fieldNames(), 0), false).forEach(entry -> {
                         final Enchantment enchantment = Enchantment.getByName(entry);
 
                         if (enchantment == null) {
@@ -140,7 +141,7 @@ public class ItemData {
 
                 if (node.has("flags")) {
                     final JsonNode flags = node.get("flags");
-                    StreamUtil.asStream(flags).forEach(flagNode -> {
+                    StreamSupport.stream(flags.spliterator(), false).forEach(flagNode -> {
                         final ItemFlag flag = EnumUtil.getByName(flagNode.textValue(), ItemFlag.class);
 
                         if (flag == null) {
@@ -168,7 +169,7 @@ public class ItemData {
                     builder.editMeta(meta -> {
                         final PotionMeta potionMeta = (PotionMeta) meta;
 
-                        StreamUtil.asStream(effects.fieldNames()).forEach(entry -> {
+                        StreamSupport.stream(Spliterators.spliteratorUnknownSize(effects.fieldNames(), 0), false).forEach(entry -> {
                             final String[] split = effects.get(entry).textValue().split("-");
                             final int duration = Integer.parseInt(split[0]);
                             final int amplifier = Integer.parseInt(split[1]);
@@ -194,7 +195,7 @@ public class ItemData {
 
                 if (node.has("attributeModifiers")) {
                     final JsonNode attributes = node.get("attributeModifiers");
-                    StreamUtil.asStream(attributes).forEach(attributeNode -> builder.attribute(
+                    StreamSupport.stream(attributes.spliterator(), false).forEach(attributeNode -> builder.attribute(
                             attributeNode.get("name").textValue(),
                             attributeNode.get("operation").intValue(),
                             attributeNode.get("amount").doubleValue(),

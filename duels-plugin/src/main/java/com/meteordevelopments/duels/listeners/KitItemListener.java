@@ -4,7 +4,7 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.arena.ArenaManagerImpl;
 import com.meteordevelopments.duels.util.Log;
-import com.meteordevelopments.duels.util.compat.Identifiers;
+import com.meteordevelopments.duels.util.ItemIdentifiers;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
@@ -48,7 +48,7 @@ public class KitItemListener implements Listener {
     }
 
     private boolean isNotKitItem(final ItemStack item) {
-        return item == null || item.getType() == Material.AIR || !Identifiers.hasIdentifier(item);
+        return item == null || item.getType() == Material.AIR || !ItemIdentifiers.hasIdentifier(item);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

@@ -3,7 +3,7 @@ package com.meteordevelopments.duels.gui.betting.buttons;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.gui.BaseButton;
 import com.meteordevelopments.duels.gui.betting.BettingGui;
-import com.meteordevelopments.duels.util.compat.Items;
+import com.meteordevelopments.duels.util.CommonItems;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
 import org.bukkit.entity.Player;
 
@@ -16,7 +16,7 @@ public class StateButton extends BaseButton {
 
     public StateButton(final DuelsPlugin plugin, final BettingGui gui, final Player owner) {
         super(plugin, ItemBuilder
-                .of(Items.OFF.clone())
+                .of(CommonItems.OFF.clone())
                 .name(plugin.getLang().getMessage("GUI.item-betting.buttons.state.name-not-ready"))
                 .build()
         );
@@ -27,7 +27,7 @@ public class StateButton extends BaseButton {
     @Override
     public void onClick(final Player player) {
         if (!gui.isReady(player) && player.getUniqueId().equals(owner)) {
-            setDisplayed(Items.ON.clone());
+            setDisplayed(CommonItems.ON.clone());
             setDisplayName(lang.getMessage("GUI.item-betting.buttons.state.name-ready"));
             gui.update(player, this);
             gui.setReady(player);

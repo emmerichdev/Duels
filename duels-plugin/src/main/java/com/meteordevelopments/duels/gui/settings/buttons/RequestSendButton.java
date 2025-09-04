@@ -4,7 +4,7 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.gui.BaseButton;
 import com.meteordevelopments.duels.party.Party;
 import com.meteordevelopments.duels.setting.Settings;
-import com.meteordevelopments.duels.util.compat.Items;
+import com.meteordevelopments.duels.util.CommonItems;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 public class RequestSendButton extends BaseButton {
 
     public RequestSendButton(final DuelsPlugin plugin) {
-        super(plugin, ItemBuilder.of(Items.GREEN_PANE.clone()).name(plugin.getLang().getMessage("GUI.settings.buttons.send.name")).build());
+        super(plugin, ItemBuilder.of(CommonItems.GREEN_PANE.clone()).name(plugin.getLang().getMessage("GUI.settings.buttons.send.name")).build());
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.gui.options.buttons.OptionButton;
 import com.meteordevelopments.duels.kit.KitImpl;
 import com.meteordevelopments.duels.kit.KitImpl.Characteristic;
-import com.meteordevelopments.duels.util.compat.Items;
+import com.meteordevelopments.duels.util.CommonItems;
 import com.meteordevelopments.duels.util.gui.SinglePageGui;
 import com.meteordevelopments.duels.util.inventory.Slots;
 import lombok.Getter;
@@ -33,7 +33,7 @@ public class OptionsGui extends SinglePageGui<DuelsPlugin> {
             set(i++, new OptionButton(plugin, this, kit, option));
         }
 
-        final ItemStack spacing = Items.WHITE_PANE.clone();
+        final ItemStack spacing = CommonItems.WHITE_PANE.clone();
         Slots.run(9, 18, slot -> inventory.setItem(slot, spacing));
     }
 
@@ -45,8 +45,8 @@ public class OptionsGui extends SinglePageGui<DuelsPlugin> {
     public enum Option {
 
         USEPERMISSION(Material.BARRIER, KitImpl::isUsePermission, kit -> kit.setUsePermission(!kit.isUsePermission()), "When enabled, players must", "have the permission duels.kits.%kit%", "to select this kit for duel."),
-        ARENASPECIFIC(Items.EMPTY_MAP, KitImpl::isArenaSpecific, kit -> kit.setArenaSpecific(!kit.isArenaSpecific()), "When enabled, kit %kit%", "can only be used in", "arenas it is bound to."),
-        SOUP(Items.MUSHROOM_SOUP, Characteristic.SOUP, "When enabled, players will", "receive the amount of health", "defined in config when", "right-clicking a soup."),
+        ARENASPECIFIC(CommonItems.EMPTY_MAP, KitImpl::isArenaSpecific, kit -> kit.setArenaSpecific(!kit.isArenaSpecific()), "When enabled, kit %kit%", "can only be used in", "arenas it is bound to."),
+        SOUP(CommonItems.MUSHROOM_SOUP, Characteristic.SOUP, "When enabled, players will", "receive the amount of health", "defined in config when", "right-clicking a soup."),
         SUMO(Material.SLIME_BALL, Characteristic.SUMO, "When enabled, players will ", "lose health only when", "interacting with water or lava."),
         UHC(Material.GOLDEN_APPLE, Characteristic.UHC, "When enabled, player's health", "will not naturally regenerate."),
         COMBO(Material.IRON_SWORD, Characteristic.COMBO, "When enabled, players will", "have no delay between hits."),

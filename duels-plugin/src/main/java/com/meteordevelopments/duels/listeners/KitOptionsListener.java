@@ -9,7 +9,7 @@ import com.meteordevelopments.duels.duel.DuelManager;
 import com.meteordevelopments.duels.kit.KitImpl.Characteristic;
 import com.meteordevelopments.duels.match.DuelMatch;
 import com.meteordevelopments.duels.util.PlayerUtil;
-import com.meteordevelopments.duels.util.compat.Items;
+import com.meteordevelopments.duels.util.CommonItems;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -243,7 +243,7 @@ public class KitOptionsListener implements Listener {
 
         final ItemStack item = event.getItem();
 
-        if (item == null || item.getType() != Items.MUSHROOM_SOUP) {
+        if (item == null || item.getType() != CommonItems.MUSHROOM_SOUP) {
             return;
         }
 

@@ -4,7 +4,7 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.config.Config;
 import com.meteordevelopments.duels.gui.BaseButton;
 import com.meteordevelopments.duels.gui.settings.buttons.*;
-import com.meteordevelopments.duels.util.compat.Items;
+import com.meteordevelopments.duels.util.CommonItems;
 import com.meteordevelopments.duels.util.gui.SinglePageGui;
 import com.meteordevelopments.duels.util.inventory.Slots;
 import org.bukkit.inventory.ItemStack;
@@ -24,7 +24,7 @@ public class SettingsGui extends SinglePageGui<DuelsPlugin> {
     public SettingsGui(final DuelsPlugin plugin) {
         super(plugin, plugin.getLang().getMessage("GUI.settings.title"), 3);
         final Config config = plugin.getConfiguration();
-        final ItemStack spacing = Items.from(config.getSettingsFillerType(), config.getSettingsFillerData());
+        final ItemStack spacing = CommonItems.from(config.getSettingsFillerType(), config.getSettingsFillerData());
         Slots.run(2, 7, slot -> inventory.setItem(slot, spacing));
         Slots.run(11, 16, slot -> inventory.setItem(slot, spacing));
         Slots.run(20, 25, slot -> inventory.setItem(slot, spacing));

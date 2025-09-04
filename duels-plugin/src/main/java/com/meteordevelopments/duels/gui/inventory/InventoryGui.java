@@ -2,7 +2,7 @@ package com.meteordevelopments.duels.gui.inventory;
 
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.gui.inventory.buttons.*;
-import com.meteordevelopments.duels.util.compat.Items;
+import com.meteordevelopments.duels.util.CommonItems;
 import com.meteordevelopments.duels.util.gui.SinglePageGui;
 import com.meteordevelopments.duels.util.inventory.Slots;
 import org.bukkit.Material;
@@ -14,7 +14,7 @@ public class InventoryGui extends SinglePageGui<DuelsPlugin> {
     public InventoryGui(final DuelsPlugin plugin, final Player player, final boolean dead) {
         super(plugin, plugin.getLang().getMessage("GUI.inventory-view.title", "name", player.getName()), 6);
 
-        final ItemStack spacing = Items.GRAY_PANE.clone();
+        final ItemStack spacing = CommonItems.GRAY_PANE.clone();
         Slots.run(0, 9, slot -> inventory.setItem(slot, spacing));
         set(4, new HeadButton(plugin, player));
 
@@ -23,7 +23,7 @@ public class InventoryGui extends SinglePageGui<DuelsPlugin> {
 
         for (final ItemStack item : player.getInventory().getContents()) {
             if (item != null && item.getType() != Material.AIR) {
-                if (Items.isHealSplash(item)) {
+                if (CommonItems.isHealSplash(item)) {
                     potions++;
                 }
 

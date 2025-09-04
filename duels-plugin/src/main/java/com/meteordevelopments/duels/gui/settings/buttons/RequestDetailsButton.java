@@ -3,7 +3,7 @@ package com.meteordevelopments.duels.gui.settings.buttons;
 import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.gui.BaseButton;
 import com.meteordevelopments.duels.setting.Settings;
-import com.meteordevelopments.duels.util.compat.Items;
+import com.meteordevelopments.duels.util.CommonItems;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 public class RequestDetailsButton extends BaseButton {
 
     public RequestDetailsButton(final DuelsPlugin plugin) {
-        super(plugin, ItemBuilder.of(Items.SIGN).name(plugin.getLang().getMessage("GUI.settings.buttons.details.name")).build());
+        super(plugin, ItemBuilder.of(CommonItems.SIGN).name(plugin.getLang().getMessage("GUI.settings.buttons.details.name")).build());
     }
 
     @Override

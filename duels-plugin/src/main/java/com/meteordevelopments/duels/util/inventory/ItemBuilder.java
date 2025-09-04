@@ -4,7 +4,7 @@ import com.meteordevelopments.duels.DuelsPlugin;
 import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.EnumUtil;
 import com.meteordevelopments.duels.util.StringUtil;
-import com.meteordevelopments.duels.util.compat.Items;
+import com.meteordevelopments.duels.util.CommonItems;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -31,7 +31,7 @@ public record ItemBuilder(ItemStack result) {
 
     private ItemBuilder(final Material type, final int amount, final short durability) {
         this(new ItemStack(type, amount));
-        Items.setDurability(result, durability);
+        CommonItems.setDurability(result, durability);
     }
 
     private ItemBuilder(final String type, final int amount, final short durability) {
@@ -109,7 +109,7 @@ public record ItemBuilder(ItemStack result) {
 
     public ItemBuilder head(final String owner) {
         editMeta(meta -> {
-            if (owner != null && Items.equals(Items.HEAD, result) && meta instanceof SkullMeta skullMeta) {
+            if (owner != null && CommonItems.equals(CommonItems.HEAD, result) && meta instanceof SkullMeta skullMeta) {
                 skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(owner));
             }
         });

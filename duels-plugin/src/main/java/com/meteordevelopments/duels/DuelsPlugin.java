@@ -47,8 +47,8 @@ import com.meteordevelopments.duels.util.CC;
 import com.meteordevelopments.duels.util.Loadable;
 import com.meteordevelopments.duels.util.Log;
 import com.meteordevelopments.duels.util.Log.LogSource;
-import com.meteordevelopments.duels.util.gui.GuiListener;
 import com.meteordevelopments.duels.util.json.JsonUtil;
+import com.meteordevelopments.duels.util.gui.GuiListener;
 import com.meteordevelopments.duels.validator.ValidatorManager;
 import lombok.Getter;
 import lombok.Setter;
@@ -81,8 +81,8 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     @Getter @Setter private LogManager logManager;
     @Getter @Setter private Config configuration;
     @Getter @Setter private Lang lang;
-    @Getter @Setter private UserManagerImpl userManager;
     @Getter @Setter private GuiListener<DuelsPlugin> guiListener;
+    @Getter @Setter private UserManagerImpl userManager;
     @Getter @Setter private KitManagerImpl kitManager;
     @Getter @Setter private ArenaManagerImpl arenaManager;
     @Getter @Setter private SettingsManager settingManager;
@@ -158,9 +158,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
             return arena;
         });
 
-        commandManager.getCommandCompletions().registerAsyncCompletion("@arenas", c -> {
-            return arenaManager.getNames();
-        });
+        commandManager.getCommandCompletions().registerAsyncCompletion("@arenas", c -> arenaManager.getNames());
 
         commandManager.getCommandContexts().registerContext(KitImpl.class, c -> {
             String name = c.popFirstArg();
@@ -171,9 +169,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
             return kit;
         });
 
-        commandManager.getCommandCompletions().registerAsyncCompletion("@kits", c -> {
-            return kitManager.getNames(false);
-        });
+        commandManager.getCommandCompletions().registerAsyncCompletion("@kits", c -> kitManager.getNames(false));
 
         commandManager.getCommandContexts().registerContext(UserData.class, c -> {
             String name = c.popFirstArg();

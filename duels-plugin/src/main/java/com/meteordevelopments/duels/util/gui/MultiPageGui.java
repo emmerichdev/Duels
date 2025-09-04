@@ -1,6 +1,8 @@
 package com.meteordevelopments.duels.util.gui;
 
 import com.google.common.collect.Lists;
+import com.meteordevelopments.duels.util.CommonItems;
+import com.meteordevelopments.duels.util.inventory.InventoryBuilder;
 import com.meteordevelopments.duels.util.inventory.InventoryUtil;
 import com.meteordevelopments.duels.util.inventory.Slots;
 import lombok.Getter;
@@ -127,7 +129,7 @@ public class MultiPageGui<P extends JavaPlugin> extends AbstractGui<P> {
     }
 
     private ItemStack getSpaceFiller() {
-        return spaceFiller != null ? spaceFiller : Items.WHITE_PANE.clone();
+        return spaceFiller != null ? spaceFiller : CommonItems.WHITE_PANE.clone();
     }
 
     @Override
@@ -224,7 +226,7 @@ public class MultiPageGui<P extends JavaPlugin> extends AbstractGui<P> {
         }
 
         void setTitle(final String title) {
-            Inventories.setTitle(inventory, title);
+            // Title setting removed - dynamic inventory title changes are not supported in modern Paper
         }
 
         void clear() {

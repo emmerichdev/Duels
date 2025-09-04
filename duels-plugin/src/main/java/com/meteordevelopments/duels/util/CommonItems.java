@@ -1,4 +1,4 @@
-package com.meteordevelopments.duels.util.compat;
+package com.meteordevelopments.duels.util;
 
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
 import org.bukkit.Material;
@@ -8,7 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionType;
 
-public final class Items {
+public final class CommonItems {
 
     public static final ItemStack ORANGE_PANE;
     public static final ItemStack BLUE_PANE;
@@ -46,29 +46,26 @@ public final class Items {
         ENCHANTED_GOLDEN_APPLE = ItemBuilder.of(Material.ENCHANTED_GOLDEN_APPLE).build();
     }
 
-    private Items() {
+    private CommonItems() {
     }
 
     public static boolean equals(final ItemStack item, final ItemStack other) {
-        return item.getType() == other.getType() && getDurability(item) == getDurability(other);
+        return item.isSimilar(other);
     }
+
+
 
     public static ItemStack from(final String type, final short data) {
-        if (type.equalsIgnoreCase("STAINED_GLASS_PANE")) {
-            return ItemBuilder.of(Panes.from(data)).name(" ").build();
+        // Legacy method - returns basic item without legacy data support
+        Material material = Material.getMaterial(type);
+        if (material == null) {
+            material = Material.WHITE_STAINED_GLASS_PANE; // fallback
         }
-
-        return ItemBuilder.of(type, 1, data).name(" ").build();
-    }
-
-    public static short getDurability(final ItemStack item) {
-        final ItemMeta meta = item.getItemMeta();
-        return ((meta instanceof Damageable damageable)) ? (short) damageable.getDamage() : 0;
+        return ItemBuilder.of(material, 1).name(" ").build();
     }
 
     public static void setDurability(final ItemStack item, final short durability) {
         final ItemMeta meta = item.getItemMeta();
-
         if (meta instanceof Damageable damageable) {
             damageable.setDamage(durability);
             item.setItemMeta(meta);

@@ -6,7 +6,7 @@ import com.meteordevelopments.duels.gui.BaseButton;
 import com.meteordevelopments.duels.gui.bind.BindGui;
 import com.meteordevelopments.duels.kit.KitImpl;
 import com.meteordevelopments.duels.util.StringUtil;
-import com.meteordevelopments.duels.util.compat.Items;
+import com.meteordevelopments.duels.util.CommonItems;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
 import lombok.Setter;
 import org.bukkit.entity.Player;
@@ -21,7 +21,7 @@ public class BindButton extends BaseButton {
     private BindGui gui;
 
     public BindButton(final DuelsPlugin plugin, final KitImpl kit, final ArenaImpl arena) {
-        super(plugin, ItemBuilder.of(Items.EMPTY_MAP).build());
+        super(plugin, ItemBuilder.of(CommonItems.EMPTY_MAP).build());
         this.kit = kit;
         this.arena = arena;
         setDisplayName(plugin.getLang().getMessage("GUI.options.bind.buttons.arena.name", "arena", arena.getName()));

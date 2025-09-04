@@ -1,4 +1,4 @@
-package com.meteordevelopments.duels.util.compat;
+package com.meteordevelopments.duels.util;
 
 import com.meteordevelopments.duels.DuelsPlugin;
 import org.bukkit.NamespacedKey;
@@ -6,11 +6,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-public final class Identifiers {
+public final class ItemIdentifiers {
 
     private static final String DUELS_ITEM_IDENTIFIER = "DuelsKitContent";
 
-    private Identifiers() {
+    private ItemIdentifiers() {
     }
 
     public static ItemStack addIdentifier(final ItemStack item) {

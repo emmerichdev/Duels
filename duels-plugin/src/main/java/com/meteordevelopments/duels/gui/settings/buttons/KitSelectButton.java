@@ -5,6 +5,9 @@ import com.meteordevelopments.duels.Permissions;
 import com.meteordevelopments.duels.gui.BaseButton;
 import com.meteordevelopments.duels.setting.Settings;
 import com.meteordevelopments.duels.util.inventory.ItemBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -30,10 +33,12 @@ public class KitSelectButton extends BaseButton {
     @Override
     public void onClick(final Player player) {
         if (config.isKitSelectingUsePermission() && !player.hasPermission(Permissions.KIT_SELECTING) && !player.hasPermission(Permissions.SETTING_ALL)) {
+            playErrorSound(player);
             lang.sendMessage(player, "ERROR.no-permission", "permission", Permissions.KIT_SELECTING);
             return;
         }
 
+        playClickSound(player);
         kitManager.getGui().open(player);
     }
 }

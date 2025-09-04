@@ -7,7 +7,7 @@ import com.meteordevelopments.duels.gui.betting.buttons.DetailsButton;
 import com.meteordevelopments.duels.gui.betting.buttons.HeadButton;
 import com.meteordevelopments.duels.gui.betting.buttons.StateButton;
 import com.meteordevelopments.duels.setting.Settings;
-import com.meteordevelopments.duels.util.compat.Items;
+import com.meteordevelopments.duels.util.CommonItems;
 import com.meteordevelopments.duels.util.gui.AbstractGui;
 import com.meteordevelopments.duels.util.gui.Button;
 import com.meteordevelopments.duels.util.gui.GuiListener;
@@ -49,10 +49,10 @@ public class BettingGui extends AbstractGui<DuelsPlugin> {
         this.sender = sender.getUniqueId();
         this.target = target.getUniqueId();
         set(inventory, 13, 14, 5, new CancelButton(plugin));
-        Slots.run(0, 3, slot -> inventory.setItem(slot, Items.ORANGE_PANE.clone()));
-        Slots.run(45, 48, slot -> inventory.setItem(slot, Items.ORANGE_PANE.clone()));
-        Slots.run(6, 9, slot -> inventory.setItem(slot, Items.BLUE_PANE.clone()));
-        Slots.run(51, 54, slot -> inventory.setItem(slot, Items.BLUE_PANE.clone()));
+        Slots.run(0, 3, slot -> inventory.setItem(slot, CommonItems.ORANGE_PANE.clone()));
+        Slots.run(45, 48, slot -> inventory.setItem(slot, CommonItems.ORANGE_PANE.clone()));
+        Slots.run(6, 9, slot -> inventory.setItem(slot, CommonItems.BLUE_PANE.clone()));
+        Slots.run(51, 54, slot -> inventory.setItem(slot, CommonItems.BLUE_PANE.clone()));
         set(inventory, 3, new StateButton(plugin, this, sender));
         set(inventory, 4, new DetailsButton(plugin, settings));
         set(inventory, 5, new StateButton(plugin, this, target));
@@ -271,7 +271,7 @@ public class BettingGui extends AbstractGui<DuelsPlugin> {
                 final int slot = SLOT_START + 9 * counter;
                 ItemStack item = inventory.getItem(slot);
 
-                final ItemStack greenPane = Items.GREEN_PANE.clone();
+                final ItemStack greenPane = CommonItems.GREEN_PANE.clone();
                 if (item != null && item.getType() != Material.AIR) {
                     final var meta = item.getItemMeta();
                     if (meta != null) {

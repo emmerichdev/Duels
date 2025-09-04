@@ -7,6 +7,7 @@ import com.meteordevelopments.duels.util.Loadable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -84,29 +85,47 @@ public class GuiListener<P extends JavaPlugin> implements Loadable, Listener {
         return guis;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void on(final InventoryClickEvent event) {
-        final Player player = (Player) event.getWhoClicked();
-        final Inventory top = player.getOpenInventory().getTopInventory();
+        if (!(event.getWhoClicked() instanceof Player player)) {
+            return;
+        }
 
-        for (final AbstractGui<P> gui : get(player)) {
-            if (gui.isPart(top)) {
-                gui.on(player, top, event);
-                break;
+        final Inventory top = player.getOpenInventory().getTopInventory();
+        
+        try {
+            for (final AbstractGui<P> gui : get(player)) {
+                if (gui.isPart(top)) {
+                    gui.on(player, top, event);
+                    break;
+                }
             }
+        } catch (Exception e) {
+            // Prevent GUI errors from breaking the plugin
+            e.printStackTrace();
+            event.setCancelled(true);
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void on(final InventoryDragEvent event) {
-        final Player player = (Player) event.getWhoClicked();
+        if (!(event.getWhoClicked() instanceof Player player)) {
+            return;
+        }
+
         final Inventory inventory = event.getInventory();
 
-        for (final AbstractGui<P> gui : get(player)) {
-            if (gui.isPart(inventory)) {
-                gui.on(player, event.getRawSlots(), event);
-                break;
+        try {
+            for (final AbstractGui<P> gui : get(player)) {
+                if (gui.isPart(inventory)) {
+                    gui.on(player, event.getRawSlots(), event);
+                    break;
+                }
             }
+        } catch (Exception e) {
+            // Prevent GUI errors from breaking the plugin
+            e.printStackTrace();
+            event.setCancelled(true);
         }
     }
 
