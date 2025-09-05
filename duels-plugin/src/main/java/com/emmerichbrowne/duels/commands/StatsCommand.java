@@ -6,7 +6,7 @@ import com.emmerichbrowne.duels.api.user.User;
 import com.emmerichbrowne.duels.data.UserData;
 import com.emmerichbrowne.duels.kit.KitImpl;
 import com.emmerichbrowne.duels.util.function.TriFunction;
-import com.emmerichbrowne.duels.command.AutoRegister;
+import com.emmerichbrowne.duels.scanner.AutoRegister;
 import org.bukkit.command.CommandSender;
 
 import java.util.HashMap;

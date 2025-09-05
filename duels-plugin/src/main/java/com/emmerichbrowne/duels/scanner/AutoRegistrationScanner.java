@@ -1,4 +1,4 @@
-package com.emmerichbrowne.duels.command;
+package com.emmerichbrowne.duels.scanner;
 
 import co.aikar.commands.PaperCommandManager;
 import com.emmerichbrowne.duels.DuelsPlugin;

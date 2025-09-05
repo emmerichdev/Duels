@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
-import com.emmerichbrowne.duels.command.AutoRegister;
+import com.emmerichbrowne.duels.scanner.AutoRegister;
 
 @AutoRegister
 public class LingerPotionListener implements Listener {

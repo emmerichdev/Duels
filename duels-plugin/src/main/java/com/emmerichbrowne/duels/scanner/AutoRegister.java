@@ -1,4 +1,4 @@
-package com.emmerichbrowne.duels.command;
+package com.emmerichbrowne.duels.scanner;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

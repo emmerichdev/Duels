@@ -21,7 +21,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import io.papermc.paper.plugin.configuration.PluginMeta;
-import com.emmerichbrowne.duels.command.AutoRegister;
+import com.emmerichbrowne.duels.scanner.AutoRegister;
 
 import java.util.Calendar;
 import java.util.Collection;

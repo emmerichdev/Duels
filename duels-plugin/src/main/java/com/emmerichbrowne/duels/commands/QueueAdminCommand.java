@@ -8,7 +8,7 @@ import com.emmerichbrowne.duels.queue.Queue;
 import com.emmerichbrowne.duels.queue.sign.QueueSignImpl;
 import com.emmerichbrowne.duels.util.BlockUtil;
 import com.emmerichbrowne.duels.util.StringUtil;
-import com.emmerichbrowne.duels.command.AutoRegister;
+import com.emmerichbrowne.duels.scanner.AutoRegister;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;

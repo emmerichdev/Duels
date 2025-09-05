@@ -14,7 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
-import com.emmerichbrowne.duels.command.AutoRegister;
+import com.emmerichbrowne.duels.scanner.AutoRegister;
 
 @AutoRegister
 public class ProjectileHitListener implements Listener {

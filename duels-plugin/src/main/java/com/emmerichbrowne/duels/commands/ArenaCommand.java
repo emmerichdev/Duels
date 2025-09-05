@@ -5,7 +5,7 @@ import com.emmerichbrowne.duels.DuelsPlugin;
 import com.emmerichbrowne.duels.arena.ArenaImpl;
 import com.emmerichbrowne.duels.kit.KitImpl;
 import com.emmerichbrowne.duels.util.StringUtil;
-import com.emmerichbrowne.duels.command.AutoRegister;
+import com.emmerichbrowne.duels.scanner.AutoRegister;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

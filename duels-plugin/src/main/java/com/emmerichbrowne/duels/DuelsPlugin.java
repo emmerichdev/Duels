@@ -8,8 +8,7 @@ import com.emmerichbrowne.duels.api.command.SubCommand;
 import com.emmerichbrowne.duels.arena.ArenaImpl;
 import com.emmerichbrowne.duels.arena.ArenaManagerImpl;
 import com.emmerichbrowne.duels.betting.BettingManager;
-import com.emmerichbrowne.duels.commands.*;
-import com.emmerichbrowne.duels.command.AutoRegistrationScanner;
+import com.emmerichbrowne.duels.scanner.AutoRegistrationScanner;
 import com.emmerichbrowne.duels.config.Config;
 import com.emmerichbrowne.duels.config.DatabaseConfig;
 import com.emmerichbrowne.duels.config.Lang;
@@ -98,7 +97,6 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     @Getter @Setter private HookManager hookManager;
     @Getter @Setter private Teleport teleport;
     @Getter @Setter private PartyManagerImpl partyManager;
-    
     @Getter @Setter private LeaderboardManager leaderboardManager;
     @Getter @Setter private RankManager rankManager;
     @Getter @Setter private MongoService mongoService;

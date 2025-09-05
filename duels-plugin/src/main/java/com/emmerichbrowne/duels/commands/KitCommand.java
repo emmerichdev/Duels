@@ -7,7 +7,7 @@ import com.emmerichbrowne.duels.gui.options.OptionsGui;
 import com.emmerichbrowne.duels.kit.KitImpl;
 import com.emmerichbrowne.duels.util.StringUtil;
 import com.emmerichbrowne.duels.util.inventory.InventoryUtil;
-import com.emmerichbrowne.duels.command.AutoRegister;
+import com.emmerichbrowne.duels.scanner.AutoRegister;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

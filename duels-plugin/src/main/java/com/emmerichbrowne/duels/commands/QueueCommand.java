@@ -4,7 +4,7 @@ import co.aikar.commands.annotation.*;
 import com.emmerichbrowne.duels.DuelsPlugin;
 import com.emmerichbrowne.duels.kit.KitImpl;
 import com.emmerichbrowne.duels.queue.Queue;
-import com.emmerichbrowne.duels.command.AutoRegister;
+import com.emmerichbrowne.duels.scanner.AutoRegister;
 import org.bukkit.entity.Player;
 
 @AutoRegister

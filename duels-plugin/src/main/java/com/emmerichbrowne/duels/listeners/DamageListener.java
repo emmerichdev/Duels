@@ -5,7 +5,7 @@ import com.emmerichbrowne.duels.arena.ArenaImpl;
 import com.emmerichbrowne.duels.arena.ArenaManagerImpl;
 import com.emmerichbrowne.duels.party.PartyManagerImpl;
 import com.emmerichbrowne.duels.util.EventUtil;
-import com.emmerichbrowne.duels.command.AutoRegister;
+import com.emmerichbrowne.duels.scanner.AutoRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
