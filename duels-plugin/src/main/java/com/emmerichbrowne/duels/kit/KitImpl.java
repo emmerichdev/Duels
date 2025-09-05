@@ -4,7 +4,7 @@ import com.emmerichbrowne.duels.DuelsPlugin;
 
 import com.emmerichbrowne.duels.api.event.kit.KitEquipEvent;
 import com.emmerichbrowne.duels.api.kit.Kit;
-import com.emmerichbrowne.duels.gui.BaseButton;
+import com.emmerichbrowne.duels.menus.BaseButton;
 import com.emmerichbrowne.duels.setting.Settings;
 import com.emmerichbrowne.duels.util.inventory.InventoryUtil;
 import com.emmerichbrowne.duels.util.inventory.ItemBuilder;

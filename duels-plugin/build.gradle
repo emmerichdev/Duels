@@ -40,6 +40,9 @@ dependencies {
 	implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
 	implementation 'org.reflections:reflections:0.10.2'
     implementation 'org.javassist:javassist:3.30.2-GA'
+
+    // Triumph GUI
+    implementation 'dev.triumphteam:triumph-gui:3.1.12'
 }
 
 repositories {
@@ -72,6 +75,7 @@ shadowJar {
 		include(dependency('org.reflections:.*'))
 		include(dependency('org.javassist:.*'))
 		include(dependency('com.google.inject:.*'))
+        include(dependency('dev.triumphteam:triumph-gui:.*'))
 	}
 
 	final String group = project.group.toString() + "." + parent.name.toLowerCase() + ".shaded."
@@ -88,6 +92,7 @@ shadowJar {
 	relocate 'org.reflections', group + 'reflections'
 	relocate 'javassist', group + 'javassist'
 	relocate 'com.google.inject', group + 'guice'
+    relocate 'dev.triumphteam.gui', group + 'triumph.gui'
 }
 
 // To build Duels plugin jar, run './gradlew clean build'.

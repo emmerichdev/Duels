@@ -2,28 +2,24 @@ package com.emmerichbrowne.duels.setting;
 
 import com.emmerichbrowne.duels.DuelsPlugin;
 import com.emmerichbrowne.duels.util.Loadable;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class SettingsManager implements Loadable, Listener {
+public class SettingsManager implements Loadable {
 
     private final DuelsPlugin plugin;
-    private final Map<UUID, Settings> cache = new HashMap<>();
+    private final Map<UUID, Settings> cache = new ConcurrentHashMap<>();
 
     public SettingsManager(final DuelsPlugin plugin) {
         this.plugin = plugin;
-        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     @Override
     public void handleLoad() {
+        // No initialization required
     }
 
     @Override
@@ -31,13 +27,11 @@ public class SettingsManager implements Loadable, Listener {
         cache.clear();
     }
 
-    // Only one Settings instance stays in memory while player is online; no need for manual removal of gui from GuiListener
     public Settings getSafely(final Player player) {
         return cache.computeIfAbsent(player.getUniqueId(), result -> new Settings(plugin, player));
     }
 
-    @EventHandler
-    public void on(final PlayerQuitEvent event) {
-        cache.remove(event.getPlayer().getUniqueId());
+    public void remove(final Player player) {
+        cache.remove(player.getUniqueId());
     }
 }

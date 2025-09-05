@@ -22,7 +22,6 @@ import com.emmerichbrowne.duels.spectate.SpectateManagerImpl;
 import com.emmerichbrowne.duels.teleport.Teleport;
 import com.emmerichbrowne.duels.util.CC;
 import com.emmerichbrowne.duels.util.Loadable;
-import com.emmerichbrowne.duels.util.gui.GuiListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +31,7 @@ import java.util.logging.Logger;
 
 
 public class LoadableManager {
-    
-    private static final Logger LOGGER = Logger.getLogger("[Duels-Optimised]");
-    
+
     private final DuelsPlugin plugin;
     private final List<Loadable> loadables = new ArrayList<>();
     private int lastLoad = -1;
@@ -57,11 +54,6 @@ public class LoadableManager {
             UserManagerImpl userManager = new UserManagerImpl(plugin);
             plugin.setUserManager(userManager);
             return userManager;
-        });
-        addLoadable("gui listener", () -> {
-            GuiListener<DuelsPlugin> guiListener = new GuiListener<>(plugin);
-            plugin.setGuiListener(guiListener);
-            return guiListener;
         });
         addLoadable("party manager", () -> {
             PartyManagerImpl partyManager = new PartyManagerImpl(plugin);
@@ -176,10 +168,10 @@ public class LoadableManager {
                 plugin.getLogManager().debug(name + " has been loaded. (took " + (System.currentTimeMillis() - now) + "ms)");
                 lastLoad = loadables.indexOf(loadable);
             } catch (Exception ex) {
-                LOGGER.log(Level.SEVERE, "Error loading " + name, ex);
+                Logger.getLogger(LoadableManager.class.getName()).log(Level.SEVERE, null, ex);
 
                 if (loadable instanceof LogManager) {
-                    LOGGER.log(Level.SEVERE, "Error loading LogManager", ex);
+                    Logger.getLogger(LoadableManager.class.getName()).log(Level.SEVERE, "Error loading LogManager", ex);
                 }
 
                 if (plugin.getLang() != null) {

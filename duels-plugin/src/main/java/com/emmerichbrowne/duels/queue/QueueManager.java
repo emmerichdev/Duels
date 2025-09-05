@@ -25,7 +25,7 @@ import com.emmerichbrowne.duels.util.Loadable;
 import com.emmerichbrowne.duels.util.Log;
 import com.emmerichbrowne.duels.util.NumberUtil;
 import com.emmerichbrowne.duels.util.CommonItems;
-import com.emmerichbrowne.duels.util.gui.MultiPageGui;
+import com.emmerichbrowne.duels.util.menu.PaginatedMenu;
 import com.emmerichbrowne.duels.util.inventory.InventoryUtil;
 import com.emmerichbrowne.duels.util.inventory.ItemBuilder;
 import com.emmerichbrowne.duels.util.json.JsonUtil;
@@ -69,7 +69,7 @@ public class QueueManager implements Loadable, DQueueManager, Listener {
     private ScheduledTask queueTask;
 
     @Getter
-    private MultiPageGui<DuelsPlugin> gui;
+    private PaginatedMenu gui;
 
     public QueueManager(final DuelsPlugin plugin) {
         this.plugin = plugin;
@@ -102,12 +102,11 @@ public class QueueManager implements Loadable, DQueueManager, Listener {
 
     @Override
     public void handleLoad() throws IOException {
-        this.gui = new MultiPageGui<>(plugin, lang.getMessage("GUI.queues.title"), config.getQueuesRows(), queues);
+        this.gui = new PaginatedMenu(lang.getMessage("GUI.queues.title"), config.getQueuesRows(), queues);
         gui.setSpaceFiller(CommonItems.from(config.getQueuesFillerType()));
         gui.setPrevButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.queues.buttons.previous-page.name")).build());
         gui.setNextButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.queues.buttons.next-page.name")).build());
         gui.setEmptyIndicator(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.queues.buttons.empty.name")).build());
-        plugin.getGuiListener().addGui(gui);
 
         // Load queues from MongoDB instead of file
         try {
@@ -198,11 +197,6 @@ public class QueueManager implements Loadable, DQueueManager, Listener {
     @Override
     public void handleUnload() {
         plugin.cancelTask(queueTask);
-
-        if (gui != null) {
-            plugin.getGuiListener().removeGui(gui);
-        }
-
         queues.clear();
     }
 

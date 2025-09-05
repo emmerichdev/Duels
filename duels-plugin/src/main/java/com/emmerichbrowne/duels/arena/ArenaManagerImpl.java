@@ -14,8 +14,9 @@ import com.emmerichbrowne.duels.redis.RedisService;
 import com.emmerichbrowne.duels.util.Loadable;
 import com.emmerichbrowne.duels.util.Log;
 import com.emmerichbrowne.duels.util.StringUtil;
-import com.emmerichbrowne.duels.util.gui.GuiSetupUtil;
-import com.emmerichbrowne.duels.util.gui.MultiPageGui;
+import com.emmerichbrowne.duels.util.CommonItems;
+import com.emmerichbrowne.duels.util.menu.PaginatedMenu;
+import com.emmerichbrowne.duels.util.inventory.ItemBuilder;
 import com.emmerichbrowne.duels.util.json.JsonUtil;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.ReplaceOptions;
@@ -23,6 +24,7 @@ import lombok.Getter;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -53,7 +55,7 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
     private final List<ArenaImpl> arenas = new ArrayList<>();
 
     @Getter
-    private MultiPageGui<DuelsPlugin> gui;
+    private PaginatedMenu gui;
 
     public ArenaManagerImpl(final DuelsPlugin plugin) {
         this.plugin = plugin;
@@ -65,9 +67,11 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
 
     @Override
     public void handleLoad() throws IOException {
-        gui = new MultiPageGui<>(plugin, lang.getMessage("GUI.arena-selector.title"), config.getArenaSelectorRows(), arenas);
-        GuiSetupUtil.setupArenaSelectorGui(gui, config, lang);
-        plugin.getGuiListener().addGui(gui);
+        gui = new PaginatedMenu(lang.getMessage("GUI.arena-selector.title"), config.getArenaSelectorRows(), arenas);
+        gui.setSpaceFiller(CommonItems.from(config.getArenaSelectorFillerType()));
+        gui.setPrevButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.kit-selector.buttons.previous-page.name")).build());
+        gui.setNextButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.kit-selector.buttons.next-page.name")).build());
+        gui.setEmptyIndicator(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.kit-selector.buttons.empty.name")).build());
 
         // Load arenas from MongoDB instead of file
         try {
@@ -96,10 +100,6 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
 
     @Override
     public void handleUnload() {
-        if (gui != null) {
-            plugin.getGuiListener().removeGui(gui);
-        }
-
         arenas.clear();
     }
 

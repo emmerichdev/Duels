@@ -43,7 +43,6 @@ import com.emmerichbrowne.duels.util.CC;
 import com.emmerichbrowne.duels.util.Loadable;
 import com.emmerichbrowne.duels.util.Log;
 import com.emmerichbrowne.duels.util.Log.LogSource;
-import com.emmerichbrowne.duels.util.gui.GuiListener;
 import com.emmerichbrowne.duels.util.inventory.InventoryUtil;
 import com.emmerichbrowne.duels.util.json.JsonUtil;
 import lombok.Getter;
@@ -79,7 +78,6 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     @Getter @Setter private LogManager logManager;
     @Getter @Setter private Config configuration;
     @Getter @Setter private Lang lang;
-    @Getter @Setter private GuiListener<DuelsPlugin> guiListener;
     @Getter @Setter private UserManagerImpl userManager;
     @Getter @Setter private KitManagerImpl kitManager;
     @Getter @Setter private ArenaManagerImpl arenaManager;

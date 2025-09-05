@@ -13,13 +13,15 @@ import com.emmerichbrowne.duels.redis.RedisService;
 import com.emmerichbrowne.duels.util.Loadable;
 import com.emmerichbrowne.duels.util.Log;
 import com.emmerichbrowne.duels.util.StringUtil;
-import com.emmerichbrowne.duels.util.gui.GuiSetupUtil;
-import com.emmerichbrowne.duels.util.gui.MultiPageGui;
+import com.emmerichbrowne.duels.util.CommonItems;
+import com.emmerichbrowne.duels.util.menu.PaginatedMenu;
+import com.emmerichbrowne.duels.util.inventory.ItemBuilder;
 import com.emmerichbrowne.duels.util.json.JsonUtil;
 import com.mongodb.client.model.ReplaceOptions;
 import lombok.Getter;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +41,7 @@ public class KitManagerImpl implements Loadable, KitManager {
     private final Map<String, KitImpl> kits = new LinkedHashMap<>();
 
     @Getter
-    private MultiPageGui<DuelsPlugin> gui;
+    private PaginatedMenu gui;
 
     public KitManagerImpl(final DuelsPlugin plugin) {
         this.plugin = plugin;
@@ -49,9 +51,11 @@ public class KitManagerImpl implements Loadable, KitManager {
 
     @Override
     public void handleLoad() throws IOException {
-        gui = new MultiPageGui<>(plugin, lang.getMessage("GUI.kit-selector.title"), config.getKitSelectorRows(), kits.values());
-        GuiSetupUtil.setupKitSelectorGui(gui, config, lang);
-        plugin.getGuiListener().addGui(gui);
+        gui = new PaginatedMenu(lang.getMessage("GUI.kit-selector.title"), config.getKitSelectorRows(), kits.values());
+        gui.setSpaceFiller(CommonItems.from(config.getKitSelectorFillerType()));
+        gui.setPrevButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.kit-selector.buttons.previous-page.name")).build());
+        gui.setNextButton(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.kit-selector.buttons.next-page.name")).build());
+        gui.setEmptyIndicator(ItemBuilder.of(Material.PAPER).name(lang.getMessage("GUI.kit-selector.buttons.empty.name")).build());
 
         // Load from MongoDB instead of file
         try {
@@ -79,10 +83,6 @@ public class KitManagerImpl implements Loadable, KitManager {
 
     @Override
     public void handleUnload() {
-        if (gui != null) {
-            plugin.getGuiListener().removeGui(gui);
-        }
-
         kits.clear();
     }
 
@@ -161,7 +161,7 @@ public class KitManagerImpl implements Loadable, KitManager {
 
         final KitCreateEvent event = new KitCreateEvent(creator, kit);
         Bukkit.getPluginManager().callEvent(event);
-        gui.calculatePages();
+        if (gui != null) gui.calculatePages();
         return kit;
     }
 
@@ -202,7 +202,7 @@ public class KitManagerImpl implements Loadable, KitManager {
 
         final KitRemoveEvent event = new KitRemoveEvent(source, kit);
         Bukkit.getPluginManager().callEvent(event);
-        gui.calculatePages();
+        if (gui != null) gui.calculatePages();
         return kit;
     }
 

@@ -3,7 +3,7 @@ package com.emmerichbrowne.duels.queue;
 import com.emmerichbrowne.duels.DuelsPlugin;
 import com.emmerichbrowne.duels.api.kit.Kit;
 import com.emmerichbrowne.duels.api.queue.DQueue;
-import com.emmerichbrowne.duels.gui.BaseButton;
+import com.emmerichbrowne.duels.menus.BaseButton;
 import com.emmerichbrowne.duels.util.inventory.ItemBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;

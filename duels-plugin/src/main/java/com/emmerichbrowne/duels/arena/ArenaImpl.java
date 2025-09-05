@@ -8,7 +8,7 @@ import com.emmerichbrowne.duels.api.event.match.MatchEndEvent;
 import com.emmerichbrowne.duels.api.event.match.MatchEndEvent.Reason;
 import com.emmerichbrowne.duels.countdown.DuelCountdown;
 import com.emmerichbrowne.duels.countdown.party.PartyDuelCountdown;
-import com.emmerichbrowne.duels.gui.BaseButton;
+import com.emmerichbrowne.duels.menus.BaseButton;
 import com.emmerichbrowne.duels.kit.KitImpl;
 import com.emmerichbrowne.duels.match.DuelMatch;
 import com.emmerichbrowne.duels.match.party.PartyDuelMatch;

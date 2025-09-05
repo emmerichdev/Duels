@@ -7,7 +7,7 @@ import com.emmerichbrowne.duels.api.event.request.RequestAcceptEvent;
 import com.emmerichbrowne.duels.api.event.request.RequestDenyEvent;
 import com.emmerichbrowne.duels.api.user.UserManager;
 import com.emmerichbrowne.duels.data.UserData;
-import com.emmerichbrowne.duels.gui.inventory.InventoryGui;
+import com.emmerichbrowne.duels.menus.inventory.InventoryMenu;
 import com.emmerichbrowne.duels.hook.hooks.VaultHook;
 import com.emmerichbrowne.duels.hook.hooks.worldguard.WorldGuardHook;
 import com.emmerichbrowne.duels.kit.KitImpl;
@@ -412,7 +412,7 @@ public class DuelCommand extends BaseCommand {
             return;
         }
 
-        final InventoryGui gui = inventoryManager.get(UUID.fromString(uuid));
+        final InventoryMenu gui = inventoryManager.get(UUID.fromString(uuid));
 
         if (gui == null) {
             lang.sendMessage(player, "ERROR.inventory-view.not-found", "uuid", target);
