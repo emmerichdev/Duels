@@ -17,11 +17,10 @@ processResources {
 
 dependencies {
 	implementation project(':duels-api')
-	implementation project(':duels-worldguard')
-
+	
 	compileOnly 'org.projectlombok:lombok:1.18.38'
 	annotationProcessor 'org.projectlombok:lombok:1.18.38'
-
+	
 	implementation 'org.apache.commons:commons-lang3:3.18.0'
 	implementation 'net.kyori:adventure-text-serializer-ansi:4.17.0'
 	compileOnly 'com.mojang:authlib:3.13.56'
@@ -34,7 +33,7 @@ dependencies {
 	implementation 'org.mongodb:mongodb-driver-sync:5.1.2'
 	implementation 'redis.clients:jedis:5.1.5'
 	implementation 'org.apache.commons:commons-pool2:2.12.0'
-
+	
 	compileOnly 'com.infernalsuite.asp:api:4.0.0-SNAPSHOT'
 	implementation 'com.infernalsuite.asp:file-loader:4.0.0-SNAPSHOT'
 	implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
@@ -43,6 +42,9 @@ dependencies {
 
     // Triumph GUI
     implementation 'dev.triumphteam:triumph-gui:3.1.12'
+
+    // WorldGuard hook merged into plugin
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.14'
 }
 
 repositories {
@@ -62,7 +64,6 @@ shadowJar {
 
 	dependencies {
 		include(project(':duels-api'))
-		include(project(':duels-worldguard'))
 		include(dependency('com.fasterxml.jackson.core:.*'))
 		include(dependency('space.arim.morepaperlib:.*'))
 		include(dependency('org.mongodb:.*'))
