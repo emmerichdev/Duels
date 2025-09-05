@@ -29,7 +29,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import com.emmerichbrowne.duels.command.AutoRegister;
 
+@AutoRegister
 public class KitOptionsListener implements Listener {
 
     private final DuelsPlugin plugin;

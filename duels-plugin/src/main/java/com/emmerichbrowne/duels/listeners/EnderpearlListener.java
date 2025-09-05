@@ -20,7 +20,9 @@ import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.UUID;
+import com.emmerichbrowne.duels.command.AutoRegister;
 
+@AutoRegister
 public class EnderpearlListener implements Listener {
 
     private static final long PEARL_EXPIRY = 60 * 1000L;

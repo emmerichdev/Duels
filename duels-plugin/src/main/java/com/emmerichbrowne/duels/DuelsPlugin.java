@@ -9,6 +9,7 @@ import com.emmerichbrowne.duels.arena.ArenaImpl;
 import com.emmerichbrowne.duels.arena.ArenaManagerImpl;
 import com.emmerichbrowne.duels.betting.BettingManager;
 import com.emmerichbrowne.duels.commands.*;
+import com.emmerichbrowne.duels.command.AutoRegistrationScanner;
 import com.emmerichbrowne.duels.config.Config;
 import com.emmerichbrowne.duels.config.DatabaseConfig;
 import com.emmerichbrowne.duels.config.Lang;
@@ -36,7 +37,7 @@ import com.emmerichbrowne.duels.request.RequestManager;
 import com.emmerichbrowne.duels.setting.SettingsManager;
 import com.emmerichbrowne.duels.slm.SlimeManager;
 import com.emmerichbrowne.duels.spectate.SpectateManagerImpl;
-import com.emmerichbrowne.duels.startup.ListenerManager;
+
 import com.emmerichbrowne.duels.startup.LoadableManager;
 import com.emmerichbrowne.duels.startup.StartupManager;
 import com.emmerichbrowne.duels.teleport.Teleport;
@@ -75,7 +76,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     private static MorePaperLib morePaperLib;
 
     private LoadableManager loadableManager;
-    private ListenerManager listenerManager;
+    
     private PaperCommandManager commandManager;
     // Plugin components
     @Getter @Setter private LogManager logManager;
@@ -128,7 +129,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         // Initialize managers (LogManager is now available for use)
         StartupManager startupManager = new StartupManager(this);
         loadableManager = new LoadableManager(this);
-        listenerManager = new ListenerManager(this);
+        
         
         slimeManager = new SlimeManager(this);
         slimeManager.init();
@@ -182,19 +183,9 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
 
         registerCommandConditions();
 
-        commandManager.registerCommand(new DuelsCommand(this));
-        commandManager.registerCommand(new DuelCommand(this));
-        commandManager.registerCommand(new PartyCommand(this));
-        commandManager.registerCommand(new QueueCommand(this));
-        commandManager.registerCommand(new SpectateCommand(this));
-        commandManager.registerCommand(new RankCommand(this));
-        commandManager.registerCommand(new TestArenaCommand(this));
-        commandManager.registerCommand(new ArenaCommand(this));
-        commandManager.registerCommand(new KitCommand(this));
-        commandManager.registerCommand(new QueueAdminCommand(this));
-        commandManager.registerCommand(new StatsCommand(this));
+        new AutoRegistrationScanner(this, commandManager).scanAndRegisterCommands();
 
-        listenerManager.registerPreListeners();
+        new AutoRegistrationScanner(this, commandManager).scanAndRegisterListeners();
         
         // Setup Redis subscriptions after managers are loaded
         if (redisService != null) {
@@ -216,11 +207,6 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         // Unload components
         if (loadableManager != null) {
             loadableManager.unloadAll();
-        }
-        
-        // Unregister listeners
-        if (listenerManager != null) {
-            listenerManager.unregisterAllListeners();
         }
         
         if (logManager != null) {
@@ -259,7 +245,7 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
 
     @Override
     public void registerListener(@NotNull final Listener listener) {
-        listenerManager.registerListenerWithTiming(listener);
+        getServer().getPluginManager().registerEvents(listener, this);
     }
 
     @Override

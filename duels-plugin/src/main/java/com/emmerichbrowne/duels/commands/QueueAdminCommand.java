@@ -8,12 +8,14 @@ import com.emmerichbrowne.duels.queue.Queue;
 import com.emmerichbrowne.duels.queue.sign.QueueSignImpl;
 import com.emmerichbrowne.duels.util.BlockUtil;
 import com.emmerichbrowne.duels.util.StringUtil;
+import com.emmerichbrowne.duels.command.AutoRegister;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@AutoRegister
 @CommandAlias("duels")
 @CommandPermission("duels.admin")
 public class QueueAdminCommand extends BaseCommand {

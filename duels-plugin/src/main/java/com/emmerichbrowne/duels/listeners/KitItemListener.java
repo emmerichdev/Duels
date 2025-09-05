@@ -18,7 +18,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import com.emmerichbrowne.duels.command.AutoRegister;
 
+@AutoRegister
 public class KitItemListener implements Listener {
 
     private final DuelsPlugin plugin;

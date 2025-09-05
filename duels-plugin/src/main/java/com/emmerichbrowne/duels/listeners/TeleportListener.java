@@ -15,7 +15,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.Set;
+import com.emmerichbrowne.duels.command.AutoRegister;
 
+@AutoRegister
 public class TeleportListener implements Listener {
 
     private final Lang lang;

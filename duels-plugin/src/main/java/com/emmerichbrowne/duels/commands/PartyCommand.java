@@ -10,10 +10,12 @@ import com.emmerichbrowne.duels.party.PartyMember;
 import com.emmerichbrowne.duels.util.StringUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import com.emmerichbrowne.duels.command.AutoRegister;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AutoRegister
 @CommandAlias("party")
 @CommandPermission("duels.party")
 public class PartyCommand extends BaseCommand {

@@ -4,8 +4,10 @@ import co.aikar.commands.annotation.*;
 import com.emmerichbrowne.duels.DuelsPlugin;
 import com.emmerichbrowne.duels.kit.KitImpl;
 import com.emmerichbrowne.duels.queue.Queue;
+import com.emmerichbrowne.duels.command.AutoRegister;
 import org.bukkit.entity.Player;
 
+@AutoRegister
 @CommandAlias("queue")
 @CommandPermission("duels.queue")
 public class QueueCommand extends BaseCommand {

@@ -5,8 +5,10 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import com.emmerichbrowne.duels.DuelsPlugin;
 import com.emmerichbrowne.duels.rank.Rank;
+import com.emmerichbrowne.duels.command.AutoRegister;
 import org.bukkit.entity.Player;
 
+@AutoRegister
 @CommandAlias("rank")
 @CommandPermission("duels.rank")
 public class RankCommand extends BaseCommand {

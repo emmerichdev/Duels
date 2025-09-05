@@ -7,8 +7,10 @@ import com.emmerichbrowne.duels.arena.ArenaImpl;
 import com.emmerichbrowne.duels.match.DuelMatch;
 import com.emmerichbrowne.duels.spectate.SpectatorImpl;
 import com.emmerichbrowne.duels.util.inventory.InventoryUtil;
+import com.emmerichbrowne.duels.command.AutoRegister;
 import org.bukkit.entity.Player;
 
+@AutoRegister
 @CommandAlias("spectate|spec")
 @CommandPermission("duels.spectate")
 public class SpectateCommand extends BaseCommand {

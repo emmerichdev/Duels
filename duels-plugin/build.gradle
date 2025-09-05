@@ -38,6 +38,7 @@ dependencies {
 	compileOnly 'com.infernalsuite.asp:api:4.0.0-SNAPSHOT'
 	implementation 'com.infernalsuite.asp:file-loader:4.0.0-SNAPSHOT'
 	implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
+	implementation 'org.reflections:reflections:0.10.2'
 }
 
 repositories {
@@ -67,6 +68,8 @@ shadowJar {
 		include(dependency('net.kyori:adventure-text-serializer-ansi:.*'))
 		include(dependency('com.infernalsuite.asp:file-loader:.*'))
 		include(dependency('co.aikar:acf-paper:.*'))
+		include(dependency('org.reflections:.*'))
+		include(dependency('com.google.inject:.*'))
 	}
 
 	final String group = project.group.toString() + "." + parent.name.toLowerCase() + ".shaded."
@@ -80,6 +83,8 @@ shadowJar {
 	relocate 'com.infernalsuite.asp.loader.file', group + 'asp.loader.file'
 	relocate 'co.aikar.commands', group + 'acf'
 	relocate 'co.aikar.locales', group + 'acflocales'
+	relocate 'org.reflections', group + 'reflections'
+	relocate 'com.google.inject', group + 'guice'
 }
 
 // To build Duels plugin jar, run './gradlew clean build'.

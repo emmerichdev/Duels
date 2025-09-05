@@ -21,6 +21,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import io.papermc.paper.plugin.configuration.PluginMeta;
+import com.emmerichbrowne.duels.command.AutoRegister;
 
 import java.util.Calendar;
 import java.util.Collection;
@@ -29,6 +30,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
 
+@AutoRegister
 @CommandAlias("duel")
 @CommandPermission("duels.duel")
 public class DuelCommand extends BaseCommand {

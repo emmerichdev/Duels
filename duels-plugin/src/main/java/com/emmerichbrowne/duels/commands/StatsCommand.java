@@ -6,6 +6,7 @@ import com.emmerichbrowne.duels.api.user.User;
 import com.emmerichbrowne.duels.data.UserData;
 import com.emmerichbrowne.duels.kit.KitImpl;
 import com.emmerichbrowne.duels.util.function.TriFunction;
+import com.emmerichbrowne.duels.command.AutoRegister;
 import org.bukkit.command.CommandSender;
 
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+@AutoRegister
 @CommandAlias("duels")
 @CommandPermission("duels.admin")
 public class StatsCommand extends BaseCommand {

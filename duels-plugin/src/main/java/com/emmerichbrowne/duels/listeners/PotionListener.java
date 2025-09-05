@@ -9,7 +9,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
+import com.emmerichbrowne.duels.command.AutoRegister;
 
+@AutoRegister
 public class PotionListener implements Listener {
 
     private final ArenaManagerImpl arenaManager;

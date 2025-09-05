@@ -5,6 +5,7 @@ import com.emmerichbrowne.duels.arena.ArenaImpl;
 import com.emmerichbrowne.duels.arena.ArenaManagerImpl;
 import com.emmerichbrowne.duels.party.PartyManagerImpl;
 import com.emmerichbrowne.duels.util.EventUtil;
+import com.emmerichbrowne.duels.command.AutoRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
+@AutoRegister
 public class DamageListener implements Listener {
 
     private final ArenaManagerImpl arenaManager;
