@@ -18,12 +18,7 @@ public class AutoRegistrationScanner {
         this.plugin = plugin;
         this.commandManager = commandManager;
     }
-    
-    public void scanAndRegisterAll() {
-        scanAndRegisterCommands();
-        scanAndRegisterListeners();
-    }
-    
+
     public void scanAndRegisterCommands() {
         Reflections reflections = new Reflections("com.emmerichbrowne.duels.commands");
         Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(AutoRegister.class);
