@@ -5,84 +5,97 @@ import com.emmerichbrowne.duels.gui.options.buttons.OptionButton;
 import com.emmerichbrowne.duels.kit.KitImpl;
 import com.emmerichbrowne.duels.kit.KitImpl.Characteristic;
 import com.emmerichbrowne.duels.util.CommonItems;
-import com.emmerichbrowne.duels.util.gui.SinglePageGui;
-import com.emmerichbrowne.duels.util.inventory.Slots;
+import dev.triumphteam.gui.guis.Gui;
+import dev.triumphteam.gui.guis.GuiItem;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class OptionsGui extends SinglePageGui<DuelsPlugin> {
+public class OptionsGui {
 
-    private final DuelsPlugin plugin;
-    private final Player owner;
+	private final DuelsPlugin plugin;
+	private final Gui gui;
 
-    public OptionsGui(final DuelsPlugin plugin, final Player player, final KitImpl kit) {
-        super(plugin, plugin.getLang().getMessage("GUI.options.title", "kit", kit.getName()), 2);
-        this.plugin = plugin;
-        this.owner = player;
+	public OptionsGui(final DuelsPlugin plugin, final Player player, final KitImpl kit) {
+		this.plugin = plugin;
+		this.gui = Gui.gui()
+				.title(LegacyComponentSerializer.legacySection().deserialize(plugin.getLang().getMessage("GUI.options.title", "kit", kit.getName())))
+				.rows(2)
+				.create();
 
-        int i = 0;
+		this.gui.setDefaultClickAction(event -> event.setCancelled(true));
 
-        for (final Option option : Option.values()) {
-            set(i++, new OptionButton(plugin, this, kit, option));
-        }
+		int i = 0;
+		for (final Option option : Option.values()) {
+			final OptionButton btn = new OptionButton(plugin, this, kit, option);
+			btn.update(player);
+			final GuiItem item = new GuiItem(btn.getDisplayed().clone(), click -> btn.onClick(player));
+			gui.setItem(i++, item);
+		}
 
-        final ItemStack spacing = CommonItems.WHITE_PANE.clone();
-        Slots.run(9, 18, slot -> inventory.setItem(slot, spacing));
-    }
+		final ItemStack spacing = CommonItems.WHITE_PANE.clone();
+		for (int slot = 9; slot < 18; slot++) {
+			gui.setItem(slot, new GuiItem(spacing.clone(), e -> e.setCancelled(true)));
+		}
+	}
 
-    @Override
-    public void on(final Player player, final Inventory inventory, final InventoryCloseEvent event) {
-        plugin.getGuiListener().removeGui(owner, this);
-    }
+	public void open(final Player player) {
+		gui.open(player);
+	}
 
-    public enum Option {
+	public void update(final Player player, final OptionButton button) {
+		// Find index of this option in enum order and replace that slot
+		int index = button.getOption().ordinal();
+		final GuiItem item = new GuiItem(button.getDisplayed().clone(), click -> button.onClick(player));
+		gui.setItem(index, item);
+	}
 
-        USEPERMISSION(Material.BARRIER, KitImpl::isUsePermission, kit -> kit.setUsePermission(!kit.isUsePermission()), "When enabled, players must", "have the permission duels.kits.%kit%", "to select this kit for duel."),
-        ARENASPECIFIC(CommonItems.EMPTY_MAP, KitImpl::isArenaSpecific, kit -> kit.setArenaSpecific(!kit.isArenaSpecific()), "When enabled, kit %kit%", "can only be used in", "arenas it is bound to."),
-        SOUP(CommonItems.MUSHROOM_SOUP, Characteristic.SOUP, "When enabled, players will", "receive the amount of health", "defined in config when", "right-clicking a soup."),
-        SUMO(Material.SLIME_BALL, Characteristic.SUMO, "When enabled, players will ", "lose health only when", "interacting with water or lava."),
-        UHC(Material.GOLDEN_APPLE, Characteristic.UHC, "When enabled, player's health", "will not naturally regenerate."),
-        COMBO(Material.IRON_SWORD, Characteristic.COMBO, "When enabled, players will", "have no delay between hits."),
-        LOKA(Material.DIAMOND_SWORD, Characteristic.LOKA, "When enabled, player,s damage", "will get increased by 33%"),
-        HUNGER(Material.COOKED_BEEF, Characteristic.HUNGER, "When enabled, players will", "not hungry."),
-        ROUNDS3(Material.GOLD_INGOT, Characteristic.ROUNDS3, "When enabled, duels will", "have 3 rounds.");
+	public enum Option {
+
+		USEPERMISSION(Material.BARRIER, KitImpl::isUsePermission, kit -> kit.setUsePermission(!kit.isUsePermission()), "When enabled, players must", "have the permission duels.kits.%kit%", "to select this kit for duel."),
+		ARENASPECIFIC(CommonItems.EMPTY_MAP, KitImpl::isArenaSpecific, kit -> kit.setArenaSpecific(!kit.isArenaSpecific()), "When enabled, kit %kit%", "can only be used in", "arenas it is bound to."),
+		SOUP(CommonItems.MUSHROOM_SOUP, Characteristic.SOUP, "When enabled, players will", "receive the amount of health", "defined in config when", "right-clicking a soup."),
+		SUMO(Material.SLIME_BALL, Characteristic.SUMO, "When enabled, players will ", "lose health only when", "interacting with water or lava."),
+		UHC(Material.GOLDEN_APPLE, Characteristic.UHC, "When enabled, player's health", "will not naturally regenerate."),
+		COMBO(Material.IRON_SWORD, Characteristic.COMBO, "When enabled, players will", "have no delay between hits."),
+		LOKA(Material.DIAMOND_SWORD, Characteristic.LOKA, "When enabled, player,s damage", "will get increased by 33%"),
+		HUNGER(Material.COOKED_BEEF, Characteristic.HUNGER, "When enabled, players will", "not hungry."),
+		ROUNDS3(Material.GOLD_INGOT, Characteristic.ROUNDS3, "When enabled, duels will", "have 3 rounds.");
 /*      PLACE(Material.STONE, Characteristic.PLACE, "When enabled, players can", "be placed blocks in arena."),
-        BREAK(Material.STONE, Characteristic.BREAK, "When enabled, players can", "be break blocks in arena.");*/
-        @Getter
-        private final Material displayed;
-        @Getter
-        private final String[] description;
+		BREAK(Material.STONE, Characteristic.BREAK, "When enabled, players can", "be break blocks in arena.");*/
+		@Getter
+		private final Material displayed;
+		@Getter
+		private final String[] description;
 
-        private final Function<KitImpl, Boolean> getter;
-        private final Consumer<KitImpl> setter;
+		private final Function<KitImpl, Boolean> getter;
+		private final Consumer<KitImpl> setter;
 
-        Option(final Material displayed, final Function<KitImpl, Boolean> getter, final Consumer<KitImpl> setter, final String... description) {
-            this.displayed = displayed;
-            this.description = description;
-            this.getter = getter;
-            this.setter = setter;
-        }
+		Option(final Material displayed, final Function<KitImpl, Boolean> getter, final Consumer<KitImpl> setter, final String... description) {
+			this.displayed = displayed;
+			this.description = description;
+			this.getter = getter;
+			this.setter = setter;
+		}
 
-        Option(final Material displayed, final Characteristic characteristic, final String... description) {
-            this.displayed = displayed;
-            this.description = description;
-            this.getter = kit -> kit.hasCharacteristic(characteristic);
-            this.setter = kit -> kit.toggleCharacteristic(characteristic);
-        }
+		Option(final Material displayed, final Characteristic characteristic, final String... description) {
+			this.displayed = displayed;
+			this.description = description;
+			this.getter = kit -> kit.hasCharacteristic(characteristic);
+			this.setter = kit -> kit.toggleCharacteristic(characteristic);
+		}
 
-        public boolean get(final KitImpl kit) {
-            return getter.apply(kit);
-        }
+		public boolean get(final KitImpl kit) {
+			return getter.apply(kit);
+		}
 
-        public void set(final KitImpl kit) {
-            setter.accept(kit);
-        }
-    }
+		public void set(final KitImpl kit) {
+			setter.accept(kit);
+		}
+	}
 }

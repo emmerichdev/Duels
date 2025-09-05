@@ -14,38 +14,42 @@ import java.util.List;
 
 public class OptionButton extends BaseButton {
 
-    private final OptionsGui gui;
-    private final KitImpl kit;
-    private final Option option;
+	private final OptionsGui gui;
+	private final KitImpl kit;
+	private final Option option;
 
-    public OptionButton(final DuelsPlugin plugin, final OptionsGui gui, final KitImpl kit, final Option option) {
-        super(plugin, ItemBuilder.of(option.getDisplayed()).build());
-        this.gui = gui;
-        this.kit = kit;
-        this.option = option;
-        setDisplayName(plugin.getLang().getMessage("GUI.options.buttons.option.name", "name", option.name().toLowerCase()));
-        update();
-    }
+	public OptionButton(final DuelsPlugin plugin, final OptionsGui gui, final KitImpl kit, final Option option) {
+		super(plugin, ItemBuilder.of(option.getDisplayed()).build());
+		this.gui = gui;
+		this.kit = kit;
+		this.option = option;
+		setDisplayName(plugin.getLang().getMessage("GUI.options.buttons.option.name", "name", option.name().toLowerCase()));
+		update();
+	}
 
-    private void update() {
-        final boolean state = option.get(kit);
-        setGlow(state);
+	public Option getOption() {
+		return option;
+	}
 
-        final List<String> lore = new ArrayList<>();
+	private void update() {
+		final boolean state = option.get(kit);
+		setGlow(state);
 
-        for (final String line : option.getDescription()) {
-            lore.add("&f" + line.replace("%kit%", kit.getName()));
-        }
+		final List<String> lore = new ArrayList<>();
 
-        Collections.addAll(lore,
-                lang.getMessage("GUI.options.buttons.option.lore", "state", state ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled")).split("\n"));
-        setLore(lore);
-    }
+		for (final String line : option.getDescription()) {
+			lore.add("&f" + line.replace("%kit%", kit.getName()));
+		}
 
-    @Override
-    public void onClick(final Player player) {
-        option.set(kit);
-        update();
-        gui.update(player, this);
-    }
+		Collections.addAll(lore,
+				lang.getMessage("GUI.options.buttons.option.lore", "state", state ? lang.getMessage("GENERAL.enabled") : lang.getMessage("GENERAL.disabled")).split("\n"));
+		setLore(lore);
+	}
+
+	@Override
+	public void onClick(final Player player) {
+		option.set(kit);
+		update();
+		gui.update(player, this);
+	}
 }
