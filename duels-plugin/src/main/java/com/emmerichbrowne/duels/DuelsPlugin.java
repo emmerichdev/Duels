@@ -36,7 +36,6 @@ import com.emmerichbrowne.duels.request.RequestManager;
 import com.emmerichbrowne.duels.setting.SettingsManager;
 import com.emmerichbrowne.duels.slm.SlimeManager;
 import com.emmerichbrowne.duels.spectate.SpectateManagerImpl;
-
 import com.emmerichbrowne.duels.startup.LoadableManager;
 import com.emmerichbrowne.duels.startup.StartupManager;
 import com.emmerichbrowne.duels.teleport.Teleport;
@@ -63,7 +62,6 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
-
 import static com.emmerichbrowne.duels.redis.RedisService.*;
 
 

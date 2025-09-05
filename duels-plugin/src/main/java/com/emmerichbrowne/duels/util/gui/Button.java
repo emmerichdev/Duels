@@ -53,17 +53,8 @@ public class Button<P extends JavaPlugin> {
         return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(CC.translate(text));
     }
 
-    // Modern Paper-specific methods
-    protected void setDisplayName(final Component component) {
-        editMeta(meta -> meta.displayName(component));
-    }
-
     protected void setLore(final Component... components) {
         editMeta(meta -> meta.lore(Arrays.asList(components)));
-    }
-
-    protected void setLoreComponents(final List<Component> components) {
-        editMeta(meta -> meta.lore(components));
     }
 
     protected void playClickSound(final Player player) {

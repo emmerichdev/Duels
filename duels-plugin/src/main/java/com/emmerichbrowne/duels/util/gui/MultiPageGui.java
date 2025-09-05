@@ -96,7 +96,7 @@ public class MultiPageGui<P extends JavaPlugin> extends AbstractGui<P> {
                     last = last.next;
                 }
 
-                last.setTitle(title + " (" + pageNum + "/" + totalPages + ")");
+                last.setTitle();
                 last.clear();
 
                 if (prev != null) {
@@ -190,7 +190,7 @@ public class MultiPageGui<P extends JavaPlugin> extends AbstractGui<P> {
         }
 
         void setEmpty() {
-            setTitle(title);
+            setTitle();
 
             final ItemStack item = inventory.getItem(4);
 
@@ -224,7 +224,7 @@ public class MultiPageGui<P extends JavaPlugin> extends AbstractGui<P> {
             next = null;
         }
 
-        void setTitle(final String title) {
+        void setTitle() {
             // Title setting removed - dynamic inventory title changes are not supported in modern Paper
         }
 

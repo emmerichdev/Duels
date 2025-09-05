@@ -14,7 +14,7 @@ public final class GuiSetupUtil {
 
     public static <T extends DuelsPlugin> void setupCommonGuiElements(
             MultiPageGui<T> gui, Lang lang,
-            String fillerType, short fillerData,
+            String fillerType,
             String prevPageKey, String nextPageKey, String emptyKey) {
         
         gui.setSpaceFiller(CommonItems.from(fillerType));
@@ -25,16 +25,16 @@ public final class GuiSetupUtil {
 
     public static <T extends DuelsPlugin> void setupKitSelectorGui(MultiPageGui<T> gui, Config config, Lang lang) {
         setupCommonGuiElements(gui, lang,
-            config.getKitSelectorFillerType(), config.getKitSelectorFillerData(),
-            "GUI.kit-selector.buttons.previous-page.name",
+            config.getKitSelectorFillerType(),
+                "GUI.kit-selector.buttons.previous-page.name",
             "GUI.kit-selector.buttons.next-page.name",
             "GUI.kit-selector.buttons.empty.name");
     }
 
     public static <T extends DuelsPlugin> void setupArenaSelectorGui(MultiPageGui<T> gui, Config config, Lang lang) {
         setupCommonGuiElements(gui, lang,
-            config.getArenaSelectorFillerType(), config.getArenaSelectorFillerData(),
-            "GUI.kit-selector.buttons.previous-page.name",
+            config.getArenaSelectorFillerType(),
+                "GUI.kit-selector.buttons.previous-page.name",
             "GUI.kit-selector.buttons.next-page.name", 
             "GUI.kit-selector.buttons.empty.name");
     }
