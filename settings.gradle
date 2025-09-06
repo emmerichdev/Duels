@@ -2,3 +2,4 @@ rootProject.name = 'Duels'
 
 include 'duels-api'
 include 'duels-plugin'
+include 'duels-game-plugin'

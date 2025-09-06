@@ -1,0 +1,38 @@
+apply plugin: 'com.gradleup.shadow'
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+dependencies {
+    implementation project(':duels-api')
+
+    compileOnly 'org.projectlombok:lombok:1.18.38'
+    annotationProcessor 'org.projectlombok:lombok:1.18.38'
+
+    implementation 'space.arim.morepaperlib:morepaperlib:0.4.4'
+}
+
+repositories {
+    mavenCentral()
+}
+
+shadowJar {
+    getDestinationDirectory().set(file("$rootDir/out/"))
+
+    final String archiveName = parent.name + '-' + project.version + '.jar'
+    getArchiveFileName().set(archiveName)
+
+    dependencies {
+        include(project(':duels-api'))
+        include(dependency('space.arim.morepaperlib:.*'))
+    }
+
+    final String group = project.group.toString() + "." + parent.name.toLowerCase() + ".shaded."
+    relocate 'space.arim.morepaperlib', group + 'morepaperlib'
+}
+
+build {
+    dependsOn(shadowJar)
+}
+
