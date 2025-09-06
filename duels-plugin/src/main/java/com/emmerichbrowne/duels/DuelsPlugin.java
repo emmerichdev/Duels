@@ -322,6 +322,10 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         return CC.translateConsole("&b&lDuels &7» ");
     }
 
+    public com.emmerichbrowne.duels.core.ServerRole getServerRole() {
+        return com.emmerichbrowne.duels.core.ServerRole.LOBBY;
+    }
+
     public static void sendMessage(String message) {
         final String prefix = getPrefix();
         if (message == null || message.isEmpty()) {

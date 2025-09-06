@@ -1,0 +1,15 @@
+name: Duels-Game
+main: com.emmerichbrowne.duels.game.DuelsGamePlugin
+version: @VERSION@
+api-version: 1.21.4
+folia-supported: true
+
+author: Emmerich
+website: https://github.com/emmerichdev/Duels
+description: The duels game plugin for Minatra
+
+dependencies:
+  server:
+    ASPaperPlugin:
+      required: true
+

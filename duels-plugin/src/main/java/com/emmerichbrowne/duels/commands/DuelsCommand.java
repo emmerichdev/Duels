@@ -86,8 +86,8 @@ public class DuelsCommand extends BaseCommand {
         final List<String> arenas = new ArrayList<>();
         arenaManager.getArenasImpl().forEach(arena -> arenas.add("&" + getColor(arena) + arena.getName()));
         final String kits = StringUtil.join(kitManager.getKits().stream().map(Kit::getName).collect(Collectors.toList()), ", ");
-        final String queues = StringUtil.join(queueManager.getQueues().stream().map(DQueue::toString).collect(Collectors.toList()), ", ");
-        final String signs = StringUtil.join(queueSignManager.getSigns().stream().map(QueueSignImpl::toString).collect(Collectors.toList()), ", ");
+        final String queues = (queueManager != null) ? StringUtil.join(queueManager.getQueues().stream().map(DQueue::toString).collect(Collectors.toList()), ", ") : lang.getMessage("GENERAL.none");
+        final String signs = (queueSignManager != null) ? StringUtil.join(queueSignManager.getSigns().stream().map(QueueSignImpl::toString).collect(Collectors.toList()), ", ") : lang.getMessage("GENERAL.none");
         lang.sendMessage(sender, "COMMAND.duels.list",
                 "arenas", !arenas.isEmpty() ? StringUtil.join(arenas, "&r, &r") : lang.getMessage("GENERAL.none"),
                 "kits", !kits.isEmpty() ? kits : lang.getMessage("GENERAL.none"),
