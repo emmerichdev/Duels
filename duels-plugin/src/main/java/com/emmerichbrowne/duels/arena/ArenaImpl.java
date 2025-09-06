@@ -218,7 +218,9 @@ public class ArenaImpl extends BaseButton implements Arena {
 
         if (source != null) {
             source.update();
-            queueManager.getGui().calculatePages();
+            if (queueManager != null && queueManager.getGui() != null) {
+                queueManager.getGui().calculatePages();
+            }
         }
 
         refreshGui(true);

@@ -104,7 +104,7 @@ public class SpectateManagerImpl implements Loadable, SpectateManager {
             return Result.ALREADY_SPECTATING;
         }
 
-        if (plugin.getQueueManager().isInQueue(player)) {
+        if (plugin.getServerRole() == com.emmerichbrowne.duels.ServerRole.LOBBY && plugin.getQueueManager().isInQueue(player)) {
             return Result.IN_QUEUE;
         }
 

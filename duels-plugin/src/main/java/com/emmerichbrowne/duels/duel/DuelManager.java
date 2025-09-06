@@ -393,7 +393,7 @@ public class DuelManager implements Loadable {
 
     private void addPlayers(final Collection<Player> players, final DuelMatch match, final ArenaImpl arena, final KitImpl kit, final Location location) {
         for (final Player player : players) {
-            if (match.getSource() == null) {
+            if (match.getSource() == null && queueManager != null) {
                 queueManager.remove(player);
             }
 

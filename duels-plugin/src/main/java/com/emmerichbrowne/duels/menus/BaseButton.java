@@ -56,8 +56,8 @@ public abstract class BaseButton {
 		this.kitManager = plugin.getKitManager();
 		this.arenaManager = plugin.getArenaManager();
 		this.settingManager = plugin.getSettingManager();
-		this.queueManager = plugin.getQueueManager();
-		this.queueSignManager = plugin.getQueueSignManager();
+		this.queueManager = plugin.getServerRole() == com.emmerichbrowne.duels.ServerRole.LOBBY ? plugin.getQueueManager() : null;
+		this.queueSignManager = plugin.getServerRole() == com.emmerichbrowne.duels.ServerRole.LOBBY ? plugin.getQueueSignManager() : null;
 		this.spectateManager = plugin.getSpectateManager();
 		this.requestManager = plugin.getRequestManager();
 	}

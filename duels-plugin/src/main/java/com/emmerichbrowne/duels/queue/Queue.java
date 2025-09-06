@@ -55,13 +55,17 @@ public class Queue extends BaseButton implements DQueue {
     void addPlayer(final QueueEntry entry) {
         players.add(entry);
         update();
-        queueManager.getGui().calculatePages();
+        if (queueManager != null && queueManager.getGui() != null) {
+            queueManager.getGui().calculatePages();
+        }
     }
 
     boolean removePlayer(final Player player) {
         if (players.removeIf(entry -> entry.getPlayer().equals(player))) {
             update();
-            queueManager.getGui().calculatePages();
+            if (queueManager != null && queueManager.getGui() != null) {
+                queueManager.getGui().calculatePages();
+            }
             return true;
         }
 
@@ -93,7 +97,9 @@ public class Queue extends BaseButton implements DQueue {
 
     @Override
     public void onClick(final Player player) {
-        queueManager.addToQueue(player, this);
+        if (queueManager != null) {
+            queueManager.addToQueue(player, this);
+        }
     }
 
     @Override
