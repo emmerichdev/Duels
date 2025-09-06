@@ -10,6 +10,7 @@ processResources {
 
 dependencies {
     implementation project(':duels-api')
+    implementation project(':duels-core')
     implementation project(':duels-plugin')
 
     compileOnly 'org.projectlombok:lombok:1.18.38'

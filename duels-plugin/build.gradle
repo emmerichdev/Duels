@@ -17,6 +17,7 @@ processResources {
 
 dependencies {
 	implementation project(':duels-api')
+	implementation project(':duels-core')
 	
 	compileOnly 'org.projectlombok:lombok:1.18.38'
 	annotationProcessor 'org.projectlombok:lombok:1.18.38'

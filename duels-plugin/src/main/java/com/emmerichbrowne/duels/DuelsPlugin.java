@@ -322,8 +322,8 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         return CC.translateConsole("&b&lDuels &7» ");
     }
 
-    public ServerRole getServerRole() {
-        return ServerRole.LOBBY;
+    public com.emmerichbrowne.duels.core.ServerRole getServerRole() {
+        return com.emmerichbrowne.duels.core.ServerRole.LOBBY;
     }
 
     public static void sendMessage(String message) {

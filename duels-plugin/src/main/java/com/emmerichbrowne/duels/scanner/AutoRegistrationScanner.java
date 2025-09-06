@@ -2,7 +2,7 @@ package com.emmerichbrowne.duels.scanner;
 
 import co.aikar.commands.PaperCommandManager;
 import com.emmerichbrowne.duels.DuelsPlugin;
-import com.emmerichbrowne.duels.ServerRole;
+import com.emmerichbrowne.duels.core.ServerRole;
 import com.emmerichbrowne.duels.commands.BaseCommand;
 import org.bukkit.event.Listener;
 import org.reflections.Reflections;

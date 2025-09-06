@@ -55,7 +55,7 @@ public class PlaceholderHook extends PlaceholderExpansion {
     }
 
     private String handleQueue(String[] args) {
-        if (plugin.getServerRole() != com.emmerichbrowne.duels.ServerRole.LOBBY) {
+        if (plugin.getServerRole() != com.emmerichbrowne.duels.core.ServerRole.LOBBY) {
             return "0";
         }
         if (args.length < 2) return null;

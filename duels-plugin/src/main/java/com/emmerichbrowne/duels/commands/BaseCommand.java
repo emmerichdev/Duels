@@ -49,8 +49,8 @@ public abstract class BaseCommand extends co.aikar.commands.BaseCommand {
         this.arenaManager = plugin.getArenaManager();
         this.bettingManager = plugin.getBettingManager();
         this.settingManager = plugin.getSettingManager();
-        this.queueManager = plugin.getServerRole() == com.emmerichbrowne.duels.ServerRole.LOBBY ? plugin.getQueueManager() : null;
-        this.queueSignManager = plugin.getServerRole() == com.emmerichbrowne.duels.ServerRole.LOBBY ? plugin.getQueueSignManager() : null;
+        this.queueManager = plugin.getServerRole() == com.emmerichbrowne.duels.core.ServerRole.LOBBY ? plugin.getQueueManager() : null;
+        this.queueSignManager = plugin.getServerRole() == com.emmerichbrowne.duels.core.ServerRole.LOBBY ? plugin.getQueueSignManager() : null;
         this.requestManager = plugin.getRequestManager();
         this.partyManager = plugin.getPartyManager();
         this.leaderboardManager = plugin.getLeaderboardManager();

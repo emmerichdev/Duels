@@ -3,7 +3,7 @@ package com.emmerichbrowne.duels.startup;
 import com.google.common.collect.Lists;
 import com.emmerichbrowne.duels.DuelsPlugin;
 import com.emmerichbrowne.duels.arena.ArenaManagerImpl;
-import com.emmerichbrowne.duels.ServerRole;
+import com.emmerichbrowne.duels.core.ServerRole;
 import com.emmerichbrowne.duels.betting.BettingManager;
 import com.emmerichbrowne.duels.data.UserManagerImpl;
 import com.emmerichbrowne.duels.duel.DuelManager;
