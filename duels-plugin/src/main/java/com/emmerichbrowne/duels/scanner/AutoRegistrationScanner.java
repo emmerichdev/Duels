@@ -2,6 +2,7 @@ package com.emmerichbrowne.duels.scanner;
 
 import co.aikar.commands.PaperCommandManager;
 import com.emmerichbrowne.duels.DuelsPlugin;
+import com.emmerichbrowne.duels.ServerRole;
 import com.emmerichbrowne.duels.commands.BaseCommand;
 import org.bukkit.event.Listener;
 import org.reflections.Reflections;
@@ -27,6 +28,9 @@ public class AutoRegistrationScanner {
         
         for (Class<?> clazz : annotatedClasses) {
             try {
+                if (shouldSkipCommand(clazz)) {
+                    continue;
+                }
                 registerCommand(clazz);
             } catch (Exception e) {
                 plugin.getLogger().severe("Failed to register command " + clazz.getSimpleName() + ": " + e.getMessage());
@@ -61,6 +65,14 @@ public class AutoRegistrationScanner {
         
         commandManager.registerCommand(command);
         plugin.getLogger().info("Auto-registered command: " + clazz.getSimpleName());
+    }
+
+    private boolean shouldSkipCommand(Class<?> clazz) {
+        if (plugin.getServerRole() != ServerRole.GAME) {
+            return false;
+        }
+        final String simple = clazz.getSimpleName();
+        return simple.equals("QueueCommand") || simple.equals("QueueAdminCommand");
     }
     
     private void registerListener(Class<?> clazz) throws Exception {

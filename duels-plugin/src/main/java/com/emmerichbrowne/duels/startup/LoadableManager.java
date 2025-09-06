@@ -3,6 +3,7 @@ package com.emmerichbrowne.duels.startup;
 import com.google.common.collect.Lists;
 import com.emmerichbrowne.duels.DuelsPlugin;
 import com.emmerichbrowne.duels.arena.ArenaManagerImpl;
+import com.emmerichbrowne.duels.ServerRole;
 import com.emmerichbrowne.duels.betting.BettingManager;
 import com.emmerichbrowne.duels.data.UserManagerImpl;
 import com.emmerichbrowne.duels.duel.DuelManager;
@@ -50,6 +51,7 @@ public class LoadableManager {
         
         // Initialize remaining loadables (Config and Lang are already initialized)
         // Skip config and lang as they are initialized earlier in the startup process
+        final ServerRole role = plugin.getServerRole();
         addLoadable("user manager", () -> {
             UserManagerImpl userManager = new UserManagerImpl(plugin);
             plugin.setUserManager(userManager);
@@ -100,21 +102,23 @@ public class LoadableManager {
             plugin.setDuelManager(duelManager);
             return duelManager;
         });
-        addLoadable("queue manager", () -> {
-            QueueManager queueManager = new QueueManager(plugin);
-            plugin.setQueueManager(queueManager);
-            return queueManager;
-        });
-        addLoadable("queue signs", () -> {
-            QueueSignManagerImpl queueSignManager = new QueueSignManagerImpl(plugin);
-            plugin.setQueueSignManager(queueSignManager);
-            return queueSignManager;
-        });
-        addLoadable("request manager", () -> {
-            RequestManager requestManager = new RequestManager(plugin);
-            plugin.setRequestManager(requestManager);
-            return requestManager;
-        });
+        if (role == ServerRole.LOBBY) {
+            addLoadable("queue manager", () -> {
+                QueueManager queueManager = new QueueManager(plugin);
+                plugin.setQueueManager(queueManager);
+                return queueManager;
+            });
+            addLoadable("queue signs", () -> {
+                QueueSignManagerImpl queueSignManager = new QueueSignManagerImpl(plugin);
+                plugin.setQueueSignManager(queueSignManager);
+                return queueSignManager;
+            });
+            addLoadable("request manager", () -> {
+                RequestManager requestManager = new RequestManager(plugin);
+                plugin.setRequestManager(requestManager);
+                return requestManager;
+            });
+        }
         addLoadable("leaderboard manager", () -> {
             LeaderboardManager leaderboardManager = new LeaderboardManager(plugin);
             plugin.setLeaderboardManager(leaderboardManager);

@@ -59,7 +59,7 @@ repositories {
 shadowJar {
 	getDestinationDirectory().set(file("$rootDir/out/"))
 
-	final String archiveName = parent.name + '-' + project.version + '.jar'
+	final String archiveName = 'Duels-Lobby-' + project.version + '.jar'
 	getArchiveFileName().set(archiveName)
 
 	dependencies {

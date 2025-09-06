@@ -1,16 +1,12 @@
 package com.emmerichbrowne.duels.game;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import com.emmerichbrowne.duels.DuelsPlugin;
+import com.emmerichbrowne.duels.ServerRole;
 
-public final class DuelsGamePlugin extends JavaPlugin {
+public final class DuelsGamePlugin extends DuelsPlugin {
 	@Override
-	public void onEnable() {
-		getLogger().info("Duels Game Plugin enabled");
-	}
-
-	@Override
-	public void onDisable() {
-		getLogger().info("Duels Game Plugin disabled");
+	public ServerRole getServerRole() {
+		return ServerRole.GAME;
 	}
 }
 

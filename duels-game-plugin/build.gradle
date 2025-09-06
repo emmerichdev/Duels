@@ -2,34 +2,78 @@ apply plugin: 'com.gradleup.shadow'
 
 processResources {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from(sourceSets.main.resources.srcDirs) {
+        include '**/*.yml'
+        filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [VERSION: project.version])
+    }
 }
 
 dependencies {
     implementation project(':duels-api')
+    implementation project(':duels-plugin')
 
     compileOnly 'org.projectlombok:lombok:1.18.38'
     annotationProcessor 'org.projectlombok:lombok:1.18.38'
 
     implementation 'space.arim.morepaperlib:morepaperlib:0.4.4'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.2'
+    implementation 'org.mongodb:mongodb-driver-sync:5.1.2'
+    implementation 'redis.clients:jedis:5.1.5'
+    implementation 'org.apache.commons:commons-pool2:2.12.0'
+    implementation 'org.apache.commons:commons-lang3:3.18.0'
+    implementation 'net.kyori:adventure-text-serializer-ansi:4.17.0'
+    implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
+    implementation 'org.reflections:reflections:0.10.2'
+    implementation 'org.javassist:javassist:3.30.2-GA'
+    implementation 'dev.triumphteam:triumph-gui:3.1.12'
+
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.14'
 }
 
 repositories {
     mavenCentral()
+    maven { url 'https://repo.aikar.co/content/groups/aikar/' }
 }
 
 shadowJar {
     getDestinationDirectory().set(file("$rootDir/out/"))
 
-    final String archiveName = parent.name + '-' + project.version + '.jar'
+    final String archiveName = 'Duels-Game-' + project.version + '.jar'
     getArchiveFileName().set(archiveName)
 
     dependencies {
         include(project(':duels-api'))
+        include(project(':duels-plugin'))
+        include(dependency('com.fasterxml.jackson.core:.*'))
         include(dependency('space.arim.morepaperlib:.*'))
+        include(dependency('org.mongodb:.*'))
+        include(dependency('redis.clients:.*'))
+        include(dependency('org.apache.commons:commons-pool2:.*'))
+        include(dependency('org.apache.commons:commons-lang3:.*'))
+        include(dependency('net.kyori:adventure-text-serializer-ansi:.*'))
+        include(dependency('co.aikar:acf-paper:.*'))
+        include(dependency('org.reflections:.*'))
+        include(dependency('org.javassist:.*'))
+        include(dependency('dev.triumphteam:triumph-gui:.*'))
     }
 
     final String group = project.group.toString() + "." + parent.name.toLowerCase() + ".shaded."
+    relocate 'com.fasterxml.jackson', 'com.emmerichbrowne.duels.shaded.jackson'
     relocate 'space.arim.morepaperlib', group + 'morepaperlib'
+    relocate 'com.mongodb', group + 'mongodb'
+    relocate 'org.bson', group + 'bson'
+    relocate 'redis.clients', group + 'redis'
+    relocate 'org.apache.commons.pool2', group + 'commons.pool2'
+    relocate 'org.apache.commons.lang3', group + 'commons.lang3'
+    relocate 'co.aikar.commands', group + 'acf'
+    relocate 'co.aikar.locales', group + 'acflocales'
+    relocate 'org.reflections', group + 'reflections'
+    relocate 'javassist', group + 'javassist'
+    relocate 'com.google.inject', group + 'guice'
+    relocate 'dev.triumphteam.gui', group + 'triumph.gui'
+
+    // Avoid including any plugin descriptors from dependency modules
+    exclude('paper-plugin.yml')
 }
 
 build {
