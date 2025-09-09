@@ -31,7 +31,6 @@ import com.emmerichbrowne.duels.player.PlayerInfoManager;
 import com.emmerichbrowne.duels.queue.QueueManager;
 import com.emmerichbrowne.duels.queue.sign.QueueSignManagerImpl;
 import com.emmerichbrowne.duels.rank.manager.RankManager;
-import com.emmerichbrowne.duels.redis.RedisService;
 import com.emmerichbrowne.duels.request.RequestManager;
 import com.emmerichbrowne.duels.setting.SettingsManager;
 import com.emmerichbrowne.duels.slm.SlimeManager;
@@ -53,7 +52,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import redis.clients.jedis.JedisPubSub;
 import space.arim.morepaperlib.MorePaperLib;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
 import java.io.IOException;
@@ -61,7 +59,6 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
-import static com.emmerichbrowne.duels.redis.RedisService.*;
 
 
 public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
@@ -96,10 +93,8 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
     @Getter @Setter private LeaderboardManager leaderboardManager;
     @Getter @Setter private RankManager rankManager;
     @Getter @Setter private MongoService mongoService;
-    @Getter @Setter private RedisService redisService;
     @Getter @Setter private DatabaseConfig databaseConfig;
     @Getter @Setter private SlimeManager slimeManager;
-    private JedisPubSub redisSubscriber;
 
     @Override
     public void onEnable() {
@@ -181,11 +176,6 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
 
         new AutoRegistrationScanner(this, commandManager).scanAndRegisterListeners();
         
-        // Setup Redis subscriptions after managers are loaded
-        if (redisService != null) {
-            setupRedisSubscriptions();
-        }
-        
         // Update system removed in this fork
     }
 
@@ -217,15 +207,6 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         // Close database connections
         if (mongoService != null) {
             mongoService.close();
-        }
-        if (redisService != null) {
-            try {
-                if (redisSubscriber != null) {
-                    redisSubscriber.unsubscribe();
-                }
-            } catch (Exception ignored) {}
-            redisService.close();
-            redisSubscriber = null;
         }
         
         instance = null;
@@ -436,66 +417,4 @@ public class DuelsPlugin extends JavaPlugin implements Duels, LogSource {
         });
     }
 
-    private void setupRedisSubscriptions() {
-        try {
-            // Ensure we don't stack multiple subscribers across reloads
-            if (this.redisSubscriber != null) {
-                try {
-                    this.redisSubscriber.unsubscribe();
-                } catch (Exception ignored) {}
-                this.redisSubscriber = null;
-            }
-            final var sub = new JedisPubSub() {
-                @Override
-                public void onMessage(String channel, String message) {
-                    doSync(() -> {
-                        // Expect messages formatted as "serverId:payload"; ignore self-originated
-                        String payload = message;
-                        try {
-                            final int idx = message.indexOf(':');
-                            if (idx > 0) {
-                                final String origin = message.substring(0, idx);
-                                if (origin.equals(getSelfServerId())) {
-                                    return;
-                                }
-                                payload = message.substring(idx + 1);
-                            }
-                        } catch (Exception ignored) {}
-                        switch (channel) {
-                            case CHANNEL_INVALIDATE_USER -> {
-                                try {
-                                    final UUID uuid = UUID.fromString(payload);
-                                    if (userManager != null) userManager.reloadUser(uuid);
-                                } catch (Exception ignored) {
-                                }
-                            }
-                            case CHANNEL_INVALIDATE_KIT -> {
-                                if (kitManager != null) kitManager.reloadKit(payload);
-                            }
-                            case CHANNEL_INVALIDATE_ARENA -> {
-                                if (arenaManager != null) arenaManager.reloadArena(payload);
-                            }
-                        }
-                    });
-                }
-            };
-            this.redisSubscriber = sub;
-            redisService.subscribe(sub,
-                    CHANNEL_INVALIDATE_USER,
-                    CHANNEL_INVALIDATE_KIT,
-                    CHANNEL_INVALIDATE_ARENA
-            );
-        } catch (Exception ex) {
-            sendMessage("&eFailed to subscribe to Redis channels; continuing without cross-server sync.");
-        }
-    }
-
-    private String getSelfServerId() {
-        final String configured = databaseConfig != null ? databaseConfig.getServerId() : null;
-        if (configured != null && !configured.trim().isEmpty()) {
-            return configured.trim();
-        }
-        final int port = getServer().getPort();
-        return port > 0 ? String.valueOf(port) : "default";
-    }
 }

@@ -10,7 +10,6 @@ import com.emmerichbrowne.duels.config.Lang;
 import com.emmerichbrowne.duels.data.ArenaData;
 import com.emmerichbrowne.duels.kit.KitImpl;
 import com.emmerichbrowne.duels.queue.Queue;
-import com.emmerichbrowne.duels.redis.RedisService;
 import com.emmerichbrowne.duels.util.Loadable;
 import com.emmerichbrowne.duels.util.Log;
 import com.emmerichbrowne.duels.util.StringUtil;
@@ -108,45 +107,29 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
             final var mongo = plugin.getMongoService();
             if (mongo != null) {
                 final var collection = mongo.collection("arenas");
-                final var redis = plugin.getRedisService();
-                final String lockKey = "duels:lock:arenas";
-                final String lockValue = java.util.UUID.randomUUID().toString();
-                final boolean locked = (redis != null) && redis.tryAcquireLock(lockKey, 15, lockValue);
-                try {
-                    for (final ArenaImpl arena : arenas) {
-                        final ArenaData data = new ArenaData(arena);
-                        final java.util.Map<String, Object> bson = JsonUtil.getObjectMapper().convertValue(data, new com.fasterxml.jackson.core.type.TypeReference<>() {});
-                        final Document doc = new Document(bson);
-                        doc.put("_id", data.getName());
-                        collection.replaceOne(
-                            new Document("_id", data.getName()),
-                            doc,
-                            new ReplaceOptions().upsert(true)
-                        );
+                for (final ArenaImpl arena : arenas) {
+                    final ArenaData data = new ArenaData(arena);
+                    final java.util.Map<String, Object> bson = JsonUtil.getObjectMapper().convertValue(data, new com.fasterxml.jackson.core.type.TypeReference<>() {});
+                    final Document doc = new Document(bson);
+                    doc.put("_id", data.getName());
+                    collection.replaceOne(
+                        new Document("_id", data.getName()),
+                        doc,
+                        new ReplaceOptions().upsert(true)
+                    );
+                }
+                final Set<String> names = arenas.stream().map(ArenaImpl::getName).collect(Collectors.toSet());
+                // Find docs to prune first
+                final List<String> toDelete = new ArrayList<>();
+                try (MongoCursor<Document> cur = collection.find(new Document("_id", new Document("$nin", names))).projection(new Document("_id", 1)).iterator()) {
+                    while (cur.hasNext()) {
+                        final Document d = cur.next();
+                        final Object id = d.get("_id");
+                        if (id != null) toDelete.add(id.toString());
                     }
-                    if (locked) {
-                        final Set<String> names = arenas.stream().map(ArenaImpl::getName).collect(Collectors.toSet());
-                        // Find docs to prune first
-                        final List<String> toDelete = new ArrayList<>();
-                        try (MongoCursor<Document> cur = collection.find(new Document("_id", new Document("$nin", names))).projection(new Document("_id", 1)).iterator()) {
-                            while (cur.hasNext()) {
-                                final Document d = cur.next();
-                                final Object id = d.get("_id");
-                                if (id != null) toDelete.add(id.toString());
-                            }
-                        }
-                        if (!toDelete.isEmpty()) {
-                            collection.deleteMany(new Document("_id", new Document("$in", toDelete)));
-                            toDelete.forEach(id -> redis.publish(RedisService.CHANNEL_INVALIDATE_ARENA, id));
-                        }
-                    }
-                    if (redis != null) {
-                        arenas.forEach(a -> redis.publish(RedisService.CHANNEL_INVALIDATE_ARENA, a.getName()));
-                    }
-                } finally {
-                    if (locked) {
-                        redis.releaseLock(lockKey, lockValue);
-                    }
+                }
+                if (!toDelete.isEmpty()) {
+                    collection.deleteMany(new Document("_id", new Document("$in", toDelete)));
                 }
             }
         } catch (Exception ex) {
@@ -161,26 +144,6 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
         return arenas.stream().filter(arena -> arena.getName().equals(name)).findFirst().orElse(null);
     }
 
-    // Called by Redis subscriber
-    public void reloadArena(@NotNull final String name) {
-        final var mongo = plugin.getMongoService();
-        if (mongo == null) { return; }
-        try {
-            final var doc = mongo.collection("arenas").find(new Document("_id", name)).first();
-            if (doc == null) {
-                arenas.removeIf(a -> a.getName().equals(name));
-                if (gui != null) { gui.calculatePages(); }
-                return;
-            }
-            final ArenaData data = JsonUtil.getObjectMapper().convertValue(doc, ArenaData.class);
-            if (data == null) { return; }
-            final ArenaImpl arena = data.toArena(plugin);
-            // Replace existing
-            arenas.removeIf(a -> a.getName().equals(name));
-            arenas.add(arena);
-            if (gui != null) { gui.calculatePages(); }
-        } catch (Exception ignored) {}
-    }
 
     @Nullable
     @Override
@@ -226,11 +189,6 @@ public class ArenaManagerImpl implements Loadable, ArenaManager {
         if (arenas.remove(arena)) {
             arena.setRemoved(true);
             saveArenas();
-            try {
-                if (plugin.getRedisService() != null) {
-                    plugin.getRedisService().publish(RedisService.CHANNEL_INVALIDATE_ARENA, arena.getName());
-                }
-            } catch (Exception ignored) {}
 
             final ArenaRemoveEvent event = new ArenaRemoveEvent(source, arena);
             Bukkit.getPluginManager().callEvent(event);

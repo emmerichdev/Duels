@@ -1,6 +1,5 @@
 package com.emmerichbrowne.duels.data;
 
-import com.emmerichbrowne.duels.redis.RedisService;
 import com.google.common.collect.Lists;
 import com.emmerichbrowne.duels.DuelsPlugin;
 import com.emmerichbrowne.duels.api.kit.Kit;
@@ -209,10 +208,6 @@ public class UserData implements User {
             final DuelsPlugin plugin = DuelsPlugin.getInstance();
             if (plugin != null && plugin.getMongoService() != null) {
                 plugin.getMongoService().saveUser(this);
-                // publish invalidation for cross-server cache
-                if (plugin.getRedisService() != null) {
-                    plugin.getRedisService().publish(RedisService.CHANNEL_INVALIDATE_USER, this.getUuid().toString());
-                }
             }
         } catch (Exception ex) {
             Log.error(String.format(ERROR_USER_SAVE, name), ex);

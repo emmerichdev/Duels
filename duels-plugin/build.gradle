@@ -31,8 +31,6 @@ dependencies {
 	implementation 'space.arim.morepaperlib:morepaperlib:0.4.4'
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.2'
 	implementation 'org.mongodb:mongodb-driver-sync:5.1.2'
-	implementation 'redis.clients:jedis:5.1.5'
-	implementation 'org.apache.commons:commons-pool2:2.12.0'
 	
 	compileOnly 'com.infernalsuite.asp:api:4.0.0-SNAPSHOT'
 	implementation 'com.infernalsuite.asp:file-loader:4.0.0-SNAPSHOT'
@@ -67,8 +65,6 @@ shadowJar {
 		include(dependency('com.fasterxml.jackson.core:.*'))
 		include(dependency('space.arim.morepaperlib:.*'))
 		include(dependency('org.mongodb:.*'))
-		include(dependency('redis.clients:.*'))
-		include(dependency('org.apache.commons:commons-pool2:.*'))
 		include(dependency('org.apache.commons:commons-lang3:.*'))
 		include(dependency('net.kyori:adventure-text-serializer-ansi:.*'))
 		include(dependency('com.infernalsuite.asp:file-loader:.*'))
@@ -84,8 +80,6 @@ shadowJar {
 	relocate 'space.arim.morepaperlib', group + 'morepaperlib'
 	relocate 'com.mongodb', group + 'mongodb'
 	relocate 'org.bson', group + 'bson'
-	relocate 'redis.clients', group + 'redis'
-	relocate 'org.apache.commons.pool2', group + 'commons.pool2'
 	relocate 'org.apache.commons.lang3', group + 'commons.lang3'
 	relocate 'com.infernalsuite.asp.loader.file', group + 'asp.loader.file'
 	relocate 'co.aikar.commands', group + 'acf'

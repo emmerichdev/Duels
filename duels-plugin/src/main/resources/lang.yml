@@ -41,8 +41,6 @@ SYSTEM:
     db-config-failed: '&cFailed to load DB.yml. Disabling plugin.'
     mongodb-connect-failed: '&cFailed to connect to MongoDB: %error%. Disabling plugin.'
     mongodb-connected: '&aConnected to MongoDB database ''&f%database%&a''.'
-    redis-connect-failed: '&eRedis connection failed, continuing without cross-server sync cache.'
-    redis-connected: '&aConnected to Redis at &f%host%:%port% &a(db=%database%)'
   errors:
     load-failure: '&c&lThere was an error while loading %name%! If you believe this is an issue from the plugin, please contact the developer.'
     unload-failure: '&c&lThere was an error while unloading %name%! If you believe this is an issue from the plugin, please contact the developer.'

@@ -9,7 +9,6 @@ import com.emmerichbrowne.duels.api.kit.KitManager;
 import com.emmerichbrowne.duels.config.Config;
 import com.emmerichbrowne.duels.config.Lang;
 import com.emmerichbrowne.duels.data.KitData;
-import com.emmerichbrowne.duels.redis.RedisService;
 import com.emmerichbrowne.duels.util.Loadable;
 import com.emmerichbrowne.duels.util.Log;
 import com.emmerichbrowne.duels.util.StringUtil;
@@ -98,10 +97,6 @@ public class KitManagerImpl implements Loadable, KitManager {
                     doc.put("_id", kd.getName());
                     collection.replaceOne(new Document("_id", kd.getName()), doc, new ReplaceOptions().upsert(true));
                 }
-                if (plugin.getRedisService() != null) {
-                    // notify cross-server to refresh kits
-                    kits.keySet().forEach(name -> plugin.getRedisService().publish(RedisService.CHANNEL_INVALIDATE_KIT, name));
-                }
             }
         } catch (Exception ex) {
             Log.error(this, ex.getMessage(), ex);
@@ -115,37 +110,6 @@ public class KitManagerImpl implements Loadable, KitManager {
         return kits.get(name);
     }
 
-    // Called by Redis subscriber
-    public void reloadKit(@NotNull final String name) {
-        final var mongo = plugin.getMongoService();
-        if (mongo == null) return;
-        try {
-            final var doc = mongo.collection("kits")
-                                 .find(new Document("_id", name))
-                                 .first();
-            if (doc == null) return;
-
-            // Bind directly from BSON document into our KitData POJO
-            final KitData data =
-                    JsonUtil
-                        .getObjectMapper()
-                        .convertValue(doc, KitData.class);
-            if (data == null
-                || data.getName() == null
-                || !StringUtil.isAlphanumeric(data.getName())) {
-                return;
-            }
-
-            // Schedule the mutation and GUI update on the main server thread
-            plugin.doSync(() -> {
-                kits.put(data.getName(), data.toKit(plugin));
-                if (gui != null) gui.calculatePages();
-            });
-        } catch (Exception ex) {
-            Log.error(this,
-                "Failed to reload kit: " + name, ex);
-        }
-    }
 
     public KitImpl create(@NotNull final Player creator, @NotNull final String name, final boolean override) {
         Objects.requireNonNull(creator, "creator");
@@ -190,10 +154,6 @@ public class KitManagerImpl implements Loadable, KitManager {
                 final var mongo = plugin.getMongoService();
                 if (mongo != null) {
                     mongo.collection("kits").deleteOne(new Document("_id", name));
-                }
-                final var redis = plugin.getRedisService();
-                if (redis != null) {
-                    redis.publish(RedisService.CHANNEL_INVALIDATE_KIT, name);
                 }
             } catch (Exception ex) {
                 Log.error(this, "Failed to finalize removal for kit: " + name, ex);

@@ -3,7 +3,6 @@ package com.emmerichbrowne.duels.startup;
 import com.emmerichbrowne.duels.DuelsPlugin;
 import com.emmerichbrowne.duels.config.DatabaseConfig;
 import com.emmerichbrowne.duels.mongo.MongoService;
-import com.emmerichbrowne.duels.redis.RedisService;
 import com.emmerichbrowne.duels.util.CC;
 
 import java.util.logging.Level;
@@ -58,22 +57,6 @@ public record StartupManager(DuelsPlugin plugin) {
             return false;
         }
 
-        // Initialize Redis (optional)
-        RedisService redisService = new RedisService(plugin);
-        try {
-            redisService.connect();
-            plugin.setRedisService(redisService);
-        } catch (Exception ex) {
-            DuelsPlugin.sendMessage(plugin.getLang().getMessage("SYSTEM.database.redis-connect-failed"));
-            LOGGER.log(Level.WARNING, "Redis connection failed; continuing without Redis.", ex);
-            // Clean up any partially initialized Redis resources
-            try {
-                redisService.close();
-            } catch (Exception closeEx) {
-                LOGGER.log(Level.WARNING, "Failed to clean up Redis service during initialization failure", closeEx);
-            }
-            plugin.setRedisService(null);
-        }
 
         return true;
     }

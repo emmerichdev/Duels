@@ -62,8 +62,7 @@ public class QueueSignManagerImpl implements Loadable, QueueSignManager, Listene
             final var mongo = plugin.getMongoService();
             if (mongo != null) {
                 final var collection = mongo.collection("signs");
-                final String serverId = resolveServerId();
-                final Document filter = new Document("serverId", serverId);
+                final Document filter = new Document();
 
                 for (final Document doc : collection.find(filter)) {
                     final String json = doc.toJson();
@@ -100,7 +99,6 @@ public class QueueSignManagerImpl implements Loadable, QueueSignManager, Listene
             if (mongo != null) {
                 final var collection = mongo.collection("signs");
                 final java.util.List<com.mongodb.client.model.WriteModel<Document>> ops = new java.util.ArrayList<>();
-                final String serverId = resolveServerId();
                 for (final QueueSignImpl sign : signs.values()) {
                     if (sign.getQueue().isRemoved()) {
                         continue;
@@ -108,9 +106,7 @@ public class QueueSignManagerImpl implements Loadable, QueueSignManager, Listene
                     final QueueSignData data = new QueueSignData(sign);
                     final String json = JsonUtil.getObjectWriter().writeValueAsString(data);
                     final Document doc = Document.parse(json);
-                    // scope by server
-                    doc.put("serverId", serverId);
-                    final String id = sign.getLocation().getWorld().getName() + ":" + sign.getLocation().getBlockX() + ":" + sign.getLocation().getBlockY() + ":" + sign.getLocation().getBlockZ() + ":" + serverId;
+                    final String id = sign.getLocation().getWorld().getName() + ":" + sign.getLocation().getBlockX() + ":" + sign.getLocation().getBlockY() + ":" + sign.getLocation().getBlockZ();
                     doc.put("_id", id);
                     final Document filter = new Document("_id", id);
                     ops.add(new ReplaceOneModel<>(filter, doc, new ReplaceOptions().upsert(true)));
@@ -131,14 +127,6 @@ public class QueueSignManagerImpl implements Loadable, QueueSignManager, Listene
         }
     }
 
-    private String resolveServerId() {
-        final String configured = plugin.getDatabaseConfig() != null ? plugin.getDatabaseConfig().getServerId() : null;
-        if (configured != null && !configured.trim().isEmpty()) {
-            return configured.trim();
-        }
-        final int port = plugin.getServer().getPort();
-        return port > 0 ? String.valueOf(port) : "default";
-    }
 
     @Nullable
     @Override
