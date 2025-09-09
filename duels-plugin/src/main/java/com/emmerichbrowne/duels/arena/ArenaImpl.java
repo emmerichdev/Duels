@@ -221,7 +221,10 @@ public class ArenaImpl extends BaseButton implements Arena {
             queueManager.getGui().calculatePages();
         }
 
-        refreshGui(true);
+        // For cloned arenas (temporary), we don't need to refresh GUI as they're not in the arena manager
+        if (!name.contains("-")) {
+            refreshGui(true);
+        }
     }
 
     public void startCountdown() {

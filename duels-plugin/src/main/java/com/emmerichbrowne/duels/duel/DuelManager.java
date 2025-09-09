@@ -48,6 +48,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DuelManager implements Loadable {
 
@@ -293,6 +294,19 @@ public class DuelManager implements Loadable {
         }
     }
 
+    private ArenaImpl createArenaClone(final ArenaImpl templateArena) {
+        // Create a temporary arena clone for this match
+        // This allows infinite concurrent matches using the same arena template
+        final String cloneName = templateArena.getName() + "-" + System.currentTimeMillis() + "-" + ThreadLocalRandom.current().nextInt(1000);
+        final ArenaImpl clone = new ArenaImpl(plugin, cloneName, templateArena.isDisabled());
+        
+        // Copy arena properties
+        templateArena.getKits().forEach(clone::bind);
+        templateArena.getPositions().forEach(clone::setPosition);
+        
+        return clone;
+    }
+
     public void startMatch(final Collection<Player> first, final Collection<Player> second, final Settings settings, final Map<UUID, List<ItemStack>> items, final Queue source) {
         final Collection<Player> players = new ArrayList<>(first.size() + second.size());
         players.addAll(first);
@@ -304,13 +318,16 @@ public class DuelManager implements Loadable {
         }
 
         final KitImpl kit = settings.getKit();
-        final ArenaImpl arena = settings.getArena() != null ? settings.getArena() : arenaManager.randomArena(kit);
+        final ArenaImpl templateArena = settings.getArena() != null ? settings.getArena() : arenaManager.randomArena(kit);
 
-        if (arena == null || !arena.isAvailable()) {
-            lang.sendMessage(players, "DUEL.start-failure." + (settings.getArena() != null ? "arena-in-use" : "no-arena-available"));
+        if (templateArena == null) {
+            lang.sendMessage(players, "DUEL.start-failure.no-arena-available");
             refundItems(players, items);
             return;
         }
+
+        // Create a clone of the arena for this match to allow infinite concurrent matches
+        final ArenaImpl arena = createArenaClone(templateArena);
 
         if (kit != null && !arenaManager.isSelectable(kit, arena)) {
             lang.sendMessage(players, "DUEL.start-failure.arena-not-applicable", "kit", kit.getName(), "arena", arena.getName());
